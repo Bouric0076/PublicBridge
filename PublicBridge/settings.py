@@ -99,9 +99,9 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'publicbridgedb',  # Your database name
+        'NAME': '',  # Your database name
         'USER': 'root',             # Your MySQL username
-        'PASSWORD': 'Sandraenos2005',# Your MySQL password
+        'PASSWORD': '',# Your MySQL password
         'HOST': '127.0.0.1',        # Database server address
         'PORT': '3306',             # MySQL default port
         'OPTIONS': {
