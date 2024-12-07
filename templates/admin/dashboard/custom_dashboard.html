@@ -1,0 +1,22 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  <h1>Welcome to the PublicBridge Admin Dashboard</h1>
+  
+  <div class="dashboard-stats">
+    <div class="stat-item">
+      <h3>Total Reports</h3>
+      <p>{{ total_reports }}</p>
+    </div>
+    <div class="stat-item">
+      <h3>Total Posts</h3>
+      <p>{{ total_posts }}</p>
+    </div>
+    <div class="stat-item">
+      <h3>Total Users</h3>
+      <p>{{ total_users }}</p>
+    </div>
+  </div>
+  
+  <!-- Future sections for graphs or other data visualization will go here -->
+{% endblock %}

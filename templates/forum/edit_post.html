@@ -1,0 +1,12 @@
+{% extends "forum/base.html" %}
+
+{% block content %}
+<h1>Edit Post</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a href="{% url 'forum:profile_view' request.user.username %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

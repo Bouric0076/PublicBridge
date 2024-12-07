@@ -1,0 +1,20 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<h1>Your Reports</h1>
+
+<a href="{% url 'submit_userreport' %}">Submit a New Report</a>
+
+{% if reports %}
+    <ul>
+    {% for report in reports %}
+        <li>
+            <strong>{{ report.title }}</strong> - Status: {{ report.status }}
+            <p>{{ report.description }}</p>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No reports found.</p>
+{% endif %}
+{% endblock %}

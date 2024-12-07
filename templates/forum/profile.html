@@ -1,0 +1,64 @@
+{% extends "forum/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Profile Information -->
+        <div class="col-md-4">
+            <h1>{{ profile.user.username }}'s Profile</h1>
+
+            <!-- Display Current Profile Picture -->
+            {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="img-thumbnail mb-3" width="150">
+            {% else %}
+                <p>No Profile Picture</p>
+            {% endif %}
+
+            <!-- Display Bio -->
+            <h3>Bio</h3>
+            <p>{{ profile.bio|default:"This user hasn't added a bio yet." }}</p>
+
+            <!-- Show Edit Form (Only for Logged-in User Viewing Own Profile) -->
+            {% if is_own_profile %}
+                <hr>
+                <h2>Edit Profile</h2>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            {% endif %}
+        </div>
+
+        <!-- User Posts Section -->
+        <div class="col-md-8">
+            <h2>{{ profile.user.username }}'s Posts</h2>
+
+            {% if posts %}
+                <ul class="list-group">
+                    {% for post in posts %}
+                        <li class="list-group-item mb-2">
+                            <h4>{{ post.title }}</h4>
+                            <p>{{ post.content }}</p>
+                            <p><small>Posted on: {{ post.created_at|date:"M d, Y" }}</small></p>
+
+                            {% if is_own_profile %}
+                                <!-- Edit and Delete Buttons -->
+                                <div class="d-flex">
+                                    <a href="{% url 'forum:edit_post' post.id %}" class="btn btn-warning btn-sm me-2">Edit</a>
+                                    <form method="POST" action="{% url 'forum:delete_post' post.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No posts yet. Start sharing your thoughts!</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

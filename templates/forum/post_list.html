@@ -1,0 +1,25 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<h1>Discussion Forum</h1>
+<a href="{% url 'create_post' %}">Create a New Post</a>
+
+<ul>
+    {% for post in posts %}
+        <li>
+            <a href="{% url 'post_detail' post.slug %}">{{ post.title }}</a>
+            <p>{{ post.content|truncatechars:100 }}</p>
+            {% if post.image %}
+                <img src="{{ post.image.url }}" alt="Image for {{ post.title }}" style="max-width: 200px;">
+            {% endif %}
+            {% if post.video %}
+                <video controls style="max-width: 300px;">
+                    <source src="{{ post.video.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            {% endif %}
+            <p>Votes: {{ post.vote_score }}</p>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

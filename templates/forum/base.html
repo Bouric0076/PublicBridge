@@ -1,0 +1,99 @@
+<!-- forum/templates/forum/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discussion Forum</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'forum:feed' %}">Go to Feed</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'forum:profile_view' user.username %}">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'forum:create_post' %}">Create Post</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'forum:feed' %}">Feed</a>
+                        </li>
+                        <li class="nav-item">
+                           <a href="{% url 'forum:notifications' %}">Notifications</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'forum:inbox' %}">Messages</a>   
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 bg-dark text-white">
+        <div class="container text-center">
+            <p>&copy; 2024 Discussion Forum. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+     <!-- Add this script to your base.html or a specific JS file -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.upvote-btn').forEach(function(button) {
+            button.addEventListener('click', function() {
+                const postId = button.getAttribute('data-post-id');
+                votePost(postId, 'upvote');
+            });
+        });
+
+        document.querySelectorAll('.downvote-btn').forEach(function(button) {
+            button.addEventListener('click', function() {
+                const postId = button.getAttribute('data-post-id');
+                votePost(postId, 'downvote');
+            });
+        });
+    });
+
+    function votePost(postId, action) {
+        fetch(`/forum/post/${postId}/vote/?action=${action}`, {
+            method: 'GET',
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Update the vote counts
+            document.querySelector(`.upvote-btn[data-post-id="${postId}"]`).textContent = `Upvote (${data.upvotes})`;
+            document.querySelector(`.downvote-btn[data-post-id="${postId}"]`).textContent = `Downvote (${data.downvotes})`;
+        });
+    }
+</script>
+
+</body>
+</html>

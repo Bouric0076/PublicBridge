@@ -1,0 +1,25 @@
+<!-- forum/templates/forum/user_profile.html -->
+{% extends "forum/base.html" %}
+{% block content %}
+<h2>{{ profile_user.username }}'s Profile</h2>
+<p>{{ profile.bio }}</p>
+<p>Location: {{ profile.location }}</p>
+<h3>Posts</h3>
+<ul>
+    {% for post in posts %}
+        <li><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></li>
+    {% endfor %}
+</ul>
+<h3>Followers</h3>
+<ul>
+    {% for follower in followers %}
+        <li>{{ follower.username }}</li>
+    {% endfor %}
+</ul>
+<h3>Following</h3>
+<ul>
+    {% for follow in following %}
+        <li>{{ follow.username }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

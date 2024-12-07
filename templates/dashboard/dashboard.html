@@ -1,0 +1,73 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+    <div class="dashboard-content">
+        <h1 class="welcome-message">Welcome, {{ user.username }}!</h1>
+
+        <!-- User Stats Section -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>Total Reports Submitted</h3>
+                <p>{{ reports_submitted }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Reports Under Review</h3>
+                <p>{{ reports_under_review }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Resolved</h3>
+                <p>{{ reports_resolved }}</p>
+            </div>
+        </div>
+
+        <!-- Button to Create New Report -->
+        <a href="{% url 'submit_userreport' %}" class="btn create-report-btn">Create New Report</a>
+
+        <!-- Recent Reports -->
+        <section class="recent-reports">
+            <h2>Recent Reports</h2>
+            <div class="report-list">
+                {% for report in recent_reports %}
+                    <div class="report-card">
+                        <h3>{{ report.title }}</h3>
+                        <p>Status: <span class="status {{ report.status|lower }}">{{ report.status }}</span></p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Latest Discussions -->
+        <section class="latest-discussions">
+            <h2>Latest Discussions</h2>
+            <div class="discussion-feed">
+                {% for discussion in discussions %}
+                    <div class="discussion-item">
+                        <h3>{{ discussion.title }}</h3>
+                        <p>{{ discussion.content }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Top Voted Ideas -->
+        <section class="top-voted-ideas">
+            <h2>Top Voted Ideas</h2>
+            <div class="idea-cards">
+                {% for idea in top_ideas %}
+                    <div class="idea-card">
+                        <h3>{{ idea.title }}</h3>
+                        <p>{{ idea.description }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Statistics & Analytics -->
+        <section class="analytics-section">
+            <h2>Statistics & Analytics</h2>
+            <div class="analytics">
+                <!-- Embed charts, graphs, or insights here -->
+            </div>
+        </section>
+    </div>
+{% endblock %}

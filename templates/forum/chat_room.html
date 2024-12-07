@@ -1,0 +1,46 @@
+{% extends "forum/base.html" %}  
+
+{% block content %}  
+<h1>Chat with {{ other_user.username }}</h1>  
+<div id="chat-box"></div>  
+<input type="text" id="message-input" placeholder="Type a message..." />  
+<button id="send-button">Send</button>  
+
+<script>  
+    document.addEventListener('DOMContentLoaded', function() {  
+        const chatBox = document.getElementById('chat-box');  
+        const messageInput = document.getElementById('message-input');  
+        const sendButton = document.getElementById('send-button');  
+
+        const conversationId = "{{ conversation.id }}"  // Ensure this is defined  
+        const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/messages/' + conversationId + '/');  
+
+        chatSocket.onmessage = function(e) {  
+            const data = JSON.parse(e.data);  
+            chatBox.innerHTML += `<p><strong>${data.sender}:</strong> ${data.message}</p>`;  
+            chatBox.scrollTop = chatBox.scrollHeight;  // Auto-scroll to the latest message  
+        };  
+
+        sendButton.onclick = function() {  
+            const message = messageInput.value.trim(); // Trim whitespace  
+            if (message) {  
+                chatSocket.send(JSON.stringify({'message': message}));  
+                messageInput.value = '';  // Clear the input after sending  
+            } else {  
+                alert('Please type a message before sending.'); // Alert for empty messages  
+            }  
+        };  
+
+        // Allow sending message with Enter key  
+        messageInput.addEventListener('keypress', function(event) {  
+            if (event.key === 'Enter') {  
+                sendButton.click(); // Trigger the send button click  
+            }  
+        });  
+
+        chatSocket.onclose = function(e) {  
+            console.error('Chat socket closed unexpectedly');  
+        };  
+    });  
+</script>  
+{% endblock %}

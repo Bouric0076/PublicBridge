@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="/static/css/users.css"> <!-- External stylesheet link -->
+</head>
+<body>
+    <div class="container">
+        <div class="form-card">
+            <h2 class="form-title">Register</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="input-container">
+                    <label for="id_username">Username</label>
+                    {{ form.username }}
+                </div>
+                <div class="input-container">
+                    <label for="id_email">Email</label>
+                    {{ form.email }}
+                </div>
+                <div class="input-container">
+                    <label for="id_password1">Password</label>
+                    {{ form.password1 }}
+                </div>
+                <div class="input-container">
+                    <label for="id_password2">Confirm Password</label>
+                    {{ form.password2 }}
+                </div>
+                <button type="submit" class="btn primary-btn">Register</button>
+            </form>
+            <div class="form-footer">
+                <a href="/users/login/" class="link">Already have an account? Login</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

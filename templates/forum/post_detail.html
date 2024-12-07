@@ -1,0 +1,102 @@
+<!-- post_detail.html -->
+{% extends "forum/base.html" %}
+
+{% block content %}
+<div class="post-container">
+    <h1>{{ post.title }}</h1>
+    <p>{{ post.content }}</p>
+
+    {% if post.media %}
+        <img src="{{ post.media.url }}" alt="Post Media" class="post-media">
+    {% endif %}
+
+    <p>By {{ post.author.username }} on {{ post.created_at }}</p>
+
+    <!-- Upvote and Downvote Buttons -->
+    <div class="vote-buttons">
+        <button class="upvote-btn" data-post-id="{{ post.id }}">Upvote ({{ post.upvotes.count }})</button>
+        <button class="downvote-btn" data-post-id="{{ post.id }}">Downvote ({{ post.downvotes.count }})</button>
+    </div>
+
+    <hr>
+
+    <h2>Comments</h2>
+    {% for comment in comments %}
+        <div class="comment">
+            <p><strong>{{ comment.author.username }}</strong>: {{ comment.content }}</p>
+            
+            {% if comment.media %}
+                <img src="{{ comment.media.url }}" alt="Comment Media" class="comment-media">
+            {% endif %}
+            
+            <p><small>Posted on {{ comment.created_at }}</small></p>
+
+            <!-- Display Replies -->
+            <div class="replies">
+                {% for reply in comment.replies.all %}
+                    <div class="comment-reply">
+                        <p><strong>{{ reply.author.username }}</strong>: {{ reply.content }}</p>
+                        
+                        {% if reply.media %}
+                            <img src="{{ reply.media.url }}" alt="Reply Media" class="reply-media">
+                        {% endif %}
+                        
+                        <p><small>Posted on {{ reply.created_at }}</small></p>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Reply Button -->
+            <button class="reply-toggle-btn" data-reply-form-id="reply-form-{{ comment.id }}">
+                Reply
+            </button>
+
+            <!-- Reply Form (Hidden by Default) -->
+            <form 
+                id="reply-form-{{ comment.id }}" 
+                class="reply-form" 
+                method="POST" 
+                action="{% url 'forum:add_comment' post.id %}" 
+                enctype="multipart/form-data"
+                style="display: none;"
+            >
+                {% csrf_token %}
+                <textarea name="content" rows="3" placeholder="Write your reply..." required></textarea>
+                <input type="file" name="media" accept="image/*">
+                <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                <button type="submit">Submit Reply</button>
+            </form>
+        </div>
+        <hr>
+    {% endfor %}
+
+    <!-- Add a New Comment -->
+    <h3>Leave a Comment</h3>
+    <form method="POST" action="{% url 'forum:add_comment' post.id %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <textarea name="content" rows="5" placeholder="Write your comment..." required></textarea>
+        <input type="file" name="media" accept="image/*">
+        <button type="submit">Submit Comment</button>
+    </form>
+</div>
+
+<!-- JavaScript for Reply Toggle -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const replyToggleButtons = document.querySelectorAll(".reply-toggle-btn");
+        replyToggleButtons.forEach(button => {
+            button.addEventListener("click", () => {
+                const replyFormId = button.getAttribute("data-reply-form-id");
+                const replyForm = document.getElementById(replyFormId);
+
+                // Toggle visibility
+                if (replyForm.style.display === "none") {
+                    replyForm.style.display = "block";
+                } else {
+                    replyForm.style.display = "none";
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

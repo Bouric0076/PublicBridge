@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'submit_userreport' %}">Submit a Report</a></li>
+                <li><a href="{% url 'forum:feed' %}">Discussion Forum</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <div class="search-bar">
+                        <input type="text" placeholder="Search...">
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="user-profile">
+                        <img src="{% static 'images/user-avatar.png' %}" alt="User Avatar" class="user-avatar">
+                        <span class="username">{{ user.username }}</span>
+                    </div>
+                    <div class="notifications">
+                        <span>Notifications</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Block -->
+            <div class="content">
+                {% block content %}
+                <!-- Dynamic content will be inserted here -->
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
