@@ -1,0 +1,38 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Manage Reports</h1>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>User</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report in reports %}
+            <tr>
+                <td>{{ report.title }}</td>
+                <td>
+                    {% if report.user %}
+                    {{ report.user.username }}
+                     {% else %}
+                        Anonymous
+                     {% endif %}
+                </td>
+                <td>{{ report.status }}</td>
+                <td>
+                    <a href="{% url 'assign_report_to_department' report.id 1 %}" class="btn btn-info">Assign</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'export_reports_to_csv' %}" class="btn btn-success">Export Reports to CSV</a>
+</div>
+{% endblock %}

@@ -11,8 +11,7 @@ class AnonymousReportForm(forms.ModelForm):
         }
 
 
-
 class ReportForm(forms.ModelForm):
     class Meta:
         model = Report
-        fields = ['title', 'description', 'status']
+        fields = ['title', 'description']

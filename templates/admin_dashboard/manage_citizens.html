@@ -1,0 +1,26 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Manage Citizens</h1>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Followers</th>
+                <th>Following</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for profile in profiles %}
+            <tr>
+                <td>{{ profile.user.username }}</td>
+                <td>{{ profile.followers_count }}</td>
+                <td>{{ profile.following_count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

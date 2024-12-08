@@ -20,7 +20,7 @@ class ReportAdmin(admin.ModelAdmin):
         return obj.user.username if obj.user else "Anonymous"
     user.short_description = "Reported By"
 
-    # Action to assign reports to a department (government admin)
+    # Action to assign reports to a department (government admin_dashboard)
     def assign_to_department(self, request, queryset):
         for report in queryset:
             report.status = 'under_review'  # Set the status to 'under_review'
@@ -68,6 +68,6 @@ class ReportAdmin(admin.ModelAdmin):
         return response
     export_to_csv.short_description = "Export selected reports to CSV"
 
-# Register the admin models
+# Register the admin_dashboard models
 admin.site.register(Report, ReportAdmin)
 admin.site.register(AnonymousReport)

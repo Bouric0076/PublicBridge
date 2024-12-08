@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Report</title>
+    <link rel="stylesheet" href="{% static 'css/edit_report.css' %}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Edit Report</h1>
+            <a href="{% url 'report_details' report.id %}" class="back-button">Back to Report</a>
+        </header>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-save">Save Changes</button>
+        </form>
+    </div>
+</body>
+</html>

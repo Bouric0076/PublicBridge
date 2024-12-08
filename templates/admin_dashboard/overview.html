@@ -1,0 +1,45 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Dashboard Overview</h1>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Reports</h5>
+                    <p class="card-text">{{ total_reports }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Resolved Reports</h5>
+                    <p class="card-text">{{ resolved_reports }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                    <p class="card-text">{{ total_users }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Active Departments</h5>
+                    <p class="card-text">{{ active_departments }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

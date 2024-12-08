@@ -25,7 +25,7 @@ class GovernmentAdminAdmin(admin.ModelAdmin):
 
 # Admin panel for Profile (to track citizen profiles and their engagement)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'bio', 'get_following_count', 'get_follower_count')  # Key info for admin
+    list_display = ('user', 'bio', 'get_following_count', 'get_follower_count')  # Key info for admin_dashboard
     search_fields = ('user__username', 'bio')  # Enable profile searching
 
     # Additional methods to display engagement metrics
@@ -44,7 +44,7 @@ class FollowAdmin(admin.ModelAdmin):
     search_fields = ('follower__user__username', 'followed__user__username')  # Search by follower/followed
 
 
-# Register the models to the admin site
+# Register the models to the admin_dashboard site
 admin.site.register(GovernmentAdmin, GovernmentAdminAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Follow, FollowAdmin)

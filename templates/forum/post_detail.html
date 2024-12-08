@@ -1,82 +1,83 @@
-<!-- post_detail.html -->
 {% extends "forum/base.html" %}
 
 {% block content %}
 <div class="post-container">
-    <h1>{{ post.title }}</h1>
+    <h1 class="mb-3">{{ post.title }}</h1>
     <p>{{ post.content }}</p>
 
     {% if post.media %}
-        <img src="{{ post.media.url }}" alt="Post Media" class="post-media">
+        <img src="{{ post.media.url }}" alt="Post Media" class="img-fluid rounded mb-3">
     {% endif %}
 
-    <p>By {{ post.author.username }} on {{ post.created_at }}</p>
+    <p><strong>By:</strong> {{ post.author.username }} on {{ post.created_at }}</p>
 
-    <!-- Upvote and Downvote Buttons -->
-    <div class="vote-buttons">
-        <button class="upvote-btn" data-post-id="{{ post.id }}">Upvote ({{ post.upvotes.count }})</button>
-        <button class="downvote-btn" data-post-id="{{ post.id }}">Downvote ({{ post.downvotes.count }})</button>
+    <div class="vote-buttons my-3">
+        <button class="btn btn-success upvote-btn" data-post-id="{{ post.id }}">Upvote ({{ post.upvotes.count }})</button>
+        <button class="btn btn-danger downvote-btn" data-post-id="{{ post.id }}">Downvote ({{ post.downvotes.count }})</button>
     </div>
 
     <hr>
-
     <h2>Comments</h2>
     {% for comment in comments %}
-        <div class="comment">
-            <p><strong>{{ comment.author.username }}</strong>: {{ comment.content }}</p>
-            
-            {% if comment.media %}
-                <img src="{{ comment.media.url }}" alt="Comment Media" class="comment-media">
-            {% endif %}
-            
-            <p><small>Posted on {{ comment.created_at }}</small></p>
+        <div class="comment p-4 mb-4 border rounded shadow-sm bg-light">
+            <div class="comment-header d-flex justify-content-between align-items-center">
+                <p class="mb-1"><strong>{{ comment.author.username }}</strong>: {{ comment.content }}</p>
+                <p><small>Posted on {{ comment.created_at }}</small></p>
+            </div>
 
-            <!-- Display Replies -->
-            <div class="replies">
+            {% if comment.media %}
+                <img src="{{ comment.media.url }}" alt="Comment Media" class="img-fluid rounded mb-2">
+            {% endif %}
+
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <div class="replies-toggle">
+                    <button class="btn btn-link btn-sm reply-toggle-btn" data-reply-form-id="reply-form-{{ comment.id }}">
+                        Reply
+                    </button>
+                </div>
+            </div>
+
+            <!-- Replies -->
+            <div class="replies ms-4 mt-3">
                 {% for reply in comment.replies.all %}
-                    <div class="comment-reply">
-                        <p><strong>{{ reply.author.username }}</strong>: {{ reply.content }}</p>
-                        
+                    <div class="comment-reply p-3 mb-3 border rounded shadow-sm bg-white">
+                        <div class="comment-header d-flex justify-content-between align-items-center">
+                            <p class="mb-1"><strong>{{ reply.author.username }}</strong>: {{ reply.content }}</p>
+                            <p><small>Posted on {{ reply.created_at }}</small></p>
+                        </div>
+
                         {% if reply.media %}
-                            <img src="{{ reply.media.url }}" alt="Reply Media" class="reply-media">
+                            <img src="{{ reply.media.url }}" alt="Reply Media" class="img-fluid rounded mb-2">
                         {% endif %}
-                        
-                        <p><small>Posted on {{ reply.created_at }}</small></p>
                     </div>
                 {% endfor %}
             </div>
 
-            <!-- Reply Button -->
-            <button class="reply-toggle-btn" data-reply-form-id="reply-form-{{ comment.id }}">
-                Reply
-            </button>
-
             <!-- Reply Form (Hidden by Default) -->
-            <form 
-                id="reply-form-{{ comment.id }}" 
-                class="reply-form" 
-                method="POST" 
-                action="{% url 'forum:add_comment' post.id %}" 
+            <form
+                id="reply-form-{{ comment.id }}"
+                class="reply-form mt-3"
+                method="POST"
+                action="{% url 'forum:add_comment' post.id %}"
                 enctype="multipart/form-data"
                 style="display: none;"
             >
                 {% csrf_token %}
-                <textarea name="content" rows="3" placeholder="Write your reply..." required></textarea>
-                <input type="file" name="media" accept="image/*">
+                <textarea name="content" rows="3" class="form-control mb-2" placeholder="Write your reply..." required></textarea>
+                <input type="file" name="media" accept="image/*" class="form-control mb-2">
                 <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                <button type="submit">Submit Reply</button>
+                <button type="submit" class="btn btn-primary">Submit Reply</button>
             </form>
         </div>
-        <hr>
     {% endfor %}
 
     <!-- Add a New Comment -->
     <h3>Leave a Comment</h3>
     <form method="POST" action="{% url 'forum:add_comment' post.id %}" enctype="multipart/form-data">
         {% csrf_token %}
-        <textarea name="content" rows="5" placeholder="Write your comment..." required></textarea>
-        <input type="file" name="media" accept="image/*">
-        <button type="submit">Submit Comment</button>
+        <textarea name="content" rows="5" class="form-control mb-3" placeholder="Write your comment..." required></textarea>
+        <input type="file" name="media" accept="image/*" class="form-control mb-3">
+        <button type="submit" class="btn btn-primary">Submit Comment</button>
     </form>
 </div>
 
@@ -89,7 +90,7 @@
                 const replyFormId = button.getAttribute("data-reply-form-id");
                 const replyForm = document.getElementById(replyFormId);
 
-                // Toggle visibility
+                // Toggle visibility of the reply form
                 if (replyForm.style.display === "none") {
                     replyForm.style.display = "block";
                 } else {

@@ -1,0 +1,41 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Manage Government Departments</h1>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Department Name</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for department in departments %}
+            <tr>
+                <td>{{ department.name }}</td>
+                <td>{{ department.is_active|yesno:"Active,Inactive" }}</td>
+                <td>
+                    <button class="btn btn-primary" onclick="toggleStatus({{ department.id }})">Toggle Status</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function toggleStatus(departmentId) {
+        fetch(`/toggle-department/${departmentId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Department status updated!');
+                    location.reload();
+                }
+            });
+    }
+</script>
+{% endblock %}

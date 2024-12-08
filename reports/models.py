@@ -35,6 +35,7 @@ class Report(models.Model):
         ('under_review', 'Under Review'),
         ('resolved', 'Resolved'),
         ('pending', 'Pending'),
+        ('rejected', 'Rejected'),
     ]
 
     CATEGORY_CHOICES = [

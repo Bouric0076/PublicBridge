@@ -1,0 +1,204 @@
+/* General Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.content {
+    flex: 1;
+    padding-top: 20px;
+    margin-bottom: 80px; /* Added margin-bottom to prevent footer overlap */
+}
+
+/* Navbar */
+.navbar {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #f8f9fa !important;
+}
+
+.nav-link {
+    color: #ffffff !important;
+}
+
+.nav-link:hover {
+    color: #ffc107 !important;
+}
+
+/* Post Cards */
+.post-summary {
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 15px;
+    background: #ffffff;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.post-summary:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.post-actions .btn {
+    margin-right: 5px;
+}
+
+/* Vote Buttons */
+.vote-buttons button {
+    margin: 5px 0;
+}
+
+/* Comments Section */
+.comment {
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.comment p {
+    margin: 0 0 5px 0;
+    font-size: 0.9rem;
+}
+
+.comment-reply {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 0.85rem;
+}
+
+/* Media Styling */
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+/* Footer */
+.footer {
+    background-color: #343a40;
+    color: #ffffff;
+    text-align: center;
+    padding: 15px 0;
+    width: 100%;
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Alerts */
+.alert {
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .post-summary {
+        font-size: 0.9rem;
+    }
+
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+}
+
+/* Custom Styling for Comments and Replies */
+.comment, .comment-reply {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.comment-header p {
+    margin: 0;
+    font-weight: 600;
+}
+
+.comment-reply {
+    margin-left: 30px;
+    background-color: #ffffff;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.comment-header p small {
+    color: #6c757d;
+}
+
+.replies-toggle {
+    margin-top: 15px;
+}
+
+.reply-toggle-btn {
+    font-size: 0.9rem;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.reply-toggle-btn:hover {
+    text-decoration: underline;
+}
+
+.reply-form {
+    margin-top: 20px;
+}
+
+.reply-form textarea {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.reply-form input[type="file"] {
+    margin-bottom: 10px;
+}
+
+/* Styling for Form Buttons */
+button.btn {
+    padding: 8px 15px;
+    font-size: 1rem;
+}
+
+button.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+button.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+button.btn-link {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 1rem;
+    color: #007bff;
+}
+
+button.btn-link:hover {
+    text-decoration: underline;
+}
+
+/* Ensures the post media images and comment media images are responsive */
+img.img-fluid {
+    max-width: 100%;
+    height: auto;
+}

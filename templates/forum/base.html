@@ -1,17 +1,67 @@
-<!-- forum/templates/forum/base.html -->
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Discussion Forum</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/forum.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .content {
+            flex: 1;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .navbar {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+        }
+
+        .post-summary {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            background: #f9f9f9;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .post-summary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .post-actions .btn {
+            margin-right: 5px;
+        }
+
+        .vote-buttons button {
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'forum:feed' %}">Go to Feed</a>
+            <a class="navbar-brand" href="{% url 'forum:feed' %}">Discussion Forum</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -19,22 +69,22 @@
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
                         <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="{% url 'forum:profile_view' user.username %}">Profile</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'forum:create_post' %}">Create Post</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="{% url 'forum:notifications' %}">Notifications</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'forum:inbox' %}">Messages</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'forum:feed' %}">Feed</a>
-                        </li>
-                        <li class="nav-item">
-                           <a href="{% url 'forum:notifications' %}">Notifications</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'forum:inbox' %}">Messages</a>   
                         </li>
                     {% else %}
                         <li class="nav-item">
@@ -50,13 +100,13 @@
     </nav>
 
     <!-- Main Content -->
-    <div class="container mt-4">
+    <div class="container mt-4 content">
         {% block content %}
         {% endblock %}
     </div>
 
     <!-- Footer -->
-    <footer class="footer mt-auto py-3 bg-dark text-white">
+    <footer class="footer bg-dark text-white py-3">
         <div class="container text-center">
             <p>&copy; 2024 Discussion Forum. All Rights Reserved.</p>
         </div>
@@ -64,36 +114,33 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
-     <!-- Add this script to your base.html or a specific JS file -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.upvote-btn').forEach(function(button) {
-            button.addEventListener('click', function() {
-                const postId = button.getAttribute('data-post-id');
-                votePost(postId, 'upvote');
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.upvote-btn').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const postId = button.getAttribute('data-post-id');
+                    votePost(postId, 'upvote');
+                });
+            });
+
+            document.querySelectorAll('.downvote-btn').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const postId = button.getAttribute('data-post-id');
+                    votePost(postId, 'downvote');
+                });
             });
         });
 
-        document.querySelectorAll('.downvote-btn').forEach(function(button) {
-            button.addEventListener('click', function() {
-                const postId = button.getAttribute('data-post-id');
-                votePost(postId, 'downvote');
-            });
-        });
-    });
-
-    function votePost(postId, action) {
-        fetch(`/forum/post/${postId}/vote/?action=${action}`, {
-            method: 'GET',
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Update the vote counts
-            document.querySelector(`.upvote-btn[data-post-id="${postId}"]`).textContent = `Upvote (${data.upvotes})`;
-            document.querySelector(`.downvote-btn[data-post-id="${postId}"]`).textContent = `Downvote (${data.downvotes})`;
-        });
-    }
-</script>
-
+        function votePost(postId, action) {
+            fetch(`/forum/post/${postId}/vote/?action=${action}`, {
+                method: 'GET',
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    document.querySelector(`.upvote-btn[data-post-id="${postId}"]`).textContent = `Upvote (${data.upvotes})`;
+                    document.querySelector(`.downvote-btn[data-post-id="${postId}"]`).textContent = `Downvote (${data.downvotes})`;
+                });
+        }
+    </script>
 </body>
 </html>
