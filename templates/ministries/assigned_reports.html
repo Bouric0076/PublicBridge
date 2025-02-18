@@ -1,0 +1,48 @@
+{% extends 'ministries/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Assigned Reports (Under Review)</h2>
+
+    <div class="card">
+        <div class="card-header">
+            <h5>Reports Assigned to Your Ministry</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Priority</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ report.title }}</td>
+                        <td>{{ report.get_category_display }}</td>
+                        <td>
+                            <span class="badge {% if report.priority == 'high' %}bg-danger{% elif report.priority == 'medium' %}bg-warning{% else %}bg-secondary{% endif %}">
+                                {{ report.get_priority_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'report_details' report.id %}" class="btn btn-sm btn-info">View</a>
+                            <a href="{% url 'update_report_status' report.report_id %}" class="btn btn-sm btn-success">Update Status</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">No reports assigned yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

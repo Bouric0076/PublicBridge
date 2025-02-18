@@ -1,0 +1,13 @@
+{% extends "ministries/base.html" %}
+{% block content %}
+<h2>Ministry Reports</h2>
+
+<ul>
+    {% for report in reports %}
+        <li>
+            {{ report.title }} - {{ report.status }}
+            <a href="{% url 'update-report-status' report.report_id %}">Update Status</a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

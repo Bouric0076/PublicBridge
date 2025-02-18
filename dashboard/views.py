@@ -1,59 +1,90 @@
-from forum.models import Post, Comment, Notification, Conversation
-from reports.models import Report
-from users.models import Profile
-from django.contrib.auth import get_user_model
 from django.contrib.auth import get_user_model
 
 from forum.models import Post, Comment, Notification, Conversation, Poll, Feedback
 from reports.models import Report
-from users.models import Profile,GovernmentAdmin
+from users.models import Profile, GovernmentAdmin
 
 User = get_user_model()
 
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import JsonResponse, HttpResponse
+from django.shortcuts import redirect
+from django.http import HttpResponse
 from django.db.models import Count
-from django.contrib.auth.decorators import login_required
 import csv
-
+from django.core.paginator import Paginator
+from django.http import JsonResponse
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
 
 # ------------------------
-# Dashboard Overview
-# ------------------------
+from django.utils.timezone import now, timedelta
+
 
 @login_required
 def dashboard_overview(request):
     total_reports = Report.objects.count()
     resolved_reports = Report.objects.filter(status='resolved').count()
-    total_users = Profile.objects.count()
+    unresolved_reports = total_reports - resolved_reports
+    total_users = User.objects.count()
     active_departments = GovernmentAdmin.objects.filter(is_active=True).count()
 
+    # Additional metrics
+    recent_reports = Report.objects.order_by('-created_at')[:5]  # Get the latest 5 reports
+    active_users = User.objects.filter(last_login__gte=now() - timedelta(days=30)).count()  # Users active in the last 30 days
+    resolved_percentage = (resolved_reports / total_reports * 100) if total_reports else 0  # Avoid division by zero
+
+    # Context with improvements
     context = {
         'total_reports': total_reports,
         'resolved_reports': resolved_reports,
+        'unresolved_reports': unresolved_reports,
+        'resolved_percentage': resolved_percentage,
         'total_users': total_users,
         'active_departments': active_departments,
+        'recent_reports': recent_reports,
+        'active_users': active_users,
     }
     return render(request, 'admin_dashboard/overview.html', context)
-
 
 # ------------------------
 # Government Admin Views
 # ------------------------
 
+
+
 @login_required
 def manage_departments(request):
+    # Fetching all the departments (GovernmentAdmin entries)
     departments = GovernmentAdmin.objects.all()
-    return render(request, 'admin_dashboard/manage_departments.html', {'departments': departments})
 
+    # Optional: Search query filtering (if you want search functionality)
+    search_query = request.GET.get('q', '')
+    if search_query:
+        departments = departments.filter(department_name__icontains=search_query)
+
+    # Pagination (optional, depending on how many records you have)
+    from django.core.paginator import Paginator
+    paginator = Paginator(departments, 10)  # Show 10 departments per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'admin_dashboard/manage_departments.html', {
+        'departments': page_obj,
+        'search_query': search_query,
+    })
 
 @login_required
-def toggle_department_status(request, department_id):
-    department = get_object_or_404(GovernmentAdmin, id=department_id)
+def toggle_department_status(request, department_department_name):
+    # Toggle the is_active status of a department
+    department = get_object_or_404(GovernmentAdmin, id=department_department_name)
     department.is_active = not department.is_active
     department.save()
-    return JsonResponse({'status': 'success', 'is_active': department.is_active})
 
+    # Return response with the updated status
+    return JsonResponse({
+        'status': 'success',
+        'is_active': department.is_active,
+        'message': 'Department status updated successfully!'
+    })
 
 # ------------------------
 # Report Management Views

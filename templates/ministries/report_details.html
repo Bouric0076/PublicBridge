@@ -1,0 +1,35 @@
+{% extends 'ministries/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Report Details</h2>
+
+    <div class="card">
+        <div class="card-header">
+            <h5>{{ report.title }}</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>Report ID:</strong> {{ report.report_id }}</p>
+            <p><strong>Submitted By:</strong> {{ report.user.get_full_name }}</p>
+            <p><strong>Contact:</strong> {{ report.user_contact }}</p>
+            <p><strong>Email:</strong> {{ report.citizen_email }}</p>
+            <p><strong>Category:</strong> {{ report.get_category_display }}</p>
+            <p><strong>Priority:</strong>
+                <span class="badge {% if report.priority == 'high' %}bg-danger{% elif report.priority == 'medium' %}bg-warning{% else %}bg-secondary{% endif %}">
+                    {{ report.get_priority_display }}
+                </span>
+            </p>
+            <p><strong>Status:</strong>
+                <span class="badge {% if report.status == 'pending' %}bg-warning{% elif report.status == 'under_review' %}bg-info{% elif report.status == 'resolved' %}bg-success{% else %}bg-secondary{% endif %}">
+                    {{ report.get_status_display }}
+                </span>
+            </p>
+            <p><strong>Details:</strong> {{ report.description }}</p>
+            <p><strong>Submitted On:</strong> {{ report.created_at|date:"F d, Y" }}</p>
+
+            <a href="{% url 'update_report_status' report.report_id %}" class="btn btn-success">Update Status</a>
+            <a href="{% url 'assigned_reports' %}" class="btn btn-secondary">Back to Reports</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

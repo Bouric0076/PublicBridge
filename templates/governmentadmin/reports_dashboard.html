@@ -1,0 +1,25 @@
+{% extends "governmentadmin/base.html" %}
+{% block content %}
+<h2>Report Management</h2>
+
+<h3>Pending Reports</h3>
+<ul>
+    {% for report in pending_reports %}
+        <li>{{ report.title }} - <a href="{% url 'assign-report' report.report_id %}">Assign</a></li>
+    {% endfor %}
+</ul>
+
+<h3>Under Review Reports</h3>
+<ul>
+    {% for report in under_review_reports %}
+        <li>{{ report.title }}</li>
+    {% endfor %}
+</ul>
+
+<h3>Resolved Reports</h3>
+<ul>
+    {% for report in resolved_reports %}
+        <li>{{ report.title }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

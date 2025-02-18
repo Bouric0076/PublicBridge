@@ -1,0 +1,44 @@
+{% extends 'governmentadmin/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-3">Assign Report: {{ report.title }}</h2>
+
+    {% if messages %}
+    <div class="alert alert-success">
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="card">
+        <div class="card-body">
+            <h5>Category: {{ report.get_category_display }}</h5>
+            <h5>Submitted By: {{ report.user.username }}</h5>
+            <h5>Status: 
+                <span class="badge 
+                    {% if report.status == 'pending' %}badge-warning
+                    {% elif report.status == 'under_review' %}badge-info
+                    {% elif report.status == 'resolved' %}badge-success
+                    {% else %}badge-secondary{% endif %}">
+                    {{ report.get_status_display }}
+                </span>
+            </h5>
+
+            <form method="post">
+                {% csrf_token %}
+                <label for="ministry_id">Assign to Ministry:</label>
+                <select name="ministry_id" class="form-control" required>
+                    <option value="" disabled selected>Select Ministry</option>
+                    {% for ministry in ministries %}
+                        <option value="{{ ministry.ministry_id }}">{{ ministry.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-primary btn-sm mt-2">Assign</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

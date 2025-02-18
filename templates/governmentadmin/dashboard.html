@@ -1,0 +1,127 @@
+{% extends 'governmentadmin/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Welcome, Government Admin</h2>
+
+    <!-- Quick Stats Section -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Reports</h5>
+                    <p class="card-text fs-3">{{ total_reports }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Pending Reports</h5>
+                    <p class="card-text fs-3">{{ pending_reports }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Resolved Reports</h5>
+                    <p class="card-text fs-3">{{ resolved_reports }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Posts</h5>
+                    <p class="card-text fs-3">{{ posts_count }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reports Management -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5>Recent Reports</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in recent_reports %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ report.title }}</td>
+                        <td>{{ report.get_category_display }}</td>
+                        <td>
+                            <span class="badge {% if report.status == 'pending' %}bg-warning{% elif report.status == 'under_review' %}bg-info{% elif report.status == 'resolved' %}bg-success{% else %}bg-secondary{% endif %}">
+                                {{ report.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'assign-report' report.report_id %}" class="btn btn-sm btn-primary">Assign</a>
+                            <a href="{% url 'update-report-status' report.report_id %}" class="btn btn-sm btn-success">Update Status</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">No recent reports available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Activity Logs -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5>Recent Activity Logs</h5>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                {% for log in activity_logs %}
+                <li class="list-group-item">{{ log.timestamp|date:"Y-m-d H:i" }} - {{ log.action }}</li>
+                {% empty %}
+                <li class="list-group-item text-muted">No recent activity logs.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Assignment Queue -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5>Assignment Queue</h5>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                {% for assignment in assignment_queue %}
+                <li class="list-group-item">{{ assignment.assigned_at|date:"Y-m-d H:i" }} - {{ assignment.report.title }} assigned to {{ assignment.department }}</li>
+                {% empty %}
+                <li class="list-group-item text-muted">No assignments pending.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Ministry Management -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5>Ministry Management</h5>
+        </div>
+        <div class="card-body">
+            <a href="{% url 'view-pending-ministries' %}" class="btn btn-primary">Manage Ministries</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
