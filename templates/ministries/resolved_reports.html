@@ -1,0 +1,43 @@
+{% extends 'ministries/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Resolved Reports</h2>
+
+    <div class="card">
+        <div class="card-header">
+            <h5>List of Resolved Reports</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Resolved On</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ report.title }}</td>
+                        <td>{{ report.get_category_display }}</td>
+                        <td>{{ report.updated_at|date:"F d, Y" }}</td>
+                        <td>
+                            <a href="{% url 'report_details' report.id %}" class="btn btn-sm btn-info">View</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">No resolved reports available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

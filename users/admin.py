@@ -1,50 +1,79 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+from .models import User, GovernmentAdmin, Profile, Follow
 
-from django.contrib import admin
-from .models import GovernmentAdmin, Profile, Follow
+
+# Custom User Form to handle additional fields
+class CustomUserChangeForm(UserChangeForm):
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'role', 'engagement_score')
 
 
-# Admin panel for managing GovernmentAdmin (ministries or departments)
+class CustomUserCreationForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'role', 'engagement_score')
+
+
+# Custom UserAdmin to use the custom forms
+class CustomUserAdmin(UserAdmin):
+    form = CustomUserChangeForm
+    add_form = CustomUserCreationForm
+    list_display = ('username', 'first_name', 'last_name', 'email', 'role', 'engagement_score', 'is_active')
+    list_filter = ('role', 'is_active')
+    search_fields = ('username', 'email')
+    ordering = ('username',)
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        ('Personal info', {'fields': ('first_name', 'last_name', 'email', 'role', 'engagement_score')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+    )
+    add_fieldsets = (
+        (None, {'fields': ('username', 'password1', 'password2')}),
+        ('Personal info', {'fields': ('first_name', 'last_name', 'email', 'role', 'engagement_score')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+    )
+
+
+# Register User with custom UserAdmin
+admin.site.register(User, CustomUserAdmin)
+
+
+# GovernmentAdmin ModelAdmin customization
 class GovernmentAdminAdmin(admin.ModelAdmin):
-    list_display = ('user', 'department_name', 'is_active')  # Display relevant fields
-    list_filter = ('is_active',)  # Filter by active/inactive status
-    search_fields = ('user__username', 'department_name')  # Search by user or department name
-    ordering = ('department_name',)  # Order by department name
-
-    # Custom action to activate/deactivate government admins
-    actions = ['activate_departments', 'deactivate_departments']
-
-    def activate_departments(self, request, queryset):
-        queryset.update(is_active=True)
-    activate_departments.short_description = "Activate selected departments"
-
-    def deactivate_departments(self, request, queryset):
-        queryset.update(is_active=False)
-    deactivate_departments.short_description = "Deactivate selected departments"
+    list_display = ('user','is_active')
+    list_filter = ('is_active',)
+    search_fields = ('user__username',)
+    ordering = ('user__username',)
 
 
-# Admin panel for Profile (to track citizen profiles and their engagement)
-class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'bio', 'get_following_count', 'get_follower_count')  # Key info for admin_dashboard
-    search_fields = ('user__username', 'bio')  # Enable profile searching
-
-    # Additional methods to display engagement metrics
-    def get_following_count(self, obj):
-        return obj.following.count()
-    get_following_count.short_description = 'Following Count'
-
-    def get_follower_count(self, obj):
-        return obj.followers.count()
-    get_follower_count.short_description = 'Follower Count'
-
-
-# Admin panel for Follow (tracking relationships between users)
-class FollowAdmin(admin.ModelAdmin):
-    list_display = ('follower', 'followed')  # Show follow relationships
-    search_fields = ('follower__user__username', 'followed__user__username')  # Search by follower/followed
-
-
-# Register the models to the admin_dashboard site
+# Register GovernmentAdmin model
 admin.site.register(GovernmentAdmin, GovernmentAdminAdmin)
+
+
+# Profile ModelAdmin customization
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'bio', 'profile_picture')
+    search_fields = ('user__username', 'bio')
+    ordering = ('user__username',)
+
+
+# Register Profile model
 admin.site.register(Profile, ProfileAdmin)
+
+
+# Follow ModelAdmin customization
+class FollowAdmin(admin.ModelAdmin):
+    list_display = ('follower', 'followed')
+    search_fields = ('follower__user__username', 'followed__user__username')
+    ordering = ('follower__user__username',)
+
+
+# Register Follow model
 admin.site.register(Follow, FollowAdmin)
+
+

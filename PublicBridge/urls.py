@@ -14,24 +14,34 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-# from django.contrib import admin_dashboard
-from django.urls import path
-
-from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-
+from django.contrib import admin
+from django.urls import path, include
+from django.contrib.auth import views as auth_views
+# from django.contrib import admin_dashboard
 
 
 urlpatterns = [
+    path('grappelli/', include('grappelli.urls')),
 
     path( 'admin/', admin.site.urls),
+
+    path( 'administrator/', include('GovernmentAdmin.urls')),
    path('', include('main.urls')),
     path('reports/', include('reports.urls')),
     path('dashboard/', include('dashboard.urls')),
     path('users/', include('users.urls')),  # Users app URLs
     path('forum/', include('forum.urls', namespace='forum')),
+
+    path("ministries/", include("ministries.urls")),
+
+    path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

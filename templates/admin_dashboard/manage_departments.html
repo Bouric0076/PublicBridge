@@ -4,8 +4,20 @@
 <div class="container">
     <h1 class="my-4">Manage Government Departments</h1>
 
-    <table class="table table-bordered">
-        <thead>
+    <!-- Search Bar -->
+    <form method="get" class="form-inline mb-3">
+        <input 
+            type="text" 
+            name="q" 
+            class="form-control mr-2" 
+            placeholder="Search departments" 
+            value="{{ search_query }}">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <!-- Departments Table -->
+    <table class="table table-bordered table-striped">
+        <thead class="thead-light">
             <tr>
                 <th>Department Name</th>
                 <th>Status</th>
@@ -15,26 +27,115 @@
         <tbody>
             {% for department in departments %}
             <tr>
-                <td>{{ department.name }}</td>
-                <td>{{ department.is_active|yesno:"Active,Inactive" }}</td>
+                <td>{{ department.department_name }}</td> <!-- Assuming 'name' is the column for department name -->
                 <td>
-                    <button class="btn btn-primary" onclick="toggleStatus({{ department.id }})">Toggle Status</button>
+                    <span 
+                        class="badge {% if department.is_active %}badge-success{% else %}badge-danger{% endif %}">
+                        {{ department.is_active|yesno:"Active,Inactive" }}
+                    </span>
                 </td>
+                <td>
+                    <button 
+                        class="btn btn-primary" 
+                        data-toggle="modal" 
+                        data-target="#confirmToggleModal" 
+                        data-id="{{ department.id }}" 
+                        data-name="{{ department.name }}">
+                        Toggle Status
+                    </button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center">No departments found.</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <!-- Pagination Controls -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if departments.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ departments.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">
+                    Previous
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in departments.paginator.page_range %}
+            <li class="page-item {% if departments.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}">
+                    {{ num }}
+                </a>
+            </li>
+            {% endfor %}
+
+            {% if departments.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ departments.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">
+                    Next
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmToggleModal" tabindex="-1" aria-labelledby="confirmToggleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmToggleModalLabel">Confirm Action</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to toggle the status of the department <strong id="modalDepartmentName"></strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmToggleButton">Confirm</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
+    // Attach data to the modal when it is shown
+    $('#confirmToggleModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var departmentId = button.data('id');
+        var departmentName = button.data('name');
+
+        var modal = $(this);
+        modal.find('#modalDepartmentName').text(departmentName);
+
+        // Set up the confirmation button's click event
+        modal.find('#confirmToggleButton').off('click').on('click', function () {
+            toggleStatus(departmentId);
+            modal.modal('hide'); // Close the modal after confirming
+        });
+    });
+
+    // Toggle status function
     function toggleStatus(departmentId) {
         fetch(`/toggle-department/${departmentId}/`)
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    alert('Department status updated!');
-                    location.reload();
+                    alert(data.message); // Show success message
+                    location.reload(); // Reload the page to reflect changes
+                } else {
+                    alert(data.message || 'An error occurred while toggling status.');
                 }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An unexpected error occurred. Please try again.');
             });
     }
 </script>

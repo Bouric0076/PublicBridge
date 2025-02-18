@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 
+import users.apps
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -39,6 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'channels',
+    'crispy_forms',
+    'GovernmentAdmin',
+    'rest_framework',
+    'ministries',
     'main',
     'dashboard',
     'reports',
@@ -62,6 +68,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'PublicBridge.urls'
+SITE_ID = 1
+
 
 TEMPLATES = [
     {
@@ -159,3 +167,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# settings.py
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

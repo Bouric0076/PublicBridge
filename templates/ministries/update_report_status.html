@@ -1,0 +1,27 @@
+{% extends 'ministries/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Update Report Status</h2>
+
+    <div class="card">
+        <div class="card-header">
+            <h5>Report: {{ report.title }}</h5>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="status" class="form-label">Select Status:</label>
+                    <select class="form-control" id="status" name="status">
+                        <option value="under_review" {% if report.status == "under_review" %}selected{% endif %}>Under Review</option>
+                        <option value="resolved" {% if report.status == "resolved" %}selected{% endif %}>Resolved</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Status</button>
+                <a href="{% url 'assigned-reports' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

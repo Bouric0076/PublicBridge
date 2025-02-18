@@ -1,42 +1,48 @@
+import uuid
+
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from django.db import models
 
+
 class User(AbstractUser):
-    is_citizen = models.BooleanField(default=True)
-    is_government_admin = models.BooleanField(default=False)
+    ROLE_CHOICES = [
+        ("citizen", "Citizen"),
+        ("government_admin", "Government Admin"),
+    ]
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="citizen")
     engagement_score = models.IntegerField(default=0)
 
     def __str__(self):
         return self.username
 
+    def is_govadmin(self):
+        return self.role == "government_admin"
+
+
+
+
 class GovernmentAdmin(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    department_name = models.CharField(max_length=255)  # Ministry/Department name
-    is_active = models.BooleanField(default=True)
-
-    def __str__(self):
-        return f"{self.user.username} - {self.department_name}"
-
-
-class Follow(models.Model):
-    follower = models.ForeignKey(
-        'Profile',
-        on_delete=models.CASCADE,
-        related_name="following_set"
-    )
-    followed = models.ForeignKey(
-        'Profile',
-        on_delete=models.CASCADE,
-        related_name="followers_set"
-    )
-
-    def __str__(self):
-        return f"{self.follower.user.username} follows {self.followed.user.username}"
+    admin_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)  # Unique identifier
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="government_admin")
+    is_active = models.BooleanField(default=True)  # Admin status (Active/Inactive)
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['follower', 'followed'], name='unique_follow')
+        permissions = [
+            ("approve_ministries", "Can approve or reject ministry registrations"),
+            ("manage_reports", "Can manage citizen-reported issues"),
+            ("assign_reports", "Can assign reports to specific ministries"),
         ]
+
+    def save(self, *args, **kwargs):
+        """Ensure only users with 'government_admin' role can be GovernmentAdmins."""
+        if self.user.role != "government_admin":
+            raise ValidationError("User must have the 'government_admin' role.")
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.user.username} (GovernmentAdmin - Active: {self.is_active})"
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -51,3 +57,33 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    def get_followers(self):
+        return self.followers.all()
+
+    def get_following(self):
+        return self.following.all()
+
+
+class Follow(models.Model):
+    follower = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name="following_set"
+    )
+    followed = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name="followers_set"
+    )
+
+    def __str__(self):
+        return f"{self.follower.user.username} follows {self.followed.user.username}"
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["follower", "followed"], name="unique_follow")
+        ]
+
+
+

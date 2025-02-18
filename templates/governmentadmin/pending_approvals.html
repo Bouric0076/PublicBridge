@@ -1,0 +1,18 @@
+{% extends "governmentadmin/base.html" %}
+
+{% block content %}
+<h2>Pending Ministries for Approval</h2>
+
+{% if ministries %}
+    <ul>
+        {% for ministry in ministries %}
+            <li>
+                {{ ministry.name }} - {{ ministry.email }}
+                <a href="{% url 'approve-ministry' ministry.ministry_id %}">Approve</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No pending ministries.</p>
+{% endif %}
+{% endblock %}

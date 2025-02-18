@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+   <style>
+       body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.summary-cards {
+    display: flex;
+    justify-content: space-between;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 20px;
+    width: 18%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.card h3 {
+    font-size: 20px;
+    color: #333;
+}
+
+.card p {
+    font-size: 24px;
+    font-weight: bold;
+    color: #007BFF;
+}
+
+section {
+    margin-top: 30px;
+}
+
+section h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+ul li a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+ul li a:hover {
+    text-decoration: underline;
+}
+
+   </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Government Admin Dashboard</h1>
+
+        <div class="summary-cards">
+            <div class="card">
+                <h3>Total Posts</h3>
+                <p>{{ posts_count }}</p>
+            </div>
+            <div class="card">
+                <h3>Total Comments</h3>
+                <p>{{ comments_count }}</p>
+            </div>
+            <div class="card">
+                <h3>Total Project Updates</h3>
+                <p>{{ project_updates_count }}</p>
+            </div>
+            <div class="card">
+                <h3>Total Polls</h3>
+                <p>{{ polls_count }}</p>
+            </div>
+            <div class="card">
+                <h3>Total Reports</h3>
+                <p>{{ reports_count }}</p>
+            </div>
+        </div>
+
+        <section class="activity-logs">
+            <h2>Recent Activity Logs</h2>
+            <ul>
+                {% for log in activity_logs %}
+                    <li>{{ log.timestamp }} - {{ log.action }} by {{ log.performed_by.username }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <section class="assignment-queue">
+            <h2>Report Assignment Queue</h2>
+            <ul>
+                {% for assignment in assignment_queue %}
+                    <li>{{ assignment.report.title }} - Assigned to {{ assignment.assigned_to.username }} - Status: {{ assignment.status }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <section class="file-attachments">
+            <h2>Recent File Attachments</h2>
+            <ul>
+                {% for attachment in file_attachments %}
+                    <li>{{ attachment.report.title }} - <a href="{{ attachment.file.url }}">Download</a></li>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+</body>
+</html>
