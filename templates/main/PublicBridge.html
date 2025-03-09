@@ -1,113 +1,781 @@
-{% extends 'main/base.html' %}
 {% load static %}
 
-{% block content %}
-<!-- Hero Section -->
-<section id="hero" class="hero d-flex align-items-center justify-content-center text-center text-white" style="background: linear-gradient(to right, #4fd342, #0e9805); height: 100vh;">
-    <div class="container">
-        <h1 class="display-4 fw-bold">Bridge the Gap Between Citizens and Government</h1>
-        <p class="lead mt-3">Join PublicBridge and make your voice heard. Together, we can build a transparent and accountable future for our communities.</p>
-        <a href="/users/register/" class="btn btn-lg btn-light mt-4 px-5 py-3 fw-bold">Join Now</a>
-    </div>
-</section>
+<!DOCTYPE html>
+<html lang="en">
 
-<!-- Features Section -->
-<section id="features" class="features py-5 bg-light">
-    <div class="container text-center">
-        <h2 class="fw-bold">Features That Empower You</h2>
-        <p class="text-muted">PublicBridge brings you tools for direct communication, transparency, and accountability with the government.</p>
-        <div class="row mt-5 g-4">
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm h-100">
-                    <img src="{% static 'images/feedback-icon.svg' %}" class="card-img-top p-4" alt="Real-Time Feedback">
-                    <div class="card-body">
-                        <h5 class="card-title">Real-Time Feedback</h5>
-                        <p class="card-text">Submit feedback and suggestions that go straight to the government.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm h-100">
-                    <img src="{% static 'images/tracking-icon.svg' %}" class="card-img-top p-4" alt="Project Tracking">
-                    <div class="card-body">
-                        <h5 class="card-title">Track Government Projects</h5>
-                        <p class="card-text">Stay updated with the progress of public projects in your area.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm h-100">
-                    <img src="{% static 'images/communication-icon.svg' %}" class="card-img-top p-4" alt="Direct Communication">
-                    <div class="card-body">
-                        <h5 class="card-title">Direct Communication</h5>
-                        <p class="card-text">Engage directly with government representatives for faster resolutions.</p>
-                    </div>
-                </div>
-            </div>
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>PublicBridge - Connecting Citizens & Government</title>
+  <meta name="description" content="PublicBridge empowers citizens to report issues, track resolutions, and ensure government accountability.">
+  <meta name="keywords" content="citizen reports, government accountability, civic engagement, transparency">
+
+  <!-- Favicons -->
+  <link href="{% static 'assets/img/publicbridge-favicon.png' %}" rel="icon">
+  <link href="{% static 'assets/img/publicbridge-icon.png' %}" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/aos/aos.css" rel="stylesheet' %} ">
+  <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
+
+</head>
+
+<body class="index-page">
+
+  <header id="header" class="header d-flex align-items-center position-relative">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+      <a href="#" class="logo d-flex align-items-center">
+  <span class="logo-text">Public<span class="highlight">Bridge</span></span>
+    </a>
+
+
+<nav id="navmenu" class="navmenu">
+  <ul>
+    <!-- Main Navigation -->
+    <li><a href="#">Home</a></li>
+    <li><a href="#">About Us</a></li>
+    <li><a href="#">How It Works</a></li>
+    <li><a href="#">Public Reports</a></li>
+    <li><a href="#">News & Updates</a></li>
+
+    <li><a href="contact.html">Contact</a></li>
+
+    <!-- Government Portal Dropdown -->
+    <li class="dropdown">
+      <a href="#">Government Portal <i class="bi bi-chevron-down"></i></a>
+      <ul class="dropdown-menu">
+        <li><a href="users/admin-login/">Government Admin</a></li>
+        <li><a href="ministries/login/">Ministry Dashboard</a></li>
+        <li><a href="#">Legislation & Policies</a></li>
+        <li><a href="#">Budget Reports</a></li>
+        <li><a href="#">Transparency Index</a></li>
+      </ul>
+    </li>
+
+
+    <!-- Authentication Dropdown -->
+    <li class="dropdown">
+      <a href="#">Account <i class="bi bi-chevron-down"></i></a>
+      <ul class="dropdown-menu">
+        <li><a href="/users/admin-login/">Admin Login</a></li>
+        <li><a href="/users/login/">Login</a></li>
+        <li><a href="/users/register/">Register</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <!-- Mobile Nav Toggle -->
+  <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+</nav>
+
+</div>
+  </header>
+
+  <main class="main">
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero section dark-background">
+
+      <div id="hero-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+
+        <div class="carousel-item active">
+          <img src="{% static 'assets/img/hero_1.jpg' %}" alt="">
+          <div class="carousel-container">
+            <h2>Connecting Citizens & Government</h2>
+            <p>Report issues, track progress, and build a transparent society where every voice counts.</p>
+          </div>
         </div>
-    </div>
-</section>
 
-<!-- How It Works Section -->
-<section id="how-it-works" class="py-5">
-    <div class="container">
-        <h2 class="text-center fw-bold">How It Works</h2>
-        <p class="text-center text-muted">PublicBridge is simple and effective. Here's how you can get involved:</p>
-        <div class="row mt-5 g-4">
-            <div class="col-md-4 text-center">
-                <div class="p-4 shadow rounded-circle bg-light d-inline-block">
-                    <i class="fas fa-user-plus fa-3x text-success"></i>
-                </div>
-                <h5 class="mt-3">Step 1: Create an Account</h5>
-                <p class="text-muted">Sign up on PublicBridge to access your personalized dashboard.</p>
-            </div>
-            <div class="col-md-4 text-center">
-                <div class="p-4 shadow rounded-circle bg-light d-inline-block">
-                    <i class="fas fa-comments fa-3x text-success"></i>
-                </div>
-                <h5 class="mt-3">Step 2: Submit Feedback</h5>
-                <p class="text-muted">Provide valuable feedback on government matters.</p>
-            </div>
-            <div class="col-md-4 text-center">
-                <div class="p-4 shadow rounded-circle bg-light d-inline-block">
-                    <i class="fas fa-chart-line fa-3x text-success"></i>
-                </div>
-                <h5 class="mt-3">Step 3: Track Progress</h5>
-                <p class="text-muted">Monitor the progress of public projects in real-time.</p>
-            </div>
+        <div class="carousel-item">
+          <img src="{% static 'assets/img/hero_5.jpg' %}" alt="">
+          <div class="carousel-container">
+            <h2>Government Accountability Starts Here</h2>
+            <p>PublicBridge ensures that concerns are heard, tracked, and resolved efficiently.</p>
+          </div>
         </div>
-    </div>
-</section>
 
-<!-- Testimonials Section -->
-<section id="testimonials" class="bg-light py-5">
-    <div class="container text-center">
-        <h2 class="fw-bold">What People Are Saying</h2>
-        <div id="testimonialCarousel" class="carousel slide mt-4" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <p class="text-muted">"PublicBridge has helped me stay informed about critical projects in my community. It's an invaluable tool for civic engagement." - <strong>Sarah W.</strong></p>
-                </div>
-                <div class="carousel-item">
-                    <p class="text-muted">"I love how easy it is to communicate with local government officials. PublicBridge makes it simple and effective." - <strong>James D.</strong></p>
-                </div>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            </button>
+        <div class="carousel-item">
+          <img src="{% static 'assets/img/hero_2.jpg' %}" alt="">
+          <div class="carousel-container">
+            <h2>Be Part of the Change</h2>
+            <p>Your reports make an impact. Together, we create a responsible and responsive government.</p>
+          </div>
         </div>
+
+        <div class="carousel-item">
+          <img src="{% static 'assets/img/hero_3.jpg' %}" alt="">
+          <div class="carousel-container">
+            <h2>Your Voice, Your Power</h2>
+            <p>Raise awareness on issues that matter. Join a community committed to making a difference.</p>
+          </div>
+        </div>
+
+        <a class="carousel-control-prev" href="#hero-carousel" role="button" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon bi bi-chevron-left" aria-hidden="true"></span>
+        </a>
+
+        <a class="carousel-control-next" href="#hero-carousel" role="button" data-bs-slide="next">
+          <span class="carousel-control-next-icon bi bi-chevron-right" aria-hidden="true"></span>
+        </a>
+
+        <ol class="carousel-indicators"></ol>
+
+      </div>
+
+    </section><!-- /Hero Section -->
+
+
+
+
+<!-- Services Section -->
+<section id="services" class="services section">
+  <!-- Section Title -->
+  <div class="container section-title" data-aos="fade-up">
+    <h2>SERVICES</h2>
+    <p>Empowering Citizens, Enhancing Transparency</p>
+  </div>
+  <!-- End Section Title -->
+
+  <div class="content">
+    <div class="container">
+      <div class="row g-0">
+        <!-- Report Submission -->
+        <div class="col-lg-3 col-md-6">
+          <div class="service-item">
+            <span class="number">01</span>
+            <div class="service-item-icon">
+              <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="service-item-content">
+              <h3 class="service-heading">Report Issues</h3>
+              <p>Citizens can submit reports about infrastructure, governance, and public services.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ministry & Department Management -->
+        <div class="col-lg-3 col-md-6">
+          <div class="service-item">
+            <span class="number">02</span>
+            <div class="service-item-icon">
+              <i class="fas fa-building"></i>
+            </div>
+            <div class="service-item-content">
+              <h3 class="service-heading">Government Departments</h3>
+              <p>Ministries and departments can manage reports and provide timely responses.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-Time Report Tracking -->
+        <div class="col-lg-3 col-md-6">
+          <div class="service-item">
+            <span class="number">03</span>
+            <div class="service-item-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="service-item-content">
+              <h3 class="service-heading">Track Progress</h3>
+              <p>Citizens can track report status and receive updates from authorities via email and sms.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Emergency Reporting & Response -->
+        <div class="col-lg-3 col-md-6">
+          <div class="service-item">
+            <span class="number">04</span>
+            <div class="service-item-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="service-item-content">
+              <h3 class="service-heading">Emergency Reporting</h3>
+              <p>Report fires, disasters, and emergencies via map pinpointing for faster response.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Services -->
+      <div class="row g-0 mt-4">
+        <!-- Government Transparency -->
+        <div class="col-lg-3 col-md-6">
+          <div class="service-item">
+            <span class="number">05</span>
+            <div class="service-item-icon">
+              <i class="fas fa-university"></i>
+            </div>
+            <div class="service-item-content">
+              <h3 class="service-heading">Government Transparency</h3>
+              <p>Providing real-time access to government data for public accountability.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Citizen Engagement -->
+        <div class="col-lg-3 col-md-6">
+          <div class="service-item">
+            <span class="number">06</span>
+            <div class="service-item-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="service-item-content">
+              <h3 class="service-heading">Citizen Engagement</h3>
+              <p>A platform for citizens to voice concerns and interact with officials.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Efficient Reporting -->
+        <div class="col-lg-3 col-md-6">
+          <div class="service-item">
+            <span class="number">07</span>
+            <div class="service-item-icon">
+              <i class="fas fa-tasks"></i>
+            </div>
+            <div class="service-item-content">
+              <h3 class="service-heading">Efficient Reporting</h3>
+              <p>Streamlined report submission and tracking for better issue resolution.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data-Driven Insights -->
+        <div class="col-lg-3 col-md-6">
+          <div class="service-item">
+            <span class="number">08</span>
+            <div class="service-item-icon">
+              <i class="fas fa-brain"></i>
+            </div>
+            <div class="service-item-content">
+              <h3 class="service-heading">Data-Driven Insights</h3>
+              <p>Advanced analytics to help government agencies make informed decisions.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End Additional Services -->
+
     </div>
+  </div>
 </section>
 
-<!-- Call to Action Section -->
-<section id="cta" class="cta text-center text-white py-5" style="background: linear-gradient(to right, #43e04b, #289c05);">
+<!-- About Section -->
+<section id="about" class="about section">
+  <div class="content">
     <div class="container">
-        <h2 class="fw-bold">Ready to Make a Difference?</h2>
-        <p class="mt-3">Join PublicBridge today and start shaping the future of your community.</p>
-        <a href="/users/register/" class="btn btn-lg btn-light mt-4 px-5 py-3 fw-bold">Sign Up Now</a>
+      <div class="row">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+          <img src="{% static 'assets/img/img_long_5.jpg' %} " alt="About PublicBridge" class="img-fluid img-overlap" data-aos="zoom-out">
+        </div>
+        <div class="col-lg-5 ml-auto" data-aos="fade-up" data-aos-delay="100">
+          <h3 class="content-subtitle text-white opacity-50">Why PublicBridge?</h3>
+          <h2 class="content-title mb-4">
+            Empowering Citizens, Enhancing <strong>Government Transparency</strong>
+          </h2>
+          <p class="opacity-50">
+            PublicBridge is a civic technology platform designed to <b> bridge the gap </b> between citizens and government agencies. We enable <b> seamless reporting, real-time engagement, and data-driven governance </b> to foster accountability.
+          </p>
+
+          <div class="row my-5">
+            <div class="col-lg-12 d-flex align-items-start mb-4">
+              <i class="bi bi-megaphone me-4 display-6"></i>
+              <div>
+                <h4 class="m-0 h5 text-white">Voice Your Concerns</h4>
+                <p class="text-white opacity-50">Submit reports on infrastructure, governance, and public services directly to the right authorities.</p>
+              </div>
+            </div>
+            <div class="col-lg-12 d-flex align-items-start mb-4">
+              <i class="bi bi-clock-history me-4 display-6"></i>
+              <div>
+                <h4 class="m-0 h5 text-white">Track Government Action</h4>
+                <p class="text-white opacity-50">Get real-time updates on submitted reports and monitor government responses.</p>
+              </div>
+            </div>
+            <div class="col-lg-12 d-flex align-items-start">
+              <i class="bi bi-bar-chart-line me-4 display-6"></i>
+              <div>
+                <h4 class="m-0 h5 text-white">Data-Driven Insights</h4>
+                <p class="text-white opacity-50">Leverage analytics to identify trends, improve policies, and drive better governance.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </section>
-{% endblock %}
+<!-- /About Section -->
+
+<!-- About 3 Section -->
+<section id="about-3" class="about-3 section">
+  <div class="container">
+    <div class="row gy-4 justify-content-between align-items-center">
+      <div class="col-lg-6 order-lg-2 position-relative" data-aos="zoom-out">
+        <img src="{% static 'assets/img/img_sq_1.jpg' %} " alt="PublicBridge Video" class="img-fluid">
+        <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8" class="glightbox pulsating-play-btn">
+          <span class="play"><i class="bi bi-play-fill"></i></span>
+        </a>
+      </div>
+      <div class="col-lg-5 order-lg-1" data-aos="fade-up" data-aos-delay="100">
+        <h2 class="content-title mb-4">Building Trust Through Transparency</h2>
+        <p class="mb-4">
+          PublicBridge enables <b> open communication </b> between governments and citizens. By <b> facilitating transparent reporting and real-time tracking </b>, we strengthen democracy and ensure that <b> every voice is heard.</b>
+        </p>
+        <ul class="list-unstyled list-check">
+          <li>Submit and track reports seamlessly</li>
+          <li>Ensure government accountability through transparency</li>
+          <li>Access real-time data for better decision-making</li>
+        </ul>
+
+        <p><a href="users/register/" class="btn-cta">Get Started</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- /About 3 Section -->
+
+    <!-- Services 2 Section -->
+<section id="services-2" class="services-2 section dark-background">
+  <!-- Section Title -->
+  <div class="container section-title" data-aos="fade-up">
+    <h2>Our Services</h2>
+    <p>Empowering citizens, enhancing governance</p>
+  </div><!-- End Section Title -->
+
+  <div class="services-carousel-wrap">
+    <div class="container">
+      <div class="swiper init-swiper">
+        <script type="application/json" class="swiper-config">
+          {
+            "loop": true,
+            "speed": 600,
+            "autoplay": {
+              "delay": 5000
+            },
+            "slidesPerView": "auto",
+            "pagination": {
+              "el": ".swiper-pagination",
+              "type": "bullets",
+              "clickable": true
+            },
+            "navigation": {
+              "nextEl": ".js-custom-next",
+              "prevEl": ".js-custom-prev"
+            },
+            "breakpoints": {
+              "320": {
+                "slidesPerView": 1,
+                "spaceBetween": 40
+              },
+              "1200": {
+                "slidesPerView": 3,
+                "spaceBetween": 40
+              }
+            }
+          }
+        </script>
+        <button class="navigation-prev js-custom-prev">
+          <i class="bi bi-arrow-left-short"></i>
+        </button>
+        <button class="navigation-next js-custom-next">
+          <i class="bi bi-arrow-right-short"></i>
+        </button>
+        <div class="swiper-wrapper">
+          
+          <div class="swiper-slide">
+            <div class="service-item">
+              <div class="service-item-contents">
+                <a href="#">
+                  <span class="service-item-category">We provide</span>
+                  <h2 class="service-item-title">Citizen Issue Reporting</h2>
+                </a>
+              </div>
+              <img src="{% static 'assets/img/img_sq_3.jpg' %} " alt="Citizen Reporting" class="img-fluid">
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="service-item">
+              <div class="service-item-contents">
+                <a href="#">
+                  <span class="service-item-category">We provide</span>
+                  <h2 class="service-item-title">Emergency & Disaster Alerts</h2>
+                </a>
+              </div>
+              <img src="{% static 'assets/img/img_sq_4.jpg' %} " alt="Emergency Alerts" class="img-fluid">
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="service-item">
+              <div class="service-item-contents">
+                <a href="#">
+                  <span class="service-item-category">We provide</span>
+                  <h2 class="service-item-title">Real-Time Report Tracking</h2>
+                </a>
+              </div>
+              <img src="{% static 'assets/img/img_sq_5.jpg' %} " alt="Real-Time Tracking" class="img-fluid">
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="service-item">
+              <div class="service-item-contents">
+                <a href="#">
+                  <span class="service-item-category">We provide</span>
+                  <h2 class="service-item-title">Government Accountability</h2>
+                </a>
+              </div>
+              <img src="{% static 'assets/img/img_sq_6.jpg' %} " alt="Government Transparency" class="img-fluid">
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="service-item">
+              <div class="service-item-contents">
+                <a href="#">
+                  <span class="service-item-category">We provide</span>
+                  <h2 class="service-item-title">Interactive Public Dashboards</h2>
+                </a>
+              </div>
+              <img src="{% static 'assets/img/img_sq_7.jpg' %} " alt="Public Dashboard" class="img-fluid">
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="service-item">
+              <div class="service-item-contents">
+                <a href="#">
+                  <span class="service-item-category">We provide</span>
+                  <h2 class="service-item-title">Anonymous Whistleblowing</h2>
+                </a>
+              </div>
+              <img src="{% static 'assets/img/img_sq_8.jpg' %} " alt="Whistleblowing" class="img-fluid">
+            </div>
+          </div>
+
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+  </div>
+</section><!-- /Services 2 Section -->
+
+
+    <!-- Testimonials Section -->
+<section class="testimonials-12 testimonials section" id="testimonials">
+  <!-- Section Title -->
+  <div class="container section-title" data-aos="fade-up">
+    <h2>What People Say About PublicBridge</h2>
+    <p>Real stories from citizens and government officials</p>
+  </div><!-- End Section Title -->
+
+  <div class="testimonial-wrap">
+    <div class="container">
+      <div class="row">
+        
+        <div class="col-md-6 mb-4 mb-md-4">
+          <div class="testimonial">
+            <img src="{% static 'assets/img/testimonials/testimonials-1.jpg' %} " alt="Testimonial author">
+            <blockquote>
+              <p>
+                “PublicBridge made it easy for me to report infrastructure issues in my neighborhood. The response time was faster than ever before!”
+              </p>
+            </blockquote>
+            <p class="client-name">Maria Gonzalez, Concerned Citizen</p>
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-4 mb-md-4">
+          <div class="testimonial">
+            <img src="{% static 'assets/img/testimonials/testimonials-2.jpg' %} " alt="Testimonial author">
+            <blockquote>
+              <p>
+                “I finally feel heard! My complaint about broken streetlights was resolved within days after using PublicBridge.”
+              </p>
+            </blockquote>
+            <p class="client-name">Liam Johnson, Community Member</p>
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-4 mb-md-4">
+          <div class="testimonial">
+            <img src="{% static 'assets/img/testimonials/testimonials-3.jpg' %} " alt="Testimonial author">
+            <blockquote>
+              <p>
+                “PublicBridge has helped us manage citizen reports more effectively, improving transparency and accountability in our department.”
+              </p>
+            </blockquote>
+            <p class="client-name">Sarah Mitchell, Government Official</p>
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-4 mb-md-4">
+          <div class="testimonial">
+            <img src="{% static 'assets/img/testimonials/testimonials-4.jpg' %} " alt="Testimonial author">
+            <blockquote>
+              <p>
+                “This platform bridges the gap between the government and the people. It’s an essential tool for modern governance.”
+              </p>
+            </blockquote>
+            <p class="client-name">David Brown, City Administrator</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section><!-- /Testimonials Section -->
+
+    <!-- Recent Posts Section -->
+<section id="recent-posts" class="recent-posts section">
+
+  <!-- Section Title -->
+  <div class="container section-title" data-aos="fade-up">
+    <h2>Latest Updates & Insights</h2>
+    <p>Stay informed about policies, reports, and public initiatives</p>
+  </div><!-- End Section Title -->
+
+  <div class="container">
+
+    <div class="row gy-5">
+
+      <div class="col-xl-4 col-md-6">
+        <div class="post-item position-relative h-100" data-aos="fade-up" data-aos-delay="100">
+
+          <div class="post-img position-relative overflow-hidden">
+            <img src="{% static 'assets/img/blog/blog-1.jpg' %} " class="img-fluid" alt="">
+            <span class="post-date">February 20</span>
+          </div>
+
+          <div class="post-content d-flex flex-column">
+
+            <h3 class="post-title">New Policy on Infrastructure Development Announced</h3>
+
+            <div class="meta d-flex align-items-center">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-person"></i> <span class="ps-2">PublicBridge Team</span>
+              </div>
+              <span class="px-3 text-black-50">/</span>
+              <div class="d-flex align-items-center">
+                <i class="bi bi-folder2"></i> <span class="ps-2">Government</span>
+              </div>
+            </div>
+
+            <hr>
+
+            <a href="blog-details.html" class="readmore stretched-link"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
+
+          </div>
+
+        </div>
+      </div><!-- End post item -->
+
+      <div class="col-xl-4 col-md-6">
+        <div class="post-item position-relative h-100" data-aos="fade-up" data-aos-delay="200">
+
+          <div class="post-img position-relative overflow-hidden">
+            <img src="{% static 'assets/img/blog/blog-2.jpg' %} " class="img-fluid" alt="">
+            <span class="post-date">January 15</span>
+          </div>
+
+          <div class="post-content d-flex flex-column">
+
+            <h3 class="post-title">How Citizens Can Track Their Reported Issues</h3>
+
+            <div class="meta d-flex align-items-center">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-person"></i> <span class="ps-2">Anna Thompson</span>
+              </div>
+              <span class="px-3 text-black-50">/</span>
+              <div class="d-flex align-items-center">
+                <i class="bi bi-folder2"></i> <span class="ps-2">Civic Engagement</span>
+              </div>
+            </div>
+
+            <hr>
+
+            <a href="blog-details.html" class="readmore stretched-link"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
+
+          </div>
+
+        </div>
+      </div><!-- End post item -->
+
+      <div class="col-xl-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+        <div class="post-item position-relative h-100">
+
+          <div class="post-img position-relative overflow-hidden">
+            <img src="{% static 'assets/img/blog/blog-3.jpg' %}" class="img-fluid" alt="">
+            <span class="post-date">December 28</span>
+          </div>
+
+          <div class="post-content d-flex flex-column">
+
+            <h3 class="post-title">Government Transparency: Progress & Challenges</h3>
+
+            <div class="meta d-flex align-items-center">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-person"></i> <span class="ps-2">David Brown</span>
+              </div>
+              <span class="px-3 text-black-50">/</span>
+              <div class="d-flex align-items-center">
+                <i class="bi bi-folder2"></i> <span class="ps-2">Public Policy</span>
+              </div>
+            </div>
+
+            <hr>
+
+            <a href="blog-details.html" class="readmore stretched-link"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
+
+          </div>
+
+        </div>
+      </div><!-- End post item -->
+
+    </div>
+
+  </div>
+
+</section><!-- /Recent Posts Section -->
+
+<!-- Call To Action Section -->
+<section id="call-to-action" class="call-to-action section light-background">
+  <div class="content">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6">
+          <h3>Stay Informed, Stay Engaged</h3>
+          <p class="opacity-50">
+            Subscribe to our newsletter and get updates on public reports, 
+            government actions, and citizen-driven change.
+          </p>
+        </div>
+        <div class="col-lg-6">
+          <form action="forms/newsletter.php" class="form-subscribe php-email-form">
+            <div class="form-group d-flex align-items-stretch">
+              <input type="email" name="email" class="form-control h-100" placeholder="Enter your email">
+              <input type="submit" class="btn btn-secondary px-4" value="Subscribe">
+            </div>
+            <div class="loading">Loading</div>
+            <div class="error-message"></div>
+            <div class="sent-message">
+              Your subscription request has been sent. Thank you!
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section><!-- /Call To Action Section -->
+
+<footer id="footer" class="footer dark-background">
+  <div class="footer-top">
+    <div class="container">
+      <div class="row gy-4">
+        <div class="col-lg-4 col-md-6 footer-about">
+          <a href="index.html" class="logo d-flex align-items-center">
+            <span class="sitename">PublicBridge</span>
+          </a>
+          <div class="footer-contact pt-3">
+            <p>123 Civic Center Road</p>
+            <p>Nairobi, Kenya</p>
+            <p class="mt-3"><strong>Phone:</strong> <span>+254 (0) 7123-45678</span></p>
+            <p><strong>Email:</strong> <span>support@publicbridge.org</span></p>
+          </div>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">How It Works</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Citizen Resources</h4>
+          <ul>
+            <li><a href="#">Submit a Report</a></li>
+            <li><a href="#">Track Your Report</a></li>
+            <li><a href="#">Public Data & Insights</a></li>
+            <li><a href="#">Government Contacts</a></li>
+            <li><a href="#">Help Center</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Government Portals</h4>
+          <ul>
+            <li><a href="#">Ministry Dashboard</a></li>
+            <li><a href="#">Government Admin Panel</a></li>
+            <li><a href="#">Legislation Updates</a></li>
+            <li><a href="#">Budget Reports</a></li>
+            <li><a href="#">Transparency Index</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Follow Us</h4>
+          <div class="social-links">
+            <a href="#"><i class="bi bi-twitter-x"></i></a>
+            <a href="#"><i class="bi bi-facebook"></i></a>
+            <a href="#"><i class="bi bi-instagram"></i></a>
+            <a href="#"><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="copyright text-center">
+    <div class="container d-flex flex-column flex-lg-row justify-content-center justify-content-lg-between align-items-center">
+      <div class="d-flex flex-column align-items-center align-items-lg-start">
+        <div>
+          © Copyright <strong><span>PublicBridge</span></strong>. All Rights Reserved.
+        </div>
+        <div class="credits">
+          Designed by <a href="https://publicbridge.org">PublicBridge Team</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+  <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+
+  <!-- Main JS File -->
+  <script src="{% static 'assets/js/main.js' %}"></script>
+
+</body>
+
+</html>
