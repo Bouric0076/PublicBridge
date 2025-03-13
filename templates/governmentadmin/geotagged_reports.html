@@ -1,0 +1,204 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    
+    <!-- ✅ Leaflet CSS for Open-Source Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <!-- ✅ Styles -->
+    <style>
+        body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background: #f4f6f9; color: #333; }
+        .container { width: 90%; margin: auto; padding: 20px; }
+        
+        /* ✅ Modern Dashboard Header */
+        .dashboard-header {
+            display: flex; justify-content: space-between;
+            align-items: center; padding: 10px 0;
+            border-bottom: 2px solid #ddd;
+        }
+        .dashboard-header h2 { margin: 0; }
+        .dashboard-header button { padding: 8px 12px; background: #007bff; color: white; border: none; cursor: pointer; }
+        
+        /* ✅ Map Styling */
+        #map { height: 450px; width: 100%; border-radius: 8px; margin-bottom: 20px; }
+
+        /* ✅ Report Cards */
+        .report-container { display: flex; flex-wrap: wrap; gap: 15px; }
+        .report-card {
+            flex: 1 1 calc(33.333% - 10px);
+            background: white; padding: 15px; border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .report-card:hover { transform: scale(1.02); }
+        .actions button { padding: 5px 10px; margin-right: 5px; cursor: pointer; border: none; }
+        .resolved { background: #28a745; color: white; }
+        .invalid { background: #dc3545; color: white; }
+
+        /* ✅ Responsive Design */
+        @media (max-width: 768px) {
+            .report-card { flex: 1 1 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="dashboard-header">
+            <h2>Admin Dashboard</h2>
+            <button onclick="refreshPage()">🔄 Refresh Data</button>
+        </div>
+
+        <!-- ✅ Map Section -->
+        <div id="map"></div>
+
+        <h3>Live Reports</h3>
+        <div class="report-container" id="reports-container">
+            {% for report in reports %}
+                <div class="report-card" id="report-{{ report.id }}">
+                    <p><strong>Category:</strong> {{ report.category }}</p>
+                    <p><strong>Status:</strong> {{ report.status }}</p>
+                    <p><strong>Location:</strong> {{ report.latitude }}, {{ report.longitude }}</p>
+                    <div class="actions">
+                        <button class="resolved" onclick="markAsResolved({{ report.id }})">✔ Mark as Resolved</button>
+                        <button class="invalid" onclick="markAsInvalid({{ report.id }})">❌ Mark as Invalid</button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- ✅ Leaflet JS for Interactive Map -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+    let map = L.map('map').setView([-1.286389, 36.817223], 10);  // Default to Nairobi
+
+// ✅ OpenStreetMap Tiles
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+// ✅ Load Existing Unresolved Geotagged Reports from `disaster_reporting`
+document.addEventListener("DOMContentLoaded", function() {
+    const geotaggedReports = {{ geotagged_reports|safe }};  // Ensure Django sends JSON data
+
+    geotaggedReports.forEach(report => {
+        if (report.status !== "Resolved" && report.status !== "invalid") {
+            addGeotaggedReportToDashboard(report);
+        }
+    });
+});
+
+// ✅ WebSocket for Real-Time Disaster Reports
+const socket = new WebSocket("ws://" + window.location.host + "/ws/disaster_reports/");
+
+socket.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    if (data.report) {
+        addGeotaggedReportToDashboard(data.report);
+    }
+};
+
+// ✅ Function to Add Geotagged Reports to Dashboard & Map
+function addGeotaggedReportToDashboard(report) {
+    const reportContainer = document.getElementById("reports-container");
+
+    // ✅ Prevent duplicate reports
+    if (document.getElementById(`geotagged-report-${report.id}`)) return;
+
+    // ✅ Create Report Card
+    const reportCard = `
+        <div class="report-card" id="geotagged-report-${report.id}">
+            <p><strong>Category:</strong> ${report.category}</p>
+            <p><strong>Status:</strong> ${report.status}</p>
+            <p><strong>Location:</strong> ${report.latitude}, ${report.longitude}</p>
+            <div class="actions">
+                <button class="resolved" onclick="markGeotaggedAsResolved(${report.id})">✔ Mark as Resolved</button>
+                <button class="invalid" onclick="markGeotaggedAsInvalid(${report.id})">❌ Mark as Invalid</button>
+            </div>
+        </div>`;
+    reportContainer.innerHTML += reportCard;
+
+    // ✅ Add Marker to Map
+    let marker = L.marker([report.latitude, report.longitude]).addTo(map)
+        .bindPopup(`<b>${report.category}</b><br>Status: ${report.status}`)
+        .openPopup();
+
+    // ✅ Store marker reference for future updates
+    report.marker = marker;
+}
+
+// ✅ Function to Mark Geotagged Report as Resolved (With CSRF Token)
+function markGeotaggedAsResolved(reportId) {
+    fetch(`http://127.0.0.1:8000/geotagging/api/reports/${reportId}/`, {  
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCSRFToken()  // ✅ Add CSRF Token
+        },
+        body: JSON.stringify({ status: "Resolved" })
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Failed to update report.");
+        return response.json();
+    })
+    .then(data => {
+        alert("Report marked as resolved.");
+        document.getElementById(`geotagged-report-${reportId}`).remove();
+    })
+    .catch(error => console.error("Error:", error));
+}
+
+// ✅ Function to Retrieve CSRF Token from Cookie
+function getCSRFToken() {
+    let cookies = document.cookie.split("; ");
+    for (let cookie of cookies) {
+        let [name, value] = cookie.split("=");
+        if (name === "csrftoken") return value;
+    }
+    return "";
+}
+
+
+// ✅ Mark Geotagged Report as Invalid
+function markGeotaggedAsInvalid(reportId) {
+    fetch(`http://127.0.0.1:8000/geotagging/api/reports/${reportId}/invalid/`, {  // ✅ Corrected URL
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCSRFToken()  // ✅ Add CSRF Token (if using Django session authentication)
+        }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Failed to mark as invalid.");
+        return response.json();
+    })
+    .then(data => {
+        alert(data.message);
+        let reportElement = document.getElementById(`geotagged-report-${reportId}`);
+        if (reportElement) reportElement.remove();  // ✅ Remove from UI only if it exists
+    })
+    .catch(error => console.error("Error:", error));
+}
+
+// ✅ Function to Retrieve CSRF Token from Cookie
+function getCSRFToken() {
+    let cookies = document.cookie.split("; ");
+    for (let cookie of cookies) {
+        let [name, value] = cookie.split("=");
+        if (name === "csrftoken") return value;
+    }
+    return "";
+}
+
+// ✅ Refresh Page
+function refreshPage() {
+    location.reload();
+}
+
+</script>

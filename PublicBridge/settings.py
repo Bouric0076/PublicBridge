@@ -30,6 +30,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'daphne',
     'django.contrib.staticfiles',
     'channels',
     'crispy_forms',
@@ -50,6 +53,7 @@ INSTALLED_APPS = [
     'reports',
     'forum',
     'users',
+    'disaster_reporting',
     'django.contrib.sites',  # Required for allauth
     'allauth',
     'allauth.account',
@@ -92,14 +96,10 @@ WSGI_APPLICATION = 'PublicBridge.wsgi.application'
 ASGI_APPLICATION = "PublicBridge.asgi.application"
 
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
-        },
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",  # Use Redis for production
     },
 }
-
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases

@@ -1,90 +1,292 @@
-/* Body and General Layout */
-body {
-    font-family: 'Inter', sans-serif;
+/* Dashboard Layout */
+body, html {
+    height: 100%;
     margin: 0;
-    padding: 0;
+    font-family: 'Inter', sans-serif;
     background-color: #f8f9fa;
-    display: flex; /* Ensure flex layout for sidebar and content */
 }
 
 /* Sidebar */
 .sidebar {
     width: 250px;
-    height: 100vh; /* Full height */
-    background-color: #343a40; /* Dark background */
-    color: #fff;
+    background-color: #1E1E2D;
+    color: white;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    transition: 0.3s;
     display: flex;
     flex-direction: column;
 }
 
-.sidebar .nav-link {
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    transition: background-color 0.3s ease, color 0.3s ease;
+.sidebar-header {
+    padding: 20px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.sidebar .nav-link:hover {
-    background-color: #495057; /* Subtle hover color */
-    color: #f8f9fa;
+.nav {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
 }
 
-.sidebar .nav-link.active {
-    background-color: #6c757d; /* Active link color */
-    color: #fff;
+.nav li {
+    width: 100%;
+}
+
+.nav .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    font-size: 16px;
+    color: #d1d1e0;
+    text-decoration: none;
+    transition: background 0.3s ease-in-out;
+}
+
+.nav .nav-link i {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.nav .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.logout {
+    margin-top: auto;
+    background-color: rgba(255, 0, 0, 0.2);
+    border-radius: 5px;
+}
+
+.logout:hover {
+    background-color: rgba(255, 0, 0, 0.4);
 }
 
 /* Main Content */
 .main-content {
-    margin-left: 0; /* Account for the fixed sidebar width */
-    padding: 1rem;
-    flex-grow: 1;
-    background-color: #ffffff;
-    min-height: 100vh; /* Ensure the main content also spans full height */
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Header */
-.main-content header {
-    border-bottom: 1px solid #e9ecef;
-    padding: 1rem;
+.header {
+    background-color: #ffffff;
+    padding: 15px 30px;
+    border-bottom: 1px solid #e0e0e0;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-info .search-bar {
+    width: 250px;
+    border-radius: 20px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.user-info img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Page Content */
+main {
+    flex: 1;
+    padding: 30px;
+}
+
+/* Responsive Sidebar */
+@media screen and (max-width: 992px) {
+    .sidebar {
+        width: 60px;
+        text-align: center;
+    }
+
+    .sidebar .sidebar-header {
+        display: none;
+    }
+
+    .sidebar .nav-link {
+        justify-content: center;
+    }
+
+    .sidebar .nav-link i {
+        margin: 0;
+    }
+
+    .main-content {
+        margin-left: 60px;
+        width: calc(100% - 60px);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 10px 0;
+    }
+
+    .sidebar .nav {
+        flex-direction: row;
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+    }
+}
+
+/* Dashboard Container */
+.dashboard-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    min-height: 100vh;
+    background: #1d3557;
+    padding: 20px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Sidebar Links */
+.sidebar .nav-link {
+    color: #ffffffb3;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.sidebar .nav-link i {
+    margin-right: 10px;
+}
+
+.sidebar .nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+/* Logout Link */
+.logout {
+    margin-top: auto;
+    color: #fca311 !important;
+}
+
+/* Main Content */
+.main-content {
+    flex-grow: 1;
+    width: calc(100vw - 250px);
+    overflow-y: auto;
+    background: #f5f5f5;
+    padding: 20px;
+}
+
+/* Header */
+.header {
+    background: white;
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+/* User Info */
+.user-info img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+}
+
 /* Cards */
 .card {
+    border: none;
     border-radius: 10px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-    margin-bottom: 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
+    padding: 15px;
 }
 
-.card-title {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: #6c757d;
-}
-
-.card-text {
+.card h5 {
     font-weight: 600;
+}
+
+.card p {
     font-size: 2rem;
+    font-weight: bold;
 }
 
-/* Table */
-.table th, .table td {
-    vertical-align: middle;
-}
-
-.table .badge {
-    font-size: 0.85rem;
-    padding: 0.4em 0.7em;
-}
-
-/* Utility */
-.flex {
+/* Floating Action Button (FAB) */
+.fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Drag & Drop File Upload */
+.drop-area {
+    border: 2px dashed #007bff;
+    padding: 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.drop-area.drag-over {
+    background: #f0f8ff;
+}
+
+/* Loading Indicator */
+.loading-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
 }
