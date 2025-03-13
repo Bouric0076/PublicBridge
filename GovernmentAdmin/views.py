@@ -14,6 +14,37 @@ from users.decorators import government_admin_required
 
 from django.shortcuts import render
 
+from rest_framework import viewsets
+from disaster_reporting.models import DisasterReport
+from .serializers import DisasterReportSerializer
+
+class DisasterReportViewSet(viewsets.ModelViewSet):
+    queryset = DisasterReport.objects.all().order_by('-created_at')
+    serializer_class = DisasterReportSerializer
+
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from disaster_reporting.models import DisasterReport, DisasterAgency  # Only geotagged reports
+from django.utils.timezone import now
+
+@login_required
+def admin_dashboard(request):
+    """Renders the admin dashboard with geotagged reports and agency data."""
+    geotagged_reports = DisasterReport.objects.filter(status="Pending").values(
+        "id", "category", "status", "latitude", "longitude"
+    )  # Convert QuerySet to JSON format
+
+    active_agencies = DisasterAgency.objects.filter(is_active=True)
+
+    context = {
+        "geotagged_reports": list(geotagged_reports),  # Ensure it's JSON-safe
+        "active_agencies": active_agencies,
+    }
+    return render(request, "governmentadmin/geotagged_reports.html", context)
+
+
+
 # Views for the admin dashboard and other pages
 def dashboard_overview(request):
     return render(request, 'admin_dashboard/overview.html')
@@ -28,6 +59,9 @@ def manage_citizens(request):
     return render(request, 'admin_dashboard/manage_citizens.html')
 
 
+def disaster_dashboard(request):
+    reports = DisasterReport.objects.all()
+    return render(request, 'governmentadmin/disaster_dashboard.html', {'reports': reports})
 
 def approve_ministry(request, ministry_id):
     try:

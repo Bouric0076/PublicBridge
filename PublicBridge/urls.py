@@ -33,6 +33,7 @@ urlpatterns = [
     path('dashboard/', include('dashboard.urls')),
     path('users/', include('users.urls')),  # Users app URLs
     path('forum/', include('forum.urls', namespace='forum')),
+    path('geotagging/', include('disaster_reporting.urls')),
 
     path("ministries/", include("ministries.urls")),
 

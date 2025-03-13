@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disaster Reports</title>
+
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        function loadMap() {
+            var map = L.map('map').setView([1.2921, 36.8219], 12);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            fetch('/api/reports/')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(report => {
+                        L.marker([report.latitude, report.longitude])
+                            .addTo(map)
+                            .bindPopup(`<b>${report.category}</b><br>${report.description}`);
+                    });
+                });
+        }
+    </script>
+</head>
+<body onload="loadMap()">
+    <h2>Live Disaster Reports</h2>
+    <div id="map" style="height: 500px;"></div>
+</body>
+</html>

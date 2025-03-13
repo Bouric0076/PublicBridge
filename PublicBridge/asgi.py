@@ -11,15 +11,15 @@ import os
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
+from disaster_reporting.routing import websocket_urlpatterns
+from django.urls import path
+from disaster_reporting import consumers
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'PublicBridge.settings')
 
+
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
-    "websocket": AuthMiddlewareStack(
-        URLRouter([
-            # URL for WebSocket routing
-            path('ws/messages/<str:conversation_id>/', consumers.ChatConsumer.as_asgi()),
-        ])
-    ),
+    "websocket": URLRouter(websocket_urlpatterns),
 })
+

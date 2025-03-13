@@ -2,28 +2,27 @@
 
 {% block content %}
 <div class="row g-4">
-    <!-- Stats Cards -->
-    <div class="col-md-4">
-        <div class="card border-0 shadow-sm h-100">
+    <div class="col-lg-4 col-md-6">
+        <div class="card">
             <div class="card-body text-center">
-                <h5 class="card-title">Total Reports Submitted</h5>
-                <p class="card-text display-6 text-primary">{{ reports_submitted }}</p>
+                <h5>Total Reports</h5>
+                <p class="display-6 text-primary">{{ reports_submitted }}</p>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card border-0 shadow-sm h-100">
+    <div class="col-lg-4 col-md-6">
+        <div class="card">
             <div class="card-body text-center">
-                <h5 class="card-title">Reports Under Review</h5>
-                <p class="card-text display-6 text-warning">{{ reports_under_review }}</p>
+                <h5>Reports Under Review</h5>
+                <p class="display-6 text-warning">{{ reports_under_review }}</p>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card border-0 shadow-sm h-100">
+    <div class="col-lg-4 col-md-6">
+        <div class="card">
             <div class="card-body text-center">
-                <h5 class="card-title">Reports Resolved</h5>
-                <p class="card-text display-6 text-success">{{ reports_resolved }}</p>
+                <h5>Resolved Reports</h5>
+                <p class="display-6 text-success">{{ reports_resolved }}</p>
             </div>
         </div>
     </div>
@@ -31,34 +30,26 @@
 
 <!-- Recent Reports Section -->
 <div class="mt-4">
-    <h2 class="fs-5">Recent Reports</h2>
-    {% if recent_reports %}
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-            <thead class="table-light">
-                <tr>
-                    <th>Title</th>
-                    <th>Status</th>
-                    <th>Submitted On</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for report in recent_reports %}
-                <tr>
-                    <td>{{ report.title }}</td>
-                    <td><span class="badge bg-info text-dark">{{ report.get_status_display }}</span></td>
-                    <td>{{ report.created_at|date:"F j, Y" }}</td>
-                    <td>
-                        <a href="{% url 'report_details' report.id %}" class="btn btn-sm btn-primary">View</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-    <p>No recent reports submitted.</p>
-    {% endif %}
+    <h2>Recent Reports</h2>
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Submitted On</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report in recent_reports %}
+            <tr>
+                <td>{{ report.title }}</td>
+                <td><span class="badge bg-info">{{ report.get_status_display }}</span></td>
+                <td>{{ report.created_at|date:"F j, Y" }}</td>
+                <td><a href="{% url 'report_details' report.id %}" class="btn btn-sm btn-primary">View</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}

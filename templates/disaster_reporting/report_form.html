@@ -1,0 +1,162 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center">
+    <h2 class="fw-bold">📍 Submit a Disaster Report</h2>
+</div>
+
+<!-- Map Container -->
+<div class="card shadow-lg mt-3">
+    <div class="card-body p-0">
+        <div id="map" style="height: 400px; border-radius: 8px;"></div>
+    </div>
+</div>
+
+<!-- Floating Action Button (FAB) -->
+<button id="open-form-btn" class="btn btn-primary fab"><i class="bi bi-plus-lg"></i></button>
+
+<!-- Hidden Form -->
+<div id="report-form-container" class="card shadow-lg mt-4 p-4" style="display: none;">
+    <form id="report-form">
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Category</label>
+            <select id="category" class="form-select">
+                <option value="fire">🔥 Fire</option>
+                <option value="flood">🌊 Flood</option>
+                <option value="earthquake">🌍 Earthquake</option>
+                <option value="medical">🚑 Medical Emergency</option>
+                <option value="road_damage">🛣️ Road Damage</option>
+                <option value="other">❓ Other</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Description</label>
+            <textarea id="description" class="form-control" rows="3" placeholder="Provide details..." required></textarea>
+        </div>
+
+        <!-- Drag & Drop Image Upload -->
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Upload Image</label>
+            <div id="drop-area" class="drop-area text-center">
+                <p class="text-muted">Drag & drop an image here or click to select</p>
+                <input type="file" id="image" hidden>
+            </div>
+        </div>
+
+        <input type="hidden" id="latitude">
+        <input type="hidden" id="longitude">
+
+        <button type="submit" class="btn btn-success w-100">📤 Submit Report</button>
+    </form>
+</div>
+
+<!-- Loading Indicator -->
+<div id="loading" class="loading-overlay">
+    <div class="spinner-border text-primary" role="status"></div>
+</div>
+
+<script>
+// Initialize Map
+var map = L.map('map').setView([0, 0], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+
+// Custom Marker Icon
+var markerIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+    iconSize: [35, 35]
+});
+
+// Get User Location
+navigator.geolocation.getCurrentPosition(function(position) {
+    var lat = position.coords.latitude;
+    var lon = position.coords.longitude;
+    map.setView([lat, lon], 13);
+    L.marker([lat, lon], { icon: markerIcon }).addTo(map).bindPopup("📍 Your Location").openPopup();
+}, function(error) {
+    console.log("Geolocation error:", error);
+});
+
+// Click to Select Location
+var selectedMarker;
+map.on('click', function(event) {
+    var lat = event.latlng.lat;
+    var lon = event.latlng.lng;
+
+    if (selectedMarker) map.removeLayer(selectedMarker);
+    
+    selectedMarker = L.marker([lat, lon], { icon: markerIcon }).addTo(map).bindPopup("📍 Selected Location").openPopup();
+    
+    document.getElementById("latitude").value = lat;
+    document.getElementById("longitude").value = lon;
+
+    document.getElementById("report-form-container").style.display = "block";
+});
+
+// Drag & Drop Image Upload
+const dropArea = document.getElementById("drop-area");
+const imageInput = document.getElementById("image");
+
+dropArea.addEventListener("click", () => imageInput.click());
+dropArea.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropArea.classList.add("drag-over");
+});
+dropArea.addEventListener("dragleave", () => dropArea.classList.remove("drag-over"));
+dropArea.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropArea.classList.remove("drag-over");
+    imageInput.files = e.dataTransfer.files;
+});
+
+// Open Form via Floating Button
+document.getElementById("open-form-btn").addEventListener("click", function () {
+    document.getElementById("report-form-container").style.display = "block";
+    window.scrollTo({ top: document.getElementById("report-form-container").offsetTop, behavior: "smooth" });
+});
+
+// Handle Form Submission
+document.getElementById("report-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    var category = document.getElementById("category").value;
+    var description = document.getElementById("description").value;
+    var latitude = document.getElementById("latitude").value;
+    var longitude = document.getElementById("longitude").value;
+    var image = document.getElementById("image").files[0];
+
+    if (!latitude || !longitude) {
+        alert("⚠️ Please select a location on the map.");
+        return;
+    }
+
+    var formData = new FormData();
+    formData.append("category", category);
+    formData.append("description", description);
+    formData.append("latitude", latitude);
+    formData.append("longitude", longitude);
+    if (image) formData.append("image", image);
+
+    // Show Loading Indicator
+    document.getElementById("loading").style.display = "flex";
+
+    fetch("api/reports/", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}"  // CSRF token for security
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert("✅ Report submitted successfully!");
+        window.location.href = "/dashboard/";
+    })
+    .catch(error => console.error("Error:", error))
+    .finally(() => document.getElementById("loading").style.display = "none");
+});
+</script>
+
+{% endblock %}
