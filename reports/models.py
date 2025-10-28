@@ -109,6 +109,19 @@ class Report(models.Model):
     sentiment = models.CharField(max_length=50, blank=True, null=True)  # Sentiment Analysis
     keywords = models.TextField(blank=True, null=True)  # Extracted Keywords
     nlp_category = models.CharField(max_length=100, blank=True, null=True)  # NLP-based Category
+    
+    # AI Gateway Integration Fields
+    ai_urgency_score = models.FloatField(blank=True, null=True)  # AI-calculated urgency score (0-1)
+    ai_confidence_scores = models.JSONField(blank=True, null=True)  # Confidence scores for each category
+    ai_explanation = models.TextField(blank=True, null=True)  # AI-generated explanation
+    ai_processing_time = models.FloatField(blank=True, null=True)  # Time taken for AI processing
+    ai_model_version = models.CharField(max_length=50, blank=True, null=True)  # Version of AI model used
+    ai_analysis_status = models.CharField(
+        max_length=20,
+        choices=[('pending', 'Pending'), ('processing', 'Processing'), ('completed', 'Completed'), ('failed', 'Failed')],
+        default='pending'
+    )
+    ai_analysis_error = models.TextField(blank=True, null=True)  # Error message if analysis failed
 
     def analyze_report(self):
         """Runs NLP analysis on the report description."""
@@ -118,6 +131,32 @@ class Report(models.Model):
             self.keywords = ', '.join(analysis.get("keywords", [])) or None
             self.nlp_category = analysis.get("category", self.category)  # Default to selected category if NLP fails
             self.save()
+    
+    def analyze_with_ai_gateway(self):
+        """Trigger AI Gateway analysis for this report."""
+        from .tasks import process_ai_analysis
+        
+        # Update status to processing
+        self.ai_analysis_status = 'processing'
+        self.save()
+        
+        # Queue the analysis task
+        process_ai_analysis.delay(self.id)
+    
+    def get_ai_analysis_results(self):
+        """Get the AI analysis results for this report."""
+        if self.ai_analysis_status != 'completed':
+            return None
+        
+        return {
+            'sentiment': self.sentiment,
+            'category': self.nlp_category,
+            'urgency_score': self.ai_urgency_score,
+            'confidence_scores': self.ai_confidence_scores,
+            'explanation': self.ai_explanation,
+            'processing_time': self.ai_processing_time,
+            'model_version': self.ai_model_version
+        }
 
     def update_status(self, new_status, updated_by):
         """Update the report status and log the change."""

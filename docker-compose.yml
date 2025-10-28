@@ -1,0 +1,269 @@
+version: '3.8'
+
+services:
+  # Django Web Application
+  web:
+    build: .
+    container_name: publicbridge_web
+    restart: unless-stopped
+    environment:
+      - DEBUG=False
+      - DJANGO_SETTINGS_MODULE=PublicBridge.settings_secure
+      - DATABASE_URL=mysql://publicbridge:password@db:3306/publicbridgedb
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+      - logs_volume:/app/logs
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    networks:
+      - publicbridge_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # AI Gateway Microservice
+  ai-gateway:
+    build: ./ai_gateway
+    container_name: publicbridge_ai_gateway
+    restart: unless-stopped
+    environment:
+      - AI_MODEL_CACHE_SIZE=1000
+      - LOG_LEVEL=INFO
+    volumes:
+      - ai_models_volume:/app/models
+    ports:
+      - "8001:8001"
+    networks:
+      - publicbridge_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  # Celery Worker
+  celery:
+    build: .
+    container_name: publicbridge_celery
+    restart: unless-stopped
+    command: celery -A PublicBridge worker --loglevel=info --concurrency=4
+    environment:
+      - DEBUG=False
+      - DJANGO_SETTINGS_MODULE=PublicBridge.settings_secure
+      - DATABASE_URL=mysql://publicbridge:password@db:3306/publicbridgedb
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    volumes:
+      - media_volume:/app/media
+      - logs_volume:/app/logs
+    depends_on:
+      - db
+      - redis
+    networks:
+      - publicbridge_network
+    healthcheck:
+      test: ["CMD", "celery", "-A", "PublicBridge", "inspect", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Celery Beat Scheduler
+  celery-beat:
+    build: .
+    container_name: publicbridge_celery_beat
+    restart: unless-stopped
+    command: celery -A PublicBridge beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    environment:
+      - DEBUG=False
+      - DJANGO_SETTINGS_MODULE=PublicBridge.settings_secure
+      - DATABASE_URL=mysql://publicbridge:password@db:3306/publicbridgedb
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    volumes:
+      - logs_volume:/app/logs
+    depends_on:
+      - db
+      - redis
+    networks:
+      - publicbridge_network
+
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: publicbridge_db
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=publicbridgedb
+      - MYSQL_USER=publicbridge
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=rootpassword
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+    networks:
+      - publicbridge_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Redis Cache and Message Broker
+  redis:
+    image: redis:7-alpine
+    container_name: publicbridge_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - publicbridge_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: publicbridge_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/ssl:/etc/nginx/ssl
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    depends_on:
+      - web
+      - ai-gateway
+    networks:
+      - publicbridge_network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Prometheus Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: publicbridge_prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - publicbridge_network
+
+  # Grafana Dashboard
+  grafana:
+    image: grafana/grafana:latest
+    container_name: publicbridge_grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+    networks:
+      - publicbridge_network
+
+  # Elasticsearch for Logging
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: publicbridge_elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - publicbridge_network
+
+  # Kibana for Log Visualization
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: publicbridge_kibana
+    restart: unless-stopped
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - publicbridge_network
+
+  # Logstash for Log Processing
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.11.0
+    container_name: publicbridge_logstash
+    restart: unless-stopped
+    volumes:
+      - ./docker/logstash/pipeline:/usr/share/logstash/pipeline
+      - logs_volume:/app/logs:ro
+    ports:
+      - "5044:5044"
+    depends_on:
+      - elasticsearch
+    networks:
+      - publicbridge_network
+
+volumes:
+  mysql_data:
+  redis_data:
+  static_volume:
+  media_volume:
+  logs_volume:
+  ai_models_volume:
+  prometheus_data:
+  grafana_data:
+  elasticsearch_data:
+
+networks:
+  publicbridge_network:
+    driver: bridge

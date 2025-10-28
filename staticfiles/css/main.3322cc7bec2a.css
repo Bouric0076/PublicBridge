@@ -1,0 +1,269 @@
+/* General Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    overflow-x: hidden;
+}
+
+h1, h2, h3 {
+    color: #333;
+}
+
+p {
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Navigation Bar */
+.navbar {
+    background: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar.scrolled {
+    background: #4CAF50;
+    color: #fff;
+}
+
+.navbar-brand img {
+    height: 40px;
+}
+
+.navbar-nav .nav-link {
+    color: #333;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #4CAF50;
+}
+
+/* Hero Section */
+.hero {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    background: linear-gradient(to right, rgba(46, 125, 50, 0.8), rgba(27, 94, 32, 0.8)), url('/static') no-repeat center center;
+    background-size: cover;
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    animation: slideDown 1s ease-in-out;
+}
+
+.hero p {
+    font-size: 1.5rem;
+    margin-top: 20px;
+    animation: fadeIn 2s ease-in-out;
+}
+
+.hero .cta-button {
+    background-color: #4CAF50;
+    color: white;
+    font-size: 1.2rem;
+    padding: 12px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 30px;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+}
+
+.hero .cta-button:hover {
+    background-color: #2e7d32;
+}
+
+/* Features Section */
+.features {
+    padding: 50px 0;
+}
+
+.features .section-header {
+    text-align: center;
+    margin-bottom: 40px;
+    animation: fadeInUp 1s ease;
+}
+
+.features .feature-cards {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.features .feature-card {
+    text-align: center;
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    margin: 15px;
+    max-width: 300px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.features .feature-card img {
+    height: 70px;
+    margin-bottom: 15px;
+    animation: bounce 2s infinite;
+}
+
+.features .feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* How It Works Section */
+.how-it-works {
+    padding: 50px 0;
+    background: #f4f4f4;
+}
+
+.how-it-works .steps {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.how-it-works .step {
+    max-width: 300px;
+    margin: 15px;
+    text-align: center;
+}
+
+.how-it-works .step h3 {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+/* Testimonials Section */
+.testimonials {
+    padding: 50px 0;
+}
+
+.testimonials .testimonial-cards {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.testimonials .testimonial-card {
+    max-width: 350px;
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.testimonials .testimonial-card:hover {
+    transform: scale(1.05);
+}
+
+/* Call to Action Section */
+.cta {
+    background: linear-gradient(to right, #2e7d32, #1b5e20);
+    color: white;
+    text-align: center;
+    padding: 50px 20px;
+    animation: fadeInUp 1.5s ease;
+}
+
+.cta h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.cta .cta-button {
+    background: white;
+    color: #2e7d32;
+    font-size: 1.2rem;
+    padding: 15px 40px;
+    border-radius: 50px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.cta .cta-button:hover {
+    background: #e8f5e9;
+}
+
+/* Footer */
+footer {
+    background: #333;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+footer a {
+    color: #4CAF50;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: #81c784;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
