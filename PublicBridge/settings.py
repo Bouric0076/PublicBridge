@@ -10,35 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-import os
 from pathlib import Path
-import environ
 
-# Initialize environment variables
-env = environ.Env(
-    DEBUG=(bool, False),
-    ALLOWED_HOSTS=(list, []),
-    SECRET_KEY=(str, 'django-insecure-1z1x9)oy$)bc!i^1ybab$pl9n%c947u$1cux12j4w^9_1*+o!v'),
-    DATABASE_URL=(str, 'sqlite:///db.sqlite3'),
-    REDIS_URL=(str, 'redis://localhost:6379/0'),
-    CELERY_BROKER_URL=(str, 'redis://localhost:6379/0'),
-    EMAIL_HOST=(str, 'localhost'),
-    EMAIL_PORT=(int, 587),
-    EMAIL_USE_TLS=(bool, True),
-    EMAIL_HOST_USER=(str, ''),
-    EMAIL_HOST_PASSWORD=(str, ''),
-    SENTRY_DSN=(str, ''),
-    AWS_ACCESS_KEY_ID=(str, ''),
-    AWS_SECRET_ACCESS_KEY=(str, ''),
-    AWS_STORAGE_BUCKET_NAME=(str, ''),
-    AWS_S3_REGION_NAME=(str, 'us-east-1'),
-)
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Take environment variables from .env file
-environ.Env.read_env(BASE_DIR / '.env')
+import users.apps
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -48,32 +22,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = 'django-insecure-1z1x9)oy$)bc!i^1ybab$pl9n%c947u$1cux12j4w^9_1*+o!v'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
+DEBUG = True
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
-
-# Add localhost to ALLOWED_HOSTS when in debug mode
-if DEBUG:
-    ALLOWED_HOSTS.extend(['localhost', '127.0.0.1', '[::1]'])
-else:
-    # In production, ensure ALLOWED_HOSTS is not empty
-    if not ALLOWED_HOSTS:
-        # For now, allow localhost in production for testing
-        # In real production, this should be set via environment variable
-        ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-        import warnings
-        warnings.warn('ALLOWED_HOSTS not set in environment. Using defaults for testing.')
+ALLOWED_HOSTS = []
 
 
 
 
 # Application definition
 
-# Application definition
-DJANGO_APPS = [
+INSTALLED_APPS = [
     'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -82,24 +43,10 @@ DJANGO_APPS = [
     'django.contrib.messages',
     'daphne',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
-]
-
-THIRD_PARTY_APPS = [
     'channels',
     'crispy_forms',
-    'crispy_bootstrap5',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'corsheaders',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'django_extensions',
-]
-
-LOCAL_APPS = [
     'GovernmentAdmin',
+    'rest_framework',
     'ministries',
     'main',
     'dashboard',
@@ -107,14 +54,14 @@ LOCAL_APPS = [
     'forum',
     'users',
     'disaster_reporting',
+    'django.contrib.sites',  # Required for allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
 ]
-
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -157,25 +104,19 @@ CHANNEL_LAYERS = {
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# SQLite Database Configuration
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'publicbridgedb',  # Your database name
+        'USER': 'root',             # Your MySQL username
+        'PASSWORD': 'Sandraenos2005',# Your MySQL password
+        'HOST': '127.0.0.1',        # Database server address
+        'PORT': '3306',             # MySQL default port
         'OPTIONS': {
-            'timeout': 20,  # SQLite timeout in seconds
-            'check_same_thread': False,  # Required for some Django operations
-        }
+            'charset': 'utf8mb4',  # Use utf8mb4 to support emojis
+        },
     }
 }
-
-# Connection pooling and optimization (SQLite doesn't support CONN_MAX_AGE)
-# These settings are for production databases like PostgreSQL/MySQL
-# if not DEBUG:
-#     DATABASES['default']['OPTIONS'].update({
-#         'CONN_MAX_AGE': 600,  # Connection reuse in production
-#         'CONN_HEALTH_CHECKS': True,
-#     })
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -215,30 +156,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
-# Media files
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-
-# Static files storage with WhiteNoise
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# Security Settings
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-X_FRAME_OPTIONS = 'DENY'
-
-# Additional security settings for production
-if not DEBUG:
-    SECURE_SSL_REDIRECT = True
-    SECURE_HSTS_SECONDS = 31536000  # 1 year
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Default primary key field type
@@ -246,105 +168,5 @@ if not DEBUG:
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Django Allauth Configuration
-SITE_ID = 1
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_USERNAME_REQUIRED = False
-
-# Email Configuration
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = env('EMAIL_HOST')
-EMAIL_PORT = env('EMAIL_PORT')
-EMAIL_USE_TLS = env('EMAIL_USE_TLS')
-EMAIL_HOST_USER = env('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
-
-# Channel Layers Configuration
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [env('REDIS_URL')],
-            "capacity": 1500,
-            "expiry": 10,
-        },
-    },
-}
-
-# Celery Configuration
-CELERY_BROKER_URL = env('CELERY_BROKER_URL')
-CELERY_RESULT_BACKEND = env('REDIS_URL')
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
-
-# AI Gateway Configuration
-AI_GATEWAY_URL = env('AI_GATEWAY_URL', default='http://localhost:8001')
-AI_GATEWAY_TIMEOUT = env('AI_GATEWAY_TIMEOUT', default=30)
-AI_GATEWAY_MAX_RETRIES = env('AI_GATEWAY_MAX_RETRIES', default=3)
-AI_GATEWAY_RETRY_DELAY = env('AI_GATEWAY_RETRY_DELAY', default=60)
-
-# CORS Configuration
-CORS_ALLOW_ALL_ORIGINS = DEBUG
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-]
-
-# REST Framework Configuration
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 20
-}
-
-# Logging Configuration
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
-        },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs' / 'django.log',
-            'formatter': 'verbose',
-        },
-        'console': {
-            'level': 'DEBUG' if DEBUG else 'INFO',
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple',
-        },
-    },
-    'root': {
-        'handlers': ['console', 'file'],
-        'level': 'INFO',
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console', 'file'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-    },
-}
+# settings.py
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
