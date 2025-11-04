@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'forum',
     'users',
     'disaster_reporting',
+    'utils',  # Added for database file storage
     'django.contrib.sites',  # Required for allauth
     'allauth',
     'allauth.account',
@@ -213,6 +214,23 @@ if not DEBUG:
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# For Render free tier - media files configuration
+if not DEBUG:
+    # On Render free tier, we'll use a different approach for media files
+    # since persistent disks are not available in the free tier
+    # Options:
+    # 1. Store media files in database (for small files)
+    # 2. Use external storage like AWS S3, Cloudinary, or similar services
+    # 3. Use base64 encoding for small images in database
+    # For now, we'll keep the basic configuration but add a note
+    
+    # Consider using a cloud storage service for production media files
+    # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    # AWS_ACCESS_KEY_ID = get_env_variable('AWS_ACCESS_KEY_ID', '')
+    # AWS_SECRET_ACCESS_KEY = get_env_variable('AWS_SECRET_ACCESS_KEY', '')
+    # AWS_STORAGE_BUCKET_NAME = get_env_variable('AWS_STORAGE_BUCKET_NAME', '')
+    # AWS_S3_REGION_NAME = get_env_variable('AWS_S3_REGION_NAME', 'us-east-1')
 
 
 # Default primary key field type

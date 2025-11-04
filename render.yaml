@@ -19,10 +19,7 @@ services:
         value: "PublicBridge.settings"
       - key: PYTHON_VERSION
         value: "3.11.0"
-    disk:
-      name: media
-      mountPath: /media
-      sizeGB: 1
+    # Removed disk for free tier - media files will be stored in database or external storage
 
 databases:
   - name: publicbridge-db
