@@ -52,10 +52,15 @@
 
   function mobileNavToogle() {
     document.querySelector('body').classList.toggle('mobile-nav-active');
-    mobileNavToggleBtn.classList.toggle('bi-list');
-    mobileNavToggleBtn.classList.toggle('bi-x');
+    if (mobileNavToggleBtn) {
+      mobileNavToggleBtn.classList.toggle('bi-list');
+      mobileNavToggleBtn.classList.toggle('bi-x');
+    }
   }
-  mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
+  
+  if (mobileNavToggleBtn) {
+    mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
+  }
 
   /**
    * Hide mobile nav on same-page/hash links
@@ -101,13 +106,16 @@
       window.scrollY > 100 ? scrollTop.classList.add('active') : scrollTop.classList.remove('active');
     }
   }
-  scrollTop.addEventListener('click', (e) => {
-    e.preventDefault();
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
+  
+  if (scrollTop) {
+    scrollTop.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     });
-  });
+  }
 
   window.addEventListener('load', toggleScrollTop);
   document.addEventListener('scroll', toggleScrollTop);
@@ -129,13 +137,16 @@
    * Auto generate the carousel indicators
    */
   document.querySelectorAll('.carousel-indicators').forEach((carouselIndicator) => {
-    carouselIndicator.closest('.carousel').querySelectorAll('.carousel-item').forEach((carouselItem, index) => {
-      if (index === 0) {
-        carouselIndicator.innerHTML += `<li data-bs-target="#${carouselIndicator.closest('.carousel').id}" data-bs-slide-to="${index}" class="active"></li>`;
-      } else {
-        carouselIndicator.innerHTML += `<li data-bs-target="#${carouselIndicator.closest('.carousel').id}" data-bs-slide-to="${index}"></li>`;
-      }
-    });
+    const carousel = carouselIndicator.closest('.carousel');
+    if (carousel && carousel.id) {
+      carousel.querySelectorAll('.carousel-item').forEach((carouselItem, index) => {
+        if (index === 0) {
+          carouselIndicator.innerHTML += `<button type="button" data-bs-target="#${carousel.id}" data-bs-slide-to="${index}" class="active" aria-current="true" aria-label="Slide ${index + 1}"></button>`;
+        } else {
+          carouselIndicator.innerHTML += `<button type="button" data-bs-target="#${carousel.id}" data-bs-slide-to="${index}" aria-label="Slide ${index + 1}"></button>`;
+        }
+      });
+    }
   });
 
   /**

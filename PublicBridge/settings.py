@@ -11,8 +11,21 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+from django.core.exceptions import ImproperlyConfigured
+import dj_database_url
 
 import users.apps
+
+def get_env_variable(var_name, default=None):
+    """Get environment variable or return default value."""
+    try:
+        return os.environ[var_name]
+    except KeyError:
+        if default is not None:
+            return default
+        error_msg = f"Set the {var_name} environment variable"
+        raise ImproperlyConfigured(error_msg)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,12 +35,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-1z1x9)oy$)bc!i^1ybab$pl9n%c947u$1cux12j4w^9_1*+o!v'
+SECRET_KEY = get_env_variable('DJANGO_SECRET_KEY', 'django-insecure-dev-key-change-in-production')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = get_env_variable('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = get_env_variable('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 
@@ -62,6 +75,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Add WhiteNoise middleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -104,21 +118,41 @@ CHANNEL_LAYERS = {
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# Database configuration for Render deployment
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'publicbridgedb',  # Your database name
-        'USER': 'root',             # Your MySQL username
-        'PASSWORD': 'Sandraenos2005',# Your MySQL password
-        'HOST': '127.0.0.1',        # Database server address
-        'PORT': '3306',             # MySQL default port
-        'OPTIONS': {
-            'charset': 'utf8mb4',  # Use utf8mb4 to support emojis
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
+# Use PostgreSQL in production (Render)
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_URL'))
+
+# MySQL configuration for production (alternative)
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': get_env_variable('DB_NAME', 'publicbridgedb'),
+#         'USER': get_env_variable('DB_USER', 'root'),
+#         'PASSWORD': get_env_variable('DB_PASSWORD', ''),
+#         'HOST': get_env_variable('DB_HOST', '127.0.0.1'),
+#         'PORT': get_env_variable('DB_PORT', '3306'),
+#         'OPTIONS': {
+#             'charset': 'utf8mb4',
+#         },
+#     }
+# }
+
 AUTH_USER_MODEL = 'users.User'
+
+# Authentication backends
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # Default Django authentication
+    'ministries.authentication.MinistryAuthBackend',  # Custom ministry authentication
+    'users.backends.EmailOrUsernameModelBackend',  # Custom backend for email login
+]
 
 
 # Password validation
@@ -143,11 +177,24 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+# Language configuration for Kenya (English primary, Swahili optional)
+LANGUAGE_CODE = 'en-us'  # Primary language - English
 
-TIME_ZONE = 'UTC'
+# Supported languages - English and Swahili
+LANGUAGES = [
+    ('en', 'English'),
+    ('sw', 'Swahili'),
+]
 
+# Enable internationalization
 USE_I18N = True
+
+# Locale paths for translation files
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
+
+TIME_ZONE = 'Africa/Nairobi'  # Kenya timezone
 
 USE_TZ = True
 
@@ -158,6 +205,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
+# For production deployment (Render)
+if not DEBUG:
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -167,6 +219,25 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Security settings for production
+if not DEBUG:
+    # HTTPS settings
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    
+    # Session security
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+    
+    # Additional security headers
+    SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+    SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
 
 # settings.py
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

@@ -15,7 +15,7 @@ from users.decorators import government_admin_required
 from django.shortcuts import render
 
 from rest_framework import viewsets
-from disaster_reporting.models import DisasterReport
+from disaster_reporting.models import DisasterReport, DisasterAgency
 from .serializers import DisasterReportSerializer
 
 class DisasterReportViewSet(viewsets.ModelViewSet):
@@ -31,7 +31,7 @@ from django.utils.timezone import now
 @login_required
 def admin_dashboard(request):
     """Renders the admin dashboard with geotagged reports and agency data."""
-    geotagged_reports = DisasterReport.objects.filter(status="Pending").values(
+    geotagged_reports = DisasterReport.objects.filter(status="pending").values(
         "id", "category", "status", "latitude", "longitude"
     )  # Convert QuerySet to JSON format
 
@@ -81,9 +81,9 @@ def view_pending_ministries(request):
 
 def view_reports(request):
     """Display all reports categorized by status."""
-    pending_reports = Report.objects.filter(status="Pending")
-    under_review_reports = Report.objects.filter(status="Under Review")
-    resolved_reports = Report.objects.filter(status="Resolved")
+    pending_reports = Report.objects.filter(status="pending")
+    under_review_reports = Report.objects.filter(status="under_review")
+    resolved_reports = Report.objects.filter(status="resolved")
 
     return render(request, "governmentadmin/reports_dashboard.html", {
         "pending_reports": pending_reports,
@@ -93,7 +93,7 @@ def view_reports(request):
 
 def assign_report_list(request):
     """Display a list of reports that need assignment."""
-    reports = Report.objects.filter(status="pending")  # Fetch only pending reports
+    reports = Report.objects.filter(status="pending").select_related('ministry')  # Fetch only pending reports and join ministry
     ministries = Ministry.objects.filter(is_approved=True)
 
     return render(request, "governmentadmin/assign_report.html", {"reports": reports, "ministries": ministries})
@@ -143,7 +143,9 @@ def govadmin_dashboard(request):
     # Report statistics
     total_reports = Report.objects.count()
     pending_reports = Report.objects.filter(status="pending").count()
+    under_review_reports = Report.objects.filter(status="under_review").count()
     resolved_reports = Report.objects.filter(status="resolved").count()
+    rejected_reports = Report.objects.filter(status="rejected").count()
 
     # Recent reports (latest 5)
     recent_reports = Report.objects.order_by('-created_at')[:5]
@@ -164,7 +166,9 @@ def govadmin_dashboard(request):
         'polls_count': polls_count,
         'total_reports': total_reports,
         'pending_reports': pending_reports,
+        'under_review_reports': under_review_reports,
         'resolved_reports': resolved_reports,
+        'rejected_reports': rejected_reports,
         'recent_reports': recent_reports,
         'activity_logs': activity_logs,
         'assignment_queue': assignment_queue,
@@ -174,9 +178,7 @@ def govadmin_dashboard(request):
     return render(request, "governmentadmin/dashboard.html", context)
 
 @login_required
+@government_admin_required
 def manage_ministries(request):
-    if not request.user.is_government_admin:
-        return render(request, "governmentadmin/error.html", {"message": "Access Denied"})
-
     ministries = Ministry.objects.all()
     return render(request, "governmentadmin/manage_ministries.html", {"ministries": ministries})

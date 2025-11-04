@@ -1,28 +1,474 @@
 {% extends "forum/base.html" %}
 
 {% block content %}
-<h1 class="mb-4">Your Feed</h1>
+<div class="min-h-screen bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Main Grid Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Left Sidebar (Communities & Navigation) -->
+            <div class="lg:col-span-3">
+                <div class="sticky top-6 space-y-6">
+                    
+                    <!-- User Profile Card -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                {{ user.username|first|upper|default:"U" }}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-gray-900 truncate">{{ user.username|default:"Anonymous" }}</h3>
+                                <p class="text-sm text-gray-500">Community Member</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-center border-t border-gray-100 pt-4">
+                            <div>
+                                <p class="text-sm font-bold text-gray-900">{{ user_posts_count }}</p>
+                                <p class="text-xs text-gray-500">Posts</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-gray-900">42</p>
+                                <p class="text-xs text-gray-500">Comments</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-gray-900">156</p>
+                                <p class="text-xs text-gray-500">Karma</p>
+                            </div>
+                        </div>
+                    </div>
 
-{% if posts %}
-    <div class="row">
-        {% for post in posts %}
-            <div class="col-md-6">
-                <div class="post-summary">
-                    <h2 class="h5">{{ post.title }}</h2>
-                    <p>{{ post.content|truncatewords:20 }}</p>
-                    <p><strong>By:</strong> {{ post.author.username }}</p>
-                    <p><small>Posted on: {{ post.created_at }}</small></p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <a href="{% url 'forum:post_detail' post.id %}" class="btn btn-primary btn-sm">View Details</a>
-                        <p class="mb-0">Upvotes: {{ post.upvotes.count }} | Downvotes: {{ post.downvotes.count }}</p>
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                        <h3 class="font-bold text-gray-900 mb-3">Quick Actions</h3>
+                        <div class="space-y-2">
+                            <a href="{% url 'forum:create_post' %}" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-50 text-gray-700 hover:text-blue-600 transition-colors">
+                                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-edit text-blue-600 text-sm"></i>
+                                </div>
+                                <span class="font-medium">Create Post</span>
+                            </a>
+                            <a href="#" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-green-50 text-gray-700 hover:text-green-600 transition-colors">
+                                <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-search text-green-600 text-sm"></i>
+                                </div>
+                                <span class="font-medium">Explore</span>
+                            </a>
+                            <a href="#" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-purple-50 text-gray-700 hover:text-purple-600 transition-colors">
+                                <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-bell text-purple-600 text-sm"></i>
+                                </div>
+                                <span class="font-medium">Notifications</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Trending Communities -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-gray-900">Trending Communities</h3>
+                            <a href="#" class="text-xs text-blue-600 hover:text-blue-800 font-medium">See all</a>
+                        </div>
+                        <div class="space-y-3">
+                            {% for i in "12345" %}
+                            <div class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                                <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                                    r/
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">r/Community{{ forloop.counter }}</p>
+                                    <p class="text-xs text-gray-500">{{ forloop.counter|add:"25" }}k members</p>
+                                </div>
+                                <button class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-full transition-colors">
+                                    Join
+                                </button>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                        <h3 class="font-bold text-gray-900 mb-3">Recent Activity</h3>
+                        <div class="space-y-3">
+                            {% for i in "123" %}
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                                <div class="flex-1">
+                                    <p class="text-sm text-gray-700">You upvoted "Community Discussion #{{ forloop.counter }}"</p>
+                                    <p class="text-xs text-gray-500 mt-1">{{ forloop.counter }}h ago</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>
-        {% endfor %}
+
+            <!-- Main Feed Content -->
+            <div class="lg:col-span-6">
+                <!-- Create Post Card -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                            {{ user.username|first|upper|default:"U" }}
+                        </div>
+                        <button onclick="window.location.href='{% url 'forum:create_post' %}'" class="flex-1 text-left px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-500 hover:text-gray-700 transition-colors">
+                            Start a discussion...
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                        <button class="flex items-center space-x-2 text-gray-500 hover:text-blue-600 transition-colors px-3 py-2 rounded-lg hover:bg-blue-50">
+                            <i class="fas fa-image text-lg"></i>
+                            <span class="text-sm font-medium">Media</span>
+                        </button>
+                        <button class="flex items-center space-x-2 text-gray-500 hover:text-green-600 transition-colors px-3 py-2 rounded-lg hover:bg-green-50">
+                            <i class="fas fa-poll text-lg"></i>
+                            <span class="text-sm font-medium">Poll</span>
+                        </button>
+                        <button class="flex items-center space-x-2 text-gray-500 hover:text-purple-600 transition-colors px-3 py-2 rounded-lg hover:bg-purple-50">
+                            <i class="fas fa-link text-lg"></i>
+                            <span class="text-sm font-medium">Link</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Feed Filters -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
+                            <button class="px-4 py-2 bg-white text-gray-900 rounded-md shadow-sm text-sm font-medium transition-all duration-200">
+                                <i class="fas fa-fire mr-2"></i>Hot
+                            </button>
+                            <button class="px-4 py-2 text-gray-600 hover:text-gray-900 rounded-md text-sm font-medium transition-colors">
+                                <i class="fas fa-chart-line mr-2"></i>Top
+                            </button>
+                            <button class="px-4 py-2 text-gray-600 hover:text-gray-900 rounded-md text-sm font-medium transition-colors">
+                                <i class="fas fa-clock mr-2"></i>New
+                            </button>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg">
+                                <i class="fas fa-expand-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Posts Feed -->
+                <div class="space-y-4">
+                    {% for post in posts %}
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 hover:border-gray-300 transition-all duration-300 post-card">
+                        <div class="flex">
+                            <!-- Voting Column -->
+                            <div class="flex flex-col items-center py-4 px-3 w-12 bg-gray-50 rounded-l-xl">
+                                <button class="upvote-btn p-1.5 text-gray-400 hover:text-orange-500 transition-colors rounded-lg hover:bg-orange-50" data-post-id="{{ post.id }}">
+                                    <i class="fas fa-arrow-up text-lg"></i>
+                                </button>
+                                <span class="text-sm font-bold my-1 text-gray-900">{{ post.upvotes.count }}</span>
+                                <button class="downvote-btn p-1.5 text-gray-400 hover:text-blue-600 transition-colors rounded-lg hover:bg-blue-50" data-post-id="{{ post.id }}">
+                                    <i class="fas fa-arrow-down text-lg"></i>
+                                </button>
+                            </div>
+
+                            <!-- Post Content -->
+                            <div class="flex-1 p-4">
+                                <!-- Post Meta -->
+                                <div class="flex items-center text-xs text-gray-500 mb-2">
+                                    <span class="font-medium text-gray-900 hover:underline cursor-pointer">r/PublicForum</span>
+                                    <span class="mx-1">•</span>
+                                    <span>Posted by</span>
+                                    <span class="font-medium text-gray-900 hover:underline cursor-pointer ml-1">u/{{ post.author.username }}</span>
+                                    <span class="mx-1">•</span>
+                                    <span>{{ post.created_at|timesince }} ago</span>
+                                </div>
+
+                                <!-- Post Title & Content - Make Clickable -->
+                                <a href="{% url 'forum:post_detail' post.id %}" class="block hover:no-underline">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 cursor-pointer transition-colors">
+                                        {{ post.title }}
+                                    </h3>
+                                </a>
+                                
+                                <a href="{% url 'forum:post_detail' post.id %}" class="block hover:no-underline">
+                                    <p class="text-gray-700 mb-3 line-clamp-3 hover:text-gray-900 cursor-pointer transition-colors">
+                                        {{ post.content|truncatewords:40 }}
+                                    </p>
+                                </a>
+
+                                {% if post.media %}
+                                <a href="{% url 'forum:post_detail' post.id %}" class="block hover:no-underline">
+                                    <div class="mb-3 rounded-lg overflow-hidden border border-gray-200 max-w-md cursor-pointer hover:border-blue-300 transition-colors">
+                                        <img src="{{ post.media.url }}" alt="Post media" class="w-full h-48 object-cover">
+                                    </div>
+                                </a>
+                                {% endif %}
+
+                                <!-- Post Actions -->
+                                <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                    <a href="{% url 'forum:post_detail' post.id %}" class="flex items-center space-x-1.5 p-2 rounded-lg hover:bg-gray-100 transition-colors hover:no-underline">
+                                        <i class="far fa-comment"></i>
+                                        <span>{{ post.comments.count }} Comments</span>
+                                    </a>
+                                    <button class="flex items-center space-x-1.5 p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                                        <i class="far fa-share-square"></i>
+                                        <span>Share</span>
+                                    </button>
+                                    <button class="flex items-center space-x-1.5 p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                                        <i class="far fa-bookmark"></i>
+                                        <span>Save</span>
+                                    </button>
+                                    <button class="flex items-center space-x-1.5 p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    
+                    <!-- Empty State -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+                        <div class="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-comments text-gray-400 text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-3">No discussions yet</h3>
+                        <p class="text-gray-600 mb-6 max-w-md mx-auto">Be the first to start a conversation in your community. Share your thoughts, questions, or ideas!</p>
+                        <a href="{% url 'forum:create_post' %}" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
+                            <i class="fas fa-plus-circle mr-2"></i>
+                            Create First Post
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Load More -->
+                {% if posts %}
+                <div class="text-center mt-8">
+                    <button class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:border-blue-500 hover:text-blue-600 transition-colors bg-white shadow-sm">
+                        <i class="fas fa-sync-alt mr-2"></i>
+                        Load More Discussions
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Right Sidebar (Trending & Stats) -->
+            <div class="lg:col-span-3">
+                <div class="sticky top-6 space-y-6">
+                    
+                    <!-- Trending Topics -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-gray-900">Trending Today</h3>
+                            <a href="#" class="text-xs text-blue-600 hover:text-blue-800 font-medium">See all</a>
+                        </div>
+                        <div class="space-y-4">
+                            {% for i in "12345" %}
+                            <div class="flex items-start space-x-3">
+                                <span class="text-sm font-bold text-gray-500 mt-0.5">{{ forloop.counter }}</span>
+                                <div class="flex-1">
+                                    <a href="#" class="text-sm font-medium text-gray-900 hover:text-blue-600 cursor-pointer mb-1 block">
+                                        Trending Civic Topic #{{ forloop.counter }}
+                                    </a>
+                                    <p class="text-xs text-gray-500">{{ forloop.counter|add:"150" }} posts</p>
+                                </div>
+                                <i class="fas fa-chevron-up text-xs text-gray-400 mt-1"></i>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Community Stats -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                        <h3 class="font-bold text-gray-900 mb-4">Community Stats</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Total Members</span>
+                                <span class="text-sm font-bold text-gray-900">1.2k</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Online Now</span>
+                                <span class="text-sm font-bold text-green-600">124</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Posts Today</span>
+                                <span class="text-sm font-bold text-gray-900">24</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Growth</span>
+                                <span class="text-sm font-bold text-green-600">+12%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Who to Follow -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                        <h3 class="font-bold text-gray-900 mb-4">Active Contributors</h3>
+                        <div class="space-y-3">
+                            {% for i in "123" %}
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                    U{{ forloop.counter }}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">CommunityLeader{{ forloop.counter }}</p>
+                                    <p class="text-xs text-gray-500">{{ forloop.counter|add:"45" }} posts</p>
+                                </div>
+                                <button class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-full transition-colors">
+                                    Follow
+                                </button>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Community Guidelines -->
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
+                        <h3 class="font-bold text-gray-900 mb-3 flex items-center">
+                            <i class="fas fa-shield-alt text-blue-600 mr-2"></i>
+                            Community Guidelines
+                        </h3>
+                        <ul class="text-xs text-gray-700 space-y-2">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i>
+                                <span>Be respectful and constructive</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i>
+                                <span>Focus on civic issues</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i>
+                                <span>Cite sources for claims</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i>
+                                <span>No personal attacks</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-{% else %}
-    <div class="alert alert-warning text-center">
-        No posts available. Check back later!
-    </div>
-{% endif %}
+</div>
+
+<style>
+    .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .post-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .post-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Make the entire post card clickable except voting and action buttons */
+    .post-card .flex-1 {
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Enhanced voting functionality
+        document.querySelectorAll('.upvote-btn, .downvote-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation(); // Prevent event from bubbling to parent elements
+                const postId = this.getAttribute('data-post-id');
+                const action = this.classList.contains('upvote-btn') ? 'upvote' : 'downvote';
+                
+                // Visual feedback
+                if (action === 'upvote') {
+                    this.classList.toggle('text-orange-500');
+                    this.classList.toggle('bg-orange-50');
+                    this.classList.toggle('text-gray-400');
+                    this.classList.toggle('bg-transparent');
+                } else {
+                    this.classList.toggle('text-blue-600');
+                    this.classList.toggle('bg-blue-50');
+                    this.classList.toggle('text-gray-400');
+                    this.classList.toggle('bg-transparent');
+                }
+                
+                // Call voting function
+                votePost(postId, action);
+            });
+        });
+
+        // Make entire post content area clickable (except voting and action buttons)
+        document.querySelectorAll('.post-card .flex-1').forEach(contentArea => {
+            contentArea.addEventListener('click', function(e) {
+                // Don't navigate if clicking on action buttons or their children
+                if (e.target.closest('button') || e.target.closest('a[href*="post_detail"]')) {
+                    return;
+                }
+                
+                // Find the post detail link and navigate to it
+                const postLink = this.querySelector('a[href*="post_detail"]');
+                if (postLink) {
+                    window.location.href = postLink.href;
+                }
+            });
+        });
+
+        // Add hover effects to post cards
+        const posts = document.querySelectorAll('.post-card');
+        posts.forEach(post => {
+            post.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 12px 28px -8px rgba(0, 0, 0, 0.12)';
+            });
+            
+            post.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
+            });
+        });
+
+        // Filter buttons functionality
+        const filterButtons = document.querySelectorAll('.bg-gray-100 button');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                filterButtons.forEach(btn => {
+                    btn.classList.remove('bg-white', 'text-gray-900', 'shadow-sm');
+                    btn.classList.add('text-gray-600');
+                });
+                this.classList.add('bg-white', 'text-gray-900', 'shadow-sm');
+                this.classList.remove('text-gray-600');
+            });
+        });
+    });
+
+    function votePost(postId, action) {
+        fetch(`/forum/post/${postId}/vote/?action=${action}`, {
+            method: 'GET',
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            // Update vote counts
+            const upvoteBtn = document.querySelector(`.upvote-btn[data-post-id="${postId}"]`);
+            const downvoteBtn = document.querySelector(`.downvote-btn[data-post-id="${postId}"]`);
+            
+            if (upvoteBtn && downvoteBtn) {
+                const voteCount = upvoteBtn.nextElementSibling;
+                voteCount.textContent = data.upvotes - data.downvotes;
+            }
+        })
+        .catch((error) => {
+            console.error('Error voting:', error);
+        });
+    }
+</script>
 {% endblock %}

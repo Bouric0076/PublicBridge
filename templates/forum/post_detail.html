@@ -1,103 +1,621 @@
 {% extends "forum/base.html" %}
 
 {% block content %}
-<div class="post-container">
-    <h1 class="mb-3">{{ post.title }}</h1>
-    <p>{{ post.content }}</p>
-
-    {% if post.media %}
-        <img src="{{ post.media.url }}" alt="Post Media" class="img-fluid rounded mb-3">
-    {% endif %}
-
-    <p><strong>By:</strong> {{ post.author.username }} on {{ post.created_at }}</p>
-
-    <div class="vote-buttons my-3">
-        <button class="btn btn-success upvote-btn" data-post-id="{{ post.id }}">Upvote ({{ post.upvotes.count }})</button>
-        <button class="btn btn-danger downvote-btn" data-post-id="{{ post.id }}">Downvote ({{ post.downvotes.count }})</button>
-    </div>
-
-    <hr>
-    <h2>Comments</h2>
-    {% for comment in comments %}
-        <div class="comment p-4 mb-4 border rounded shadow-sm bg-light">
-            <div class="comment-header d-flex justify-content-between align-items-center">
-                <p class="mb-1"><strong>{{ comment.author.username }}</strong>: {{ comment.content }}</p>
-                <p><small>Posted on {{ comment.created_at }}</small></p>
-            </div>
-
-            {% if comment.media %}
-                <img src="{{ comment.media.url }}" alt="Comment Media" class="img-fluid rounded mb-2">
-            {% endif %}
-
-            <div class="d-flex justify-content-between align-items-center mt-2">
-                <div class="replies-toggle">
-                    <button class="btn btn-link btn-sm reply-toggle-btn" data-reply-form-id="reply-form-{{ comment.id }}">
-                        Reply
-                    </button>
+<div class="min-h-screen bg-gray-100 py-6">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Sidebar (Left) -->
+            <div class="hidden lg:block lg:col-span-1">
+                <div class="sticky top-6 space-y-4">
+                    <!-- Community Info Card -->
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-900">PublicForum</h3>
+                                <p class="text-xs text-gray-500">{{ post.community.members.count|default:"1.2k" }} members</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-700 mb-4">A civic engagement platform for community discussions, policy ideas, and public discourse.</p>
+                        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 px-4 rounded-full text-sm transition-colors">
+                            Join Community
+                        </button>
+                    </div>
+                    
+                    <!-- Trending Topics -->
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <h3 class="font-bold text-gray-900 mb-3">Trending Topics</h3>
+                        <div class="space-y-3">
+                            {% for topic in "12345" %}
+                            <div class="flex items-start space-x-2">
+                                <span class="text-xs text-gray-500 font-medium mt-0.5">{{ forloop.counter }}</span>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900 hover:text-blue-600 cursor-pointer">Local Policy Issue #{{ forloop.counter }}</p>
+                                    <p class="text-xs text-gray-500">{{ forloop.counter|add:"50" }} discussions</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <!-- Community Guidelines -->
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <h3 class="font-bold text-gray-900 mb-3">Community Guidelines</h3>
+                        <ul class="text-xs text-gray-700 space-y-2">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i>
+                                <span>Be respectful and constructive</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i>
+                                <span>Focus on civic issues and solutions</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i>
+                                <span>Cite sources when making claims</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i>
+                                <span>No personal attacks or misinformation</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
-            <!-- Replies -->
-            <div class="replies ms-4 mt-3">
-                {% for reply in comment.replies.all %}
-                    <div class="comment-reply p-3 mb-3 border rounded shadow-sm bg-white">
-                        <div class="comment-header d-flex justify-content-between align-items-center">
-                            <p class="mb-1"><strong>{{ reply.author.username }}</strong>: {{ reply.content }}</p>
-                            <p><small>Posted on {{ reply.created_at }}</small></p>
+            <!-- Main Content (Center) -->
+            <div class="lg:col-span-2">
+                <!-- Post Card -->
+                <div class="bg-white rounded-lg shadow mb-4">
+                    <!-- Voting Column -->
+                    <div class="flex">
+                        <!-- Vote Buttons (Left) -->
+                        <div class="flex flex-col items-center py-4 px-2 w-10 bg-gray-50 rounded-l-lg">
+                            <button class="upvote-btn p-1 text-gray-400 hover:text-orange-500 transition-colors" data-post-id="{{ post.id }}">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                </svg>
+                            </button>
+                            <span class="text-xs font-bold my-1">{{ post.upvotes.count }}</span>
+                            <button class="downvote-btn p-1 text-gray-400 hover:text-blue-600 transition-colors" data-post-id="{{ post.id }}">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
                         </div>
 
-                        {% if reply.media %}
-                            <img src="{{ reply.media.url }}" alt="Reply Media" class="img-fluid rounded mb-2">
-                        {% endif %}
+                        <!-- Post Content (Right) -->
+                        <div class="flex-1 p-4">
+                            <!-- Post Meta -->
+                            <div class="flex items-center text-xs text-gray-500 mb-2">
+                                <span class="font-medium text-gray-900 hover:underline cursor-pointer">PublicForum</span>
+                                <span class="mx-1">•</span>
+                                <span>Posted by</span>
+                                <span class="font-medium text-gray-900 hover:underline cursor-pointer ml-1">{{ post.author.username }}</span>
+                                <span class="mx-1">•</span>
+                                <span>{{ post.created_at|timesince }} ago</span>
+                            </div>
+
+                            <!-- Post Title -->
+                            <h1 class="text-xl font-bold text-gray-900 mb-3">{{ post.title }}</h1>
+
+                            <!-- Post Content - Improved Structure -->
+                            <div class="text-gray-800 mb-4 space-y-4">
+                                {% if post.content %}
+                                <div class="prose max-w-none">
+                                    {{ post.content|linebreaks }}
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Structured Post Details -->
+                                {% if post.category %}
+                                <div class="flex items-center text-sm">
+                                    <span class="font-medium mr-2">Category:</span>
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">{{ post.category }}</span>
+                                </div>
+                                {% endif %}
+                                
+                                {% if post.tags.all %}
+                                <div class="flex flex-wrap gap-1">
+                                    {% for tag in post.tags.all %}
+                                    <span class="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs">#{{ tag.name }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            {% if post.media %}
+                            <div class="mb-4 rounded-md overflow-hidden border border-gray-200">
+                                <img src="{{ post.media.url }}" alt="Post Media" class="w-full h-auto max-h-96 object-contain bg-gray-100">
+                            </div>
+                            {% endif %}
+
+                            <!-- Post Actions -->
+                            <div class="flex items-center space-x-2 text-xs text-gray-500">
+                                <button class="flex items-center space-x-1 p-2 rounded-md hover:bg-gray-100 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                    </svg>
+                                    <span>{{ comments|length }} Comments</span>
+                                </button>
+                                <button class="flex items-center space-x-1 p-2 rounded-md hover:bg-gray-100 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                                    </svg>
+                                    <span>Share</span>
+                                </button>
+                                <button class="flex items-center space-x-1 p-2 rounded-md hover:bg-gray-100 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+                                    </svg>
+                                    <span>Save</span>
+                                </button>
+                                <button class="flex items-center space-x-1 p-2 rounded-md hover:bg-gray-100 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                {% endfor %}
+                </div>
+
+                <!-- Comment Input -->
+                <div class="bg-white rounded-lg shadow mb-4 p-4">
+                    <div class="flex space-x-3">
+                        <div class="flex-shrink-0">
+                            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                                {{ user.username|first|upper|default:"U" }}
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <form method="POST" action="{% url 'forum:add_comment' post.id %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <textarea 
+                                    name="content" 
+                                    rows="3" 
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-all duration-200 resize-none placeholder-gray-500 text-sm"
+                                    placeholder="Share your perspective on this civic issue..."
+                                    required
+                                ></textarea>
+                                <div class="flex items-center justify-between mt-2">
+                                    <div class="flex items-center space-x-2">
+                                        <input 
+                                            type="file" 
+                                            name="media" 
+                                            accept="image/*" 
+                                            class="hidden" 
+                                            id="comment-media"
+                                            onchange="previewCommentImage(this)"
+                                        >
+                                        <button type="button" onclick="document.getElementById('comment-media').click()" class="p-1.5 text-gray-500 hover:text-gray-700 transition-colors rounded">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                        </button>
+                                        <div id="comment-preview" class="hidden flex items-center space-x-2">
+                                            <img class="w-12 h-12 rounded object-cover">
+                                            <button type="button" onclick="removeCommentImage()" class="text-red-500 text-sm">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 px-4 rounded-full text-sm transition-colors">
+                                        Comment
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comments Sorting -->
+                <div class="bg-white rounded-lg shadow mb-4 p-4">
+                    <div class="flex items-center space-x-4 text-sm font-medium">
+                        <span class="text-gray-500">Sort by:</span>
+                        <button class="text-blue-600 border-b-2 border-blue-600 pb-1">Most Relevant</button>
+                        <button class="text-gray-500 hover:text-gray-700 pb-1">Newest</button>
+                        <button class="text-gray-500 hover:text-gray-700 pb-1">Most Supported</button>
+                    </div>
+                </div>
+
+                <!-- Comments List -->
+                <div class="space-y-4">
+                    {% for comment in comments %}
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="flex">
+                            <!-- Comment Voting (Left) -->
+                            <div class="flex flex-col items-center py-4 px-2 w-10 bg-gray-50 rounded-l-lg">
+                                <button class="p-1 text-gray-400 hover:text-orange-500 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                    </svg>
+                                </button>
+                                <span class="text-xs font-bold my-1">{{ comment.upvotes.count|default:"12" }}</span>
+                                <button class="p-1 text-gray-400 hover:text-blue-600 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <!-- Comment Content (Right) -->
+                            <div class="flex-1 p-4">
+                                <div class="flex items-center text-xs text-gray-500 mb-2">
+                                    <span class="font-medium text-gray-900 hover:underline cursor-pointer">{{ comment.author.username }}</span>
+                                    <span class="mx-1">•</span>
+                                    <span>{{ comment.created_at|timesince }} ago</span>
+                                    {% if comment.author.is_verified %}
+                                    <span class="ml-1 px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded text-xs flex items-center">
+                                        <i class="fas fa-check-circle text-xs mr-1"></i>
+                                        Verified
+                                    </span>
+                                    {% endif %}
+                                </div>
+
+                                <p class="text-gray-800 mb-3">{{ comment.content }}</p>
+
+                                {% if comment.media %}
+                                <div class="mb-3 rounded-md overflow-hidden max-w-xs border border-gray-200">
+                                    <img src="{{ comment.media.url }}" alt="Comment Media" class="w-full h-auto">
+                                </div>
+                                {% endif %}
+
+                                <!-- Comment Actions -->
+                                <div class="flex items-center space-x-2 text-xs text-gray-500">
+                                    <button class="flex items-center space-x-1 p-1.5 rounded hover:bg-gray-100 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path>
+                                        </svg>
+                                        <span>{{ comment.upvotes.count|default:"12" }}</span>
+                                    </button>
+                                    <button class="reply-toggle-btn flex items-center space-x-1 p-1.5 rounded hover:bg-gray-100 transition-colors" data-reply-form-id="reply-form-{{ comment.id }}">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path>
+                                        </svg>
+                                        <span>Reply</span>
+                                    </button>
+                                    <button class="flex items-center space-x-1 p-1.5 rounded hover:bg-gray-100 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+                                        </svg>
+                                        <span>Save</span>
+                                    </button>
+                                    <button class="flex items-center space-x-1 p-1.5 rounded hover:bg-gray-100 transition-colors">
+                                        <i class="fas fa-flag text-xs"></i>
+                                        <span>Report</span>
+                                    </button>
+                                </div>
+
+                                <!-- Replies -->
+                                {% if comment.replies.all %}
+                                <div class="mt-4 ml-4 space-y-4 border-l-2 border-gray-200 pl-4">
+                                    {% for reply in comment.replies.all %}
+                                    <div class="pt-4 first:pt-0">
+                                        <div class="flex space-x-3">
+                                            <div class="flex-shrink-0">
+                                                <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                                                    {{ reply.author.username|first|upper }}
+                                                </div>
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="flex items-center text-xs text-gray-500 mb-1">
+                                                    <span class="font-medium text-gray-900 hover:underline cursor-pointer">{{ reply.author.username }}</span>
+                                                    <span class="mx-1">•</span>
+                                                    <span>{{ reply.created_at|timesince }} ago</span>
+                                                    {% if reply.author.is_verified %}
+                                                    <span class="ml-1 px-1 py-0.5 bg-blue-100 text-blue-800 rounded text-xs flex items-center">
+                                                        <i class="fas fa-check-circle text-xs mr-1"></i>
+                                                    </span>
+                                                    {% endif %}
+                                                </div>
+                                                <p class="text-gray-800 text-sm">{{ reply.content }}</p>
+                                                
+                                                {% if reply.media %}
+                                                <div class="mt-2 rounded-md overflow-hidden max-w-xs border border-gray-200">
+                                                    <img src="{{ reply.media.url }}" alt="Reply Media" class="w-full h-auto">
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+
+                                <!-- Reply Form -->
+                                <form
+                                    id="reply-form-{{ comment.id }}"
+                                    class="reply-form mt-4 p-4 bg-gray-50 rounded-md hidden"
+                                    method="POST"
+                                    action="{% url 'forum:add_comment' post.id %}"
+                                    enctype="multipart/form-data"
+                                >
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <textarea 
+                                            name="content" 
+                                            rows="2" 
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-all duration-200 resize-none placeholder-gray-500 text-sm"
+                                            placeholder="Write your reply..."
+                                            required
+                                        ></textarea>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-2">
+                                            <input 
+                                                type="file" 
+                                                name="media" 
+                                                accept="image/*" 
+                                                class="hidden" 
+                                                id="reply-media-{{ comment.id }}"
+                                                onchange="previewReplyImage(this, 'reply-preview-{{ comment.id }}')"
+                                            >
+                                            <button type="button" onclick="document.getElementById('reply-media-{{ comment.id }}').click()" class="p-1.5 text-gray-500 hover:text-gray-700 transition-colors rounded">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                </svg>
+                                            </button>
+                                            <div id="reply-preview-{{ comment.id }}" class="hidden flex items-center space-x-2">
+                                                <img class="w-10 h-10 rounded object-cover">
+                                                <button type="button" onclick="removeReplyImage('reply-media-{{ comment.id }}', 'reply-preview-{{ comment.id }}')" class="text-red-500 text-xs">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button type="button" onclick="toggleReplyForm('reply-form-{{ comment.id }}')" class="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-800 transition-colors">
+                                                Cancel
+                                            </button>
+                                            <button type="submit" class="px-3 py-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors text-sm font-medium">
+                                                Reply
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <!-- Empty Comments State -->
+                    <div class="bg-white rounded-lg shadow p-8 text-center">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">No comments yet</h3>
+                        <p class="text-gray-600">Be the first to share your perspective on this civic issue!</p>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
 
-            <!-- Reply Form (Hidden by Default) -->
-            <form
-                id="reply-form-{{ comment.id }}"
-                class="reply-form mt-3"
-                method="POST"
-                action="{% url 'forum:add_comment' post.id %}"
-                enctype="multipart/form-data"
-                style="display: none;"
-            >
-                {% csrf_token %}
-                <textarea name="content" rows="3" class="form-control mb-2" placeholder="Write your reply..." required></textarea>
-                <input type="file" name="media" accept="image/*" class="form-control mb-2">
-                <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                <button type="submit" class="btn btn-primary">Submit Reply</button>
-            </form>
-        </div>
-    {% endfor %}
+            <!-- Sidebar (Right) -->
+            <div class="hidden lg:block lg:col-span-1">
+                <div class="sticky top-6 space-y-4">
+                    <!-- About PublicBridge Card -->
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <h3 class="font-bold text-gray-900 mb-3">About PublicBridge</h3>
+                        <p class="text-sm text-gray-700 mb-4">PublicBridge is a civic engagement platform connecting communities with local government, facilitating constructive dialogue on public issues.</p>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Platform Launched</span>
+                                <span class="font-medium">2023</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Active Communities</span>
+                                <span class="font-medium">150+</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Policy Impact</span>
+                                <span class="font-medium text-green-500">42 initiatives</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 px-4 rounded-full text-sm transition-colors mb-2">
+                                Start Discussion
+                            </button>
+                            <button class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-1.5 px-4 rounded-full text-sm transition-colors">
+                                Explore Communities
+                            </button>
+                        </div>
+                    </div>
 
-    <!-- Add a New Comment -->
-    <h3>Leave a Comment</h3>
-    <form method="POST" action="{% url 'forum:add_comment' post.id %}" enctype="multipart/form-data">
-        {% csrf_token %}
-        <textarea name="content" rows="5" class="form-control mb-3" placeholder="Write your comment..." required></textarea>
-        <input type="file" name="media" accept="image/*" class="form-control mb-3">
-        <button type="submit" class="btn btn-primary">Submit Comment</button>
-    </form>
+                    <!-- Related Discussions -->
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <h3 class="font-bold text-gray-900 mb-3">Related Discussions</h3>
+                        <div class="space-y-3">
+                            {% for i in "123" %}
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                                    <i class="fas fa-comment"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">Related civic discussion #{{ forloop.counter }}</p>
+                                    <p class="text-xs text-gray-500">{{ forloop.counter|add:"25" }} comments</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <!-- Civic Resources -->
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <h3 class="font-bold text-gray-900 mb-3">Civic Resources</h3>
+                        <div class="space-y-2 text-sm">
+                            <a href="#" class="flex items-center text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-file-alt mr-2"></i>
+                                <span>Local Government Contacts</span>
+                            </a>
+                            <a href="#" class="flex items-center text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-vote-yea mr-2"></i>
+                                <span>Upcoming Public Meetings</span>
+                            </a>
+                            <a href="#" class="flex items-center text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-landmark mr-2"></i>
+                                <span>Policy Making Process</span>
+                            </a>
+                            <a href="#" class="flex items-center text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-hands-helping mr-2"></i>
+                                <span>Get Involved Guide</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Footer Links -->
+                    <div class="text-xs text-gray-500 space-y-2 pt-4">
+                        <div class="flex flex-wrap gap-2">
+                            <a href="#" class="hover:underline">About</a>
+                            <a href="#" class="hover:underline">Help Center</a>
+                            <a href="#" class="hover:underline">Privacy</a>
+                            <a href="#" class="hover:underline">Terms</a>
+                            <a href="#" class="hover:underline">Communities</a>
+                            <a href="#" class="hover:underline">Feedback</a>
+                        </div>
+                        <div class="pt-2">
+                            <p>© 2023 PublicBridge. Building better communities together.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- JavaScript for Reply Toggle -->
+<style>
+    .prose {
+        line-height: 1.6;
+    }
+    
+    .prose p {
+        margin-bottom: 1rem;
+    }
+    
+    .prose p:last-child {
+        margin-bottom: 0;
+    }
+    
+    .fade-in {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
 <script>
+    // Reply form toggle functionality
     document.addEventListener("DOMContentLoaded", () => {
         const replyToggleButtons = document.querySelectorAll(".reply-toggle-btn");
         replyToggleButtons.forEach(button => {
             button.addEventListener("click", () => {
                 const replyFormId = button.getAttribute("data-reply-form-id");
-                const replyForm = document.getElementById(replyFormId);
-
-                // Toggle visibility of the reply form
-                if (replyForm.style.display === "none") {
-                    replyForm.style.display = "block";
-                } else {
-                    replyForm.style.display = "none";
-                }
+                toggleReplyForm(replyFormId);
             });
         });
     });
+
+    function toggleReplyForm(formId) {
+        const replyForm = document.getElementById(formId);
+        replyForm.classList.toggle('hidden');
+        if (!replyForm.classList.contains('hidden')) {
+            replyForm.classList.add('fade-in');
+            replyForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }
+
+    // Image preview functions
+    function previewReplyImage(input, previewId) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById(previewId);
+                const img = preview.querySelector('img');
+                img.src = e.target.result;
+                preview.classList.remove('hidden');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function removeReplyImage(inputId, previewId) {
+        document.getElementById(inputId).value = '';
+        document.getElementById(previewId).classList.add('hidden');
+    }
+
+    function previewCommentImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('comment-preview');
+                const img = preview.querySelector('img');
+                img.src = e.target.result;
+                preview.classList.remove('hidden');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function removeCommentImage() {
+        document.getElementById('comment-media').value = '';
+        document.getElementById('comment-preview').classList.add('hidden');
+    }
+
+    // Voting functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.upvote-btn, .downvote-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const postId = this.getAttribute('data-post-id');
+                const action = this.classList.contains('upvote-btn') ? 'upvote' : 'downvote';
+                
+                // Visual feedback
+                if (action === 'upvote') {
+                    this.classList.toggle('text-orange-500');
+                    this.classList.toggle('text-gray-400');
+                } else {
+                    this.classList.toggle('text-blue-600');
+                    this.classList.toggle('text-gray-400');
+                }
+                
+                // Call voting function
+                votePost(postId, action);
+            });
+        });
+    });
+
+    function votePost(postId, action) {
+        fetch(`/forum/post/${postId}/vote/?action=${action}`, {
+            method: 'GET',
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            // Update vote counts
+            const upvoteBtn = document.querySelector(`.upvote-btn[data-post-id="${postId}"]`);
+            const downvoteBtn = document.querySelector(`.downvote-btn[data-post-id="${postId}"]`);
+            
+            if (upvoteBtn && downvoteBtn) {
+                const upvoteCount = upvoteBtn.parentElement.querySelector('span');
+                const downvoteCount = downvoteBtn.parentElement.querySelector('span');
+                
+                upvoteCount.textContent = data.upvotes;
+                downvoteCount.textContent = data.downvotes;
+            }
+        })
+        .catch((error) => {
+            console.error('Error voting:', error);
+        });
+    }
 </script>
 {% endblock %}

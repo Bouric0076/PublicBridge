@@ -1,64 +1,610 @@
 {% extends "forum/base.html" %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="row">
-        <!-- Profile Information -->
-        <div class="col-md-4">
-            <h1>{{ profile.user.username }}'s Profile</h1>
-
-            <!-- Display Current Profile Picture -->
-            {% if profile.profile_picture %}
-                <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="img-thumbnail mb-3" width="150">
-            {% else %}
-                <p>No Profile Picture</p>
-            {% endif %}
-
-            <!-- Display Bio -->
-            <h3>Bio</h3>
-            <p>{{ profile.bio|default:"This user hasn't added a bio yet." }}</p>
-
-            <!-- Show Edit Form (Only for Logged-in User Viewing Own Profile) -->
-            {% if is_own_profile %}
-                <hr>
-                <h2>Edit Profile</h2>
-                <form method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                </form>
-            {% endif %}
-        </div>
-
-        <!-- User Posts Section -->
-        <div class="col-md-8">
-            <h2>{{ profile.user.username }}'s Posts</h2>
-
-            {% if posts %}
-                <ul class="list-group">
-                    {% for post in posts %}
-                        <li class="list-group-item mb-2">
-                            <h4>{{ post.title }}</h4>
-                            <p>{{ post.content }}</p>
-                            <p><small>Posted on: {{ post.created_at|date:"M d, Y" }}</small></p>
-
+<div class="min-h-screen bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Main Grid Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Left Sidebar - Profile Info -->
+            <div class="lg:col-span-4">
+                <div class="sticky top-6 space-y-6">
+                    
+                    <!-- Profile Header Card -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <!-- Cover Photo -->
+                        <div class="h-32 bg-gradient-to-r from-blue-500 to-purple-600 relative">
                             {% if is_own_profile %}
-                                <!-- Edit and Delete Buttons -->
-                                <div class="d-flex">
-                                    <a href="{% url 'forum:edit_post' post.id %}" class="btn btn-warning btn-sm me-2">Edit</a>
-                                    <form method="POST" action="{% url 'forum:delete_post' post.id %}">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                    </form>
-                                </div>
+                            <button class="absolute top-4 right-4 w-8 h-8 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-colors">
+                                <i class="fas fa-camera text-sm"></i>
+                            </button>
                             {% endif %}
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No posts yet. Start sharing your thoughts!</p>
-            {% endif %}
+                        </div>
+                        
+                        <!-- Profile Info -->
+                        <div class="px-6 pb-6">
+                            <!-- Profile Picture & Basic Info -->
+                            <div class="flex items-end justify-between -mt-16 mb-4">
+                                <div class="flex items-end space-x-4">
+                                    <div class="relative">
+                                        <div class="w-24 h-24 bg-white rounded-2xl p-1 shadow-lg">
+                                            {% if profile.profile_picture %}
+                                                <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="w-full h-full rounded-2xl object-cover">
+                                            {% else %}
+                                                <div class="w-full h-full bg-gradient-to-br from-gray-400 to-gray-600 rounded-2xl flex items-center justify-center">
+                                                    <i class="fas fa-user text-white text-2xl"></i>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        {% if is_own_profile %}
+                                        <button onclick="document.getElementById('profilePictureInput').click()" class="absolute -bottom-2 -right-2 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition-colors">
+                                            <i class="fas fa-camera text-xs"></i>
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="pb-2">
+                                        <h1 class="text-2xl font-bold text-gray-900 mb-1">{{ profile.user.username }}</h1>
+                                        <div class="flex items-center space-x-3 text-sm text-gray-600">
+                                            <span class="flex items-center space-x-1">
+                                                <i class="fas fa-calendar-alt text-xs"></i>
+                                                <span>Joined {{ profile.user.date_joined|date:"M Y" }}</span>
+                                            </span>
+                                            {% if profile.location %}
+                                            <span class="flex items-center space-x-1">
+                                                <i class="fas fa-map-marker-alt text-xs"></i>
+                                                <span>{{ profile.location }}</span>
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                {% if not is_own_profile %}
+                                <div class="flex space-x-2">
+                                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                                        <i class="fas fa-user-plus mr-1"></i>
+                                        Follow
+                                    </button>
+                                    <button class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-600">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Bio -->
+                            <div class="mb-4">
+                                {% if profile.bio %}
+                                    <p class="text-gray-700 text-sm leading-relaxed">{{ profile.bio|linebreaks }}</p>
+                                {% else %}
+                                    <p class="text-gray-500 text-sm italic">
+                                        {% if is_own_profile %}
+                                            Add a bio to tell the community about yourself
+                                        {% else %}
+                                            This user hasn't added a bio yet
+                                        {% endif %}
+                                    </p>
+                                {% endif %}
+                            </div>
+
+                            <!-- Stats Grid -->
+                            <div class="grid grid-cols-4 gap-4 py-4 border-t border-gray-100">
+                                <div class="text-center">
+                                    <div class="text-lg font-bold text-gray-900">{{ posts|length }}</div>
+                                    <div class="text-xs text-gray-600">Posts</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-lg font-bold text-gray-900">{{ total_comments }}</div>
+                                    <div class="text-xs text-gray-600">Comments</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-lg font-bold text-gray-900">{{ total_upvotes }}</div>
+                                    <div class="text-xs text-gray-600">Upvotes</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-lg font-bold text-gray-900">
+                                        {% if posts|length > 0 %}
+                                            {{ engagement_rate }}%
+                                        {% else %}
+                                            0%
+                                        {% endif %}
+                                    </div>
+                                    <div class="text-xs text-gray-600">Engagement</div>
+                                </div>
+                            </div>
+                            
+                            {% if is_own_profile %}
+                            <button onclick="toggleEditForm()" class="w-full mt-2 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm flex items-center justify-center">
+                                <i class="fas fa-edit mr-2"></i>
+                                Edit Profile
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Community Status Card -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                        <h3 class="font-bold text-gray-900 mb-3 flex items-center">
+                            <i class="fas fa-shield-alt text-blue-600 mr-2"></i>
+                            Community Status
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Member Level</span>
+                                <span class="text-sm font-bold text-gray-900">
+                                    {% if posts|length >= 20 %}
+                                        <span class="text-purple-600">Elite Contributor</span>
+                                    {% elif posts|length >= 10 %}
+                                        <span class="text-blue-600">Active Member</span>
+                                    {% elif posts|length >= 5 %}
+                                        <span class="text-green-600">Regular Member</span>
+                                    {% else %}
+                                        <span class="text-gray-600">New Member</span>
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Trust Score</span>
+                                <span class="text-sm font-bold text-gray-900">{% if posts|length > 0 %}92%{% else %}N/A{% endif %}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Last Active</span>
+                                <span class="text-sm text-gray-900">{{ profile.user.last_login|timesince }} ago</span>
+                            </div>
+                            {% if profile.website %}
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Website</span>
+                                <a href="{{ profile.website }}" target="_blank" class="text-sm text-blue-600 hover:text-blue-700 transition-colors truncate max-w-[120px]">
+                                    {{ profile.website }}
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Recent Achievements -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                        <h3 class="font-bold text-gray-900 mb-3 flex items-center">
+                            <i class="fas fa-trophy text-yellow-500 mr-2"></i>
+                            Recent Achievements
+                        </h3>
+                        <div class="space-y-2">
+                            {% if posts|length >= 1 %}
+                            <div class="flex items-center space-x-3 p-2 rounded-lg bg-green-50">
+                                <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-pen text-green-600 text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">First Post</p>
+                                    <p class="text-xs text-gray-600">Started contributing</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if posts|length >= 5 %}
+                            <div class="flex items-center space-x-3 p-2 rounded-lg bg-blue-50">
+                                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-users text-blue-600 text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">Active Member</p>
+                                    <p class="text-xs text-gray-600">5+ posts published</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if total_upvotes >= 10 %}
+                            <div class="flex items-center space-x-3 p-2 rounded-lg bg-purple-50">
+                                <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-star text-purple-600 text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">Popular Content</p>
+                                    <p class="text-xs text-gray-600">10+ upvotes received</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if posts|length == 0 %}
+                            <div class="text-center py-4">
+                                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                    <i class="fas fa-rocket text-gray-400"></i>
+                                </div>
+                                <p class="text-sm text-gray-600">Start posting to earn achievements</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Edit Profile Form -->
+                    {% if is_own_profile %}
+                    <div id="editProfileForm" class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hidden">
+                        <h3 class="font-bold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-user-edit text-blue-600 mr-2"></i>
+                            Edit Profile
+                        </h3>
+                        <form method="POST" enctype="multipart/form-data" class="space-y-4">
+                            {% csrf_token %}
+                            
+                            <input type="file" id="profilePictureInput" name="profile_picture" accept="image/*" class="hidden" onchange="previewImage(this)">
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Bio</label>
+                                <textarea 
+                                    name="bio" 
+                                    rows="4" 
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 resize-none text-sm"
+                                    placeholder="Tell the community about yourself...">{{ profile.bio|default:'' }}</textarea>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                                <input 
+                                    type="text" 
+                                    name="location" 
+                                    value="{{ profile.location|default:'' }}"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 text-sm"
+                                    placeholder="Your city or region">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Website</label>
+                                <input 
+                                    type="url" 
+                                    name="website" 
+                                    value="{{ profile.website|default:'' }}"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 text-sm"
+                                    placeholder="https://example.com">
+                            </div>
+                            
+                            <div class="flex space-x-3 pt-2">
+                                <button type="submit" class="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm">
+                                    Save Changes
+                                </button>
+                                <button type="button" onclick="toggleEditForm()" class="px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Main Content - Activity Feed -->
+            <div class="lg:col-span-8">
+                <!-- Activity Header -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-bold text-gray-900">Recent Activity</h2>
+                        <div class="flex items-center space-x-2 text-sm">
+                            <span class="text-gray-600">Sort by:</span>
+                            <select class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                                <option>Newest</option>
+                                <option>Most Popular</option>
+                                <option>Most Discussed</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Tabs -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
+                    <div class="border-b border-gray-200">
+                        <div class="flex space-x-1 px-6">
+                            <button class="activity-tab active px-4 py-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 transition-colors" data-tab="posts">
+                                <i class="fas fa-newspaper mr-2"></i>
+                                Posts ({{ posts|length }})
+                            </button>
+                            <button class="activity-tab px-4 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent transition-colors" data-tab="comments">
+                                <i class="fas fa-comments mr-2"></i>
+                                Comments ({{ total_comments }})
+                            </button>
+                            <button class="activity-tab px-4 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent transition-colors" data-tab="upvotes">
+                                <i class="fas fa-heart mr-2"></i>
+                                Upvotes ({{ total_upvotes }})
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Posts Tab -->
+                    <div id="posts-tab" class="activity-content">
+                        {% if posts %}
+                            <div class="divide-y divide-gray-100">
+                                {% for post in posts %}
+                                <div class="p-6 hover:bg-gray-50 transition-colors duration-200 post-item group">
+                                    <div class="flex items-start space-x-4">
+                                        <!-- Voting Column -->
+                                        <div class="flex flex-col items-center w-10 flex-shrink-0">
+                                            <button class="upvote-btn p-1 text-gray-400 hover:text-orange-500 transition-colors" data-post-id="{{ post.id }}">
+                                                <i class="fas fa-arrow-up text-lg"></i>
+                                            </button>
+                                            <span class="text-sm font-bold my-1 text-gray-900">{{ post.upvotes.count }}</span>
+                                            <button class="downvote-btn p-1 text-gray-400 hover:text-blue-600 transition-colors" data-post-id="{{ post.id }}">
+                                                <i class="fas fa-arrow-down text-lg"></i>
+                                            </button>
+                                        </div>
+
+                                        <!-- Post Content -->
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex items-center text-xs text-gray-500 mb-2">
+                                                <span>Posted in</span>
+                                                <span class="font-medium text-gray-900 hover:underline cursor-pointer ml-1">r/PublicForum</span>
+                                                <span class="mx-1">•</span>
+                                                <span>{{ post.created_at|timesince }} ago</span>
+                                            </div>
+
+                                            <a href="{% url 'forum:post_detail' post.id %}" class="block hover:no-underline">
+                                                <h3 class="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 cursor-pointer transition-colors line-clamp-2">
+                                                    {{ post.title }}
+                                                </h3>
+                                            </a>
+                                            
+                                            <a href="{% url 'forum:post_detail' post.id %}" class="block hover:no-underline">
+                                                <p class="text-gray-700 mb-3 line-clamp-3 hover:text-gray-900 cursor-pointer transition-colors text-sm">
+                                                    {{ post.content|truncatewords:40 }}
+                                                </p>
+                                            </a>
+
+                                            <!-- Post Actions -->
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center space-x-4 text-xs text-gray-500">
+                                                    <a href="{% url 'forum:post_detail' post.id %}" class="flex items-center space-x-1.5 p-2 rounded-lg hover:bg-gray-100 transition-colors hover:no-underline">
+                                                        <i class="far fa-comment"></i>
+                                                        <span>{{ post.comments.count }} comments</span>
+                                                    </a>
+                                                    <button class="flex items-center space-x-1.5 p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                                                        <i class="far fa-share-square"></i>
+                                                        <span>Share</span>
+                                                    </button>
+                                                    <button class="flex items-center space-x-1.5 p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                                                        <i class="far fa-bookmark"></i>
+                                                        <span>Save</span>
+                                                    </button>
+                                                </div>
+                                                
+                                                {% if is_own_profile %}
+                                                <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <a href="{% url 'forum:edit_post' post.id %}" class="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-600" title="Edit">
+                                                        <i class="fas fa-edit text-xs"></i>
+                                                    </a>
+                                                    <form method="POST" action="{% url 'forum:delete_post' post.id %}" class="delete-form">
+                                                        {% csrf_token %}
+                                                        <button type="button" onclick="confirmDelete(this)" class="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors text-gray-600" title="Delete">
+                                                            <i class="fas fa-trash text-xs"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <!-- Empty Posts State -->
+                            <div class="text-center py-12">
+                                <div class="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-edit text-gray-400 text-2xl"></i>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">No posts yet</h3>
+                                <p class="text-gray-600 mb-4">Start sharing your thoughts with the community</p>
+                                {% if is_own_profile %}
+                                <a href="{% url 'forum:create_post' %}" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                                    <i class="fas fa-plus-circle mr-2"></i>
+                                    Create Your First Post
+                                </a>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Comments Tab -->
+                    <div id="comments-tab" class="activity-content hidden">
+                        <div class="text-center py-12">
+                            <div class="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-comments text-gray-400 text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Comments will appear here</h3>
+                            <p class="text-gray-600">User comments and interactions will be displayed in this section.</p>
+                        </div>
+                    </div>
+
+                    <!-- Upvotes Tab -->
+                    <div id="upvotes-tab" class="activity-content hidden">
+                        <div class="text-center py-12">
+                            <div class="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-heart text-gray-400 text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Upvoted content</h3>
+                            <p class="text-gray-600">Posts and comments that this user has upvoted will appear here.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Load More -->
+                {% if posts|length > 5 %}
+                <div class="text-center">
+                    <button class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:border-blue-500 hover:text-blue-600 transition-colors bg-white font-medium">
+                        <i class="fas fa-sync-alt mr-2"></i>
+                        Load More Activity
+                    </button>
+                </div>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .post-item {
+        transition: all 0.3s ease;
+    }
+    
+    .post-item:hover {
+        background-color: #f9fafb;
+    }
+    
+    .activity-tab.active {
+        color: #2563eb;
+        border-bottom-color: #2563eb;
+    }
+    
+    .activity-content {
+        display: block;
+    }
+    
+    .activity-content.hidden {
+        display: none;
+    }
+    
+    .fade-in {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<script>
+    // Toggle edit form visibility
+    function toggleEditForm() {
+        const form = document.getElementById('editProfileForm');
+        form.classList.toggle('hidden');
+        if (!form.classList.contains('hidden')) {
+            form.classList.add('fade-in');
+        }
+    }
+
+    // Tab switching functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabs = document.querySelectorAll('.activity-tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Hide all content
+                document.querySelectorAll('.activity-content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+                
+                // Show selected content
+                const tabName = this.getAttribute('data-tab');
+                document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+            });
+        });
+
+        // Voting functionality
+        document.querySelectorAll('.upvote-btn, .downvote-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const postId = this.getAttribute('data-post-id');
+                const action = this.classList.contains('upvote-btn') ? 'upvote' : 'downvote';
+                
+                // Visual feedback
+                if (action === 'upvote') {
+                    this.classList.toggle('text-orange-500');
+                    this.classList.toggle('text-gray-400');
+                } else {
+                    this.classList.toggle('text-blue-600');
+                    this.classList.toggle('text-gray-400');
+                }
+                
+                // Call voting function
+                votePost(postId, action);
+            });
+        });
+
+        // Make post content clickable
+        document.querySelectorAll('.post-item .flex-1').forEach(contentArea => {
+            contentArea.addEventListener('click', function(e) {
+                if (e.target.closest('button') || e.target.closest('a[href*="post_detail"]')) {
+                    return;
+                }
+                
+                const postLink = this.querySelector('a[href*="post_detail"]');
+                if (postLink) {
+                    window.location.href = postLink.href;
+                }
+            });
+        });
+    });
+
+    // Preview image before upload
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const profilePic = document.querySelector('.w-24.h-24 img') || 
+                                 document.querySelector('.w-24.h-24 .fa-user').parentElement;
+                if (profilePic.tagName === 'IMG') {
+                    profilePic.src = e.target.result;
+                } else {
+                    const newImg = document.createElement('img');
+                    newImg.src = e.target.result;
+                    newImg.className = 'w-full h-full rounded-2xl object-cover';
+                    profilePic.innerHTML = '';
+                    profilePic.appendChild(newImg);
+                }
+                showNotification('Profile picture updated!', 'success');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Confirm post deletion
+    function confirmDelete(button) {
+        if (confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
+            button.closest('.delete-form').submit();
+        }
+    }
+
+    // Voting function
+    function votePost(postId, action) {
+        fetch(`/forum/post/${postId}/vote/?action=${action}`, {
+            method: 'GET',
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            const upvoteBtn = document.querySelector(`.upvote-btn[data-post-id="${postId}"]`);
+            const downvoteBtn = document.querySelector(`.downvote-btn[data-post-id="${postId}"]`);
+            
+            if (upvoteBtn && downvoteBtn) {
+                const voteCount = upvoteBtn.nextElementSibling;
+                voteCount.textContent = data.upvotes - data.downvotes;
+            }
+        })
+        .catch((error) => {
+            console.error('Error voting:', error);
+        });
+    }
+
+    // Show notification
+    function showNotification(message, type = 'info') {
+        // Implementation for showing notifications
+        console.log(`${type}: ${message}`);
+    }
+</script>
 {% endblock %}

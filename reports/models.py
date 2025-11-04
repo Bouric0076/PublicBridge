@@ -5,8 +5,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.utils import timezone
 
-from GovernmentAdmin.models import Ministry
-from ministries.models import Ministry
+from ministries.models import Ministry  # Use consolidated Ministry model
 from users.models import GovernmentAdmin
 from utils.nlp_utils import analyze_text  # Use actual NLP function
 

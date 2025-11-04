@@ -4,58 +4,555 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}User Dashboard{% endblock %}</title>
-
-    <!-- Google Fonts & Bootstrap -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
-
-    <!-- Leaflet Map -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
-    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <title>{% block title %}PublicBridge - Civic Engagement Platform{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary: #059669;
+            --primary-light: #10b981;
+            --primary-dark: #047857;
+            --secondary: #3b82f6;
+            --accent: #8b5cf6;
+        }
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .sidebar-gradient {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid white;
+        }
+        
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 25px -8px rgba(5, 150, 105, 0.15);
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .scrollbar-thin {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e0 transparent;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background-color: #cbd5e0;
+            border-radius: 3px;
+        }
+        
+        /* Header specific styles */
+        .header-shadow {
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        
+        .notification-badge-lg {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 12px;
+            height: 12px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        
+        .search-focus {
+            transition: all 0.3s ease;
+        }
+        
+        .search-focus:focus {
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+            border-color: var(--primary);
+        }
+        
+        /* Mobile responsive improvements */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .sidebar-mobile {
+                width: 280px;
+                height: 100vh;
+                position: fixed;
+                top: 0;
+                left: 0;
+                z-index: 50;
+            }
+            
+            .mobile-menu-button {
+                display: flex;
+                z-index: 60;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .search-bar {
+                width: 100%;
+                order: 3;
+            }
+            
+            .header-actions {
+                order: 2;
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .header-title {
+                order: 1;
+                width: 100%;
+            }
+            
+            .user-menu-mobile {
+                align-self: flex-end;
+            }
+            
+            .header-main {
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+            }
+        }
+        
+        /* Mobile menu toggle */
+        .mobile-menu-button {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 60;
+            width: 44px;
+            height: 44px;
+            background: var(--primary);
+            border-radius: 10px;
+            color: white;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-menu-button:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-button {
+                display: flex;
+            }
+            
+            .sidebar-mobile-hidden {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar-mobile-visible {
+                transform: translateX(0);
+                box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            }
+            
+            .header-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 40;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+            }
+            
+            .header-overlay-visible {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+        
+        /* Desktop specific styles */
+        @media (min-width: 769px) {
+            .header-main {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+    </style>
 </head>
-<body>
-    <div class="dashboard-container d-flex">
+<body class="bg-gray-50 min-h-screen">
+    <!-- Mobile Menu Overlay -->
+    <div class="header-overlay lg:hidden" id="headerOverlay"></div>
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-button lg:hidden" id="mobileMenuButton" aria-label="Toggle menu">
+        <i class="fas fa-bars text-lg" id="menuIcon"></i>
+    </button>
+
+    <!-- Dashboard Container -->
+    <div class="flex h-screen overflow-hidden dashboard-container">
         <!-- Sidebar -->
-        <nav class="sidebar">
-            <div class="sidebar-header">
-                <h4 class="brand">
-                    <a href="#" class="text-white">MyDashboard</a>
-                </h4>
+        <div class="sidebar-gradient w-64 lg:w-64 flex-shrink-0 flex flex-col sidebar-mobile sidebar-mobile-hidden lg:sidebar-mobile-visible transition-all duration-300 z-50 fixed lg:relative h-full" id="sidebar">
+            <!-- Brand -->
+            <div class="p-6 border-b border-white/20">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-bridge text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-white font-bold text-lg">Public<span class="text-emerald-200">Bridge</span></h2>
+                        <p class="text-white/70 text-xs">Civic Platform</p>
+                    </div>
+                </div>
             </div>
-            <ul class="nav flex-column">
-                <li><a href="{% url 'dashboard' %}" class="nav-link"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
-                <li><a href="{% url 'forum:feed' %}" class="nav-link"><i class="bi bi-chat"></i> Feed</a></li>
-                <li><a href="{% url 'live_alerts' %}" class="nav-link"><i class="bi bi-bell"></i> Live Alerts</a></li>
-                <li><a href="{% url 'submit_report' %}" class="nav-link"><i class="bi bi-file-earmark-text"></i> Submit Report</a></li>
-                <li><a href="{% url 'forum:notifications' %}" class="nav-link"><i class="bi bi-bell"></i> Notifications</a></li>
-                <li><a href="{% url 'forum:inbox' %}" class="nav-link"><i class="bi bi-envelope"></i> Inbox</a></li>
-                <li class="mt-auto"><a href="{% url 'logout' %}" class="nav-link logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
-            </ul>
-        </nav>
+
+            <!-- User Profile -->
+            <div class="p-4 border-b border-white/20">
+                <div class="flex items-center space-x-3">
+                    <div class="relative">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                            {% if user.profile.profile_picture %}
+                                <img src="{{ user.profile.profile_picture.url }}" alt="{{ user.username }}" class="w-12 h-12 rounded-xl object-cover">
+                            {% else %}
+                                <i class="fas fa-user text-white text-lg"></i>
+                            {% endif %}
+                        </div>
+                        <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-white font-semibold text-sm truncate">
+                            {% if user.get_full_name %}
+                                {{ user.get_full_name }}
+                            {% else %}
+                                {{ user.username }}
+                            {% endif %}
+                        </p>
+                        <p class="text-white/70 text-xs capitalize">
+                            {% if user.role %}
+                                {{ user.role }}
+                            {% else %}
+                                Citizen
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="flex-1 p-4 space-y-2 scrollbar-thin overflow-y-auto">
+                <a href="{% url 'dashboard' %}" class="nav-item flex items-center space-x-3 p-3 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200 group">
+                    <i class="fas fa-chart-pie w-5 text-center group-hover:scale-110 transition-transform"></i>
+                    <span class="font-medium">Dashboard</span>
+                </a>
+                
+                <a href="{% url 'submit_report' %}" class="nav-item flex items-center space-x-3 p-3 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200 group">
+                    <i class="fas fa-flag w-5 text-center group-hover:scale-110 transition-transform"></i>
+                    <span class="font-medium">Report Issue</span>
+                </a>
+                
+                <a href="{% url 'forum:feed' %}" class="nav-item flex items-center space-x-3 p-3 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200 group">
+                    <i class="fas fa-comments w-5 text-center group-hover:scale-110 transition-transform"></i>
+                    <span class="font-medium">Community Feed</span>
+                </a>
+                
+                <a href="{% url 'live_alerts' %}" class="nav-item flex items-center space-x-3 p-3 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200 group">
+                    <i class="fas fa-bell w-5 text-center group-hover:scale-110 transition-transform"></i>
+                    <span class="font-medium">Live Alerts</span>
+                    {% block live_alerts_badge %}{% endblock %}
+                </a>
+                
+                <a href="#" class="nav-item flex items-center space-x-3 p-3 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200 group">
+                    <i class="fas fa-chart-line w-5 text-center group-hover:scale-110 transition-transform"></i>
+                    <span class="font-medium">Track Issues</span>
+                </a>
+                
+                <a href="{% url 'forum:notifications' %}" class="nav-item flex items-center space-x-3 p-3 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200 group">
+                    <i class="fas fa-bell w-5 text-center group-hover:scale-110 transition-transform"></i>
+                    <span class="font-medium">Notifications</span>
+                    {% block notifications_badge %}{% endblock %}
+                </a>
+                
+                <a href="{% url 'forum:inbox' %}" class="nav-item flex items-center space-x-3 p-3 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200 group">
+                    <i class="fas fa-envelope w-5 text-center group-hover:scale-110 transition-transform"></i>
+                    <span class="font-medium">Messages</span>
+                    {% block messages_badge %}{% endblock %}
+                </a>
+            </nav>
+
+            <!-- Footer -->
+            <div class="p-4 border-t border-white/20">
+                <a href="{% url 'logout' %}" class="flex items-center space-x-3 p-3 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200 group">
+                    <i class="fas fa-sign-out-alt w-5 text-center group-hover:scale-110 transition-transform"></i>
+                    <span class="font-medium">Logout</span>
+                </a>
+            </div>
+        </div>
 
         <!-- Main Content -->
-        <div class="main-content">
-            <!-- Header -->
-            <header class="header">
-                <h1 class="fs-4">{% block header %}Dashboard{% endblock %}</h1>
-                <div class="user-info">
-                    <input type="text" class="form-control search-bar" placeholder="Search...">
-                    <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}">
-                    <span class="ms-2">{{ user.username }}</span>
+        <div class="flex-1 flex flex-col overflow-hidden lg:ml-0">
+            <!-- Enhanced Header -->
+            <header class="glass-effect border-b border-gray-200/50 header-shadow header-main">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-0 p-4 lg:p-6">
+                    <!-- Page Title Section -->
+                    <div class="header-title">
+                        <div class="flex items-center space-x-3">
+                            <div class="lg:hidden flex-shrink-0">
+                                <div class="w-10 h-10 bg-gradient-to-r from-primary to-primary-light rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-bridge text-white text-lg"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h1 class="text-xl lg:text-2xl font-bold text-gray-800 flex items-center">
+                                    {% block page_title %}Dashboard{% endblock %}
+                                    <span class="ml-2 hidden lg:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                                        <i class="fas fa-circle text-[8px] mr-1 animate-pulse"></i>
+                                        Live
+                                    </span>
+                                </h1>
+                                <p class="text-gray-600 mt-1 text-sm lg:text-base">{% block page_subtitle %}Welcome back! Here's what's happening in your community.{% endblock %}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Actions Section -->
+                    <div class="flex items-center space-x-4 header-actions">
+                        <!-- Search Bar -->
+                        <div class="relative search-bar flex-1 lg:flex-none">
+                            <div class="relative">
+                                <input type="text" placeholder="Search reports, issues..." 
+                                       class="search-focus pl-10 pr-4 py-2.5 w-full lg:w-80 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all duration-200 bg-gray-50/70">
+                                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                                <div class="absolute right-3 top-3 hidden lg:block">
+                                    <kbd class="px-1.5 py-0.5 text-xs font-semibold text-gray-500 bg-gray-100 border border-gray-300 rounded">⌘K</kbd>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex items-center space-x-2 lg:space-x-3">
+                            <!-- Notification Bell -->
+                            <button class="relative p-2.5 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-xl transition-all duration-200 group">
+                                <i class="fas fa-bell text-lg group-hover:scale-110 transition-transform"></i>
+                                <span class="notification-badge-lg pulse-dot"></span>
+                                {% block header_notifications_badge %}{% endblock %}
+                            </button>
+                            
+                            <!-- Quick Report Button -->
+                            <a href="{% url 'submit_report' %}" class="hidden sm:flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-primary to-primary-light text-white rounded-xl hover:from-primary-dark hover:to-primary transition-all duration-200 shadow-sm hover:shadow-md">
+                                <i class="fas fa-plus text-sm"></i>
+                                <span class="font-medium text-sm">New Report</span>
+                            </a>
+                            
+                            <!-- User Menu -->
+                            <div class="flex items-center space-x-3 p-2 rounded-xl hover:bg-gray-100 transition-colors duration-200 cursor-pointer user-menu-mobile group relative">
+                                <div class="w-8 h-8 bg-gradient-to-r from-primary to-primary-light rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                                    {% if user.profile.profile_picture %}
+                                        <img src="{{ user.profile.profile_picture.url }}" alt="{{ user.username }}" class="w-8 h-8 rounded-lg object-cover">
+                                    {% else %}
+                                        <span class="text-white font-semibold text-sm">{{ user.username|first|upper }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="hidden lg:block text-left">
+                                    <span class="font-medium text-gray-700 block text-sm">{{ user.username }}</span>
+                                    <span class="text-xs text-gray-500 capitalize">
+                                        {% if user.role %}
+                                            {{ user.role }}
+                                        {% else %}
+                                            Citizen
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <i class="fas fa-chevron-down text-gray-400 text-sm hidden lg:block group-hover:rotate-180 transition-transform"></i>
+                                
+                                <!-- User dropdown menu (hidden by default) -->
+                                <div class="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                        <i class="fas fa-user mr-2 text-gray-400"></i>
+                                        Profile
+                                    </a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                        <i class="fas fa-cog mr-2 text-gray-400"></i>
+                                        Settings
+                                    </a>
+                                    <div class="border-t border-gray-200 my-1"></div>
+                                    <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-50">
+                                        <i class="fas fa-sign-out-alt mr-2"></i>
+                                        Logout
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                
+                <!-- Quick Stats Bar (Desktop only) -->
             </header>
 
-            <!-- Page Content -->
-            <main>
-                {% block content %}
-                {% endblock %}
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-y-auto p-4 lg:p-6 bg-gray-50/50 scrollbar-thin">
+                <!-- Stats Overview Section -->
+                {% block stats_overview %}{% endblock %}
+                
+                <!-- Main Content Block -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200/50 overflow-hidden">
+                    {% block content %}
+                    <!-- Default content will be overridden by child templates -->
+                    {% endblock %}
+                </div>
+
+                <!-- Additional Content Blocks -->
+                {% block additional_content %}{% endblock %}
             </main>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add active state to current page nav item
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (item.getAttribute('href') === currentPath) {
+                    item.classList.add('active');
+                }
+            });
+
+            // Mobile menu toggle functionality
+            const mobileMenuButton = document.getElementById('mobileMenuButton');
+            const sidebar = document.getElementById('sidebar');
+            const headerOverlay = document.getElementById('headerOverlay');
+            const menuIcon = document.getElementById('menuIcon');
+            
+            if (mobileMenuButton && sidebar && headerOverlay) {
+                mobileMenuButton.addEventListener('click', function() {
+                    sidebar.classList.toggle('sidebar-mobile-hidden');
+                    sidebar.classList.toggle('sidebar-mobile-visible');
+                    headerOverlay.classList.toggle('header-overlay-visible');
+                    
+                    // Toggle menu icon between bars and times
+                    if (menuIcon.classList.contains('fa-bars')) {
+                        menuIcon.classList.remove('fa-bars');
+                        menuIcon.classList.add('fa-times');
+                    } else {
+                        menuIcon.classList.remove('fa-times');
+                        menuIcon.classList.add('fa-bars');
+                    }
+                });
+                
+                // Close sidebar when clicking on overlay
+                headerOverlay.addEventListener('click', function() {
+                    sidebar.classList.add('sidebar-mobile-hidden');
+                    sidebar.classList.remove('sidebar-mobile-visible');
+                    headerOverlay.classList.remove('header-overlay-visible');
+                    menuIcon.classList.remove('fa-times');
+                    menuIcon.classList.add('fa-bars');
+                });
+            }
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                if (window.innerWidth < 1024) {
+                    const isClickInsideSidebar = sidebar.contains(event.target);
+                    const isClickOnMenuButton = mobileMenuButton.contains(event.target);
+                    
+                    if (!isClickInsideSidebar && !isClickOnMenuButton && sidebar.classList.contains('sidebar-mobile-visible')) {
+                        sidebar.classList.remove('sidebar-mobile-visible');
+                        sidebar.classList.add('sidebar-mobile-hidden');
+                        headerOverlay.classList.remove('header-overlay-visible');
+                        menuIcon.classList.remove('fa-times');
+                        menuIcon.classList.add('fa-bars');
+                    }
+                }
+            });
+
+            // Search functionality
+            const searchInput = document.querySelector('.search-focus');
+            if (searchInput) {
+                // Add keyboard shortcut for search
+                document.addEventListener('keydown', function(e) {
+                    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                        e.preventDefault();
+                        searchInput.focus();
+                    }
+                });
+                
+                // Clear search on escape
+                searchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        searchInput.blur();
+                    }
+                });
+            }
+
+            // Initialize any global functionality here
+            console.log('PublicBridge Dashboard initialized');
+        });
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
 </body>
 </html>

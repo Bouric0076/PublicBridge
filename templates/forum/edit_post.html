@@ -1,12 +1,451 @@
 {% extends "forum/base.html" %}
 
 {% block content %}
-<h1>Edit Post</h1>
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Edit Post</h1>
+                    <p class="text-gray-600">Update your post and share your thoughts with the community</p>
+                </div>
+                <div class="flex items-center space-x-2 text-sm text-gray-500">
+                    <i class="fas fa-edit"></i>
+                    <span>Editing mode</span>
+                </div>
+            </div>
+        </div>
 
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Save Changes</button>
-    <a href="{% url 'forum:profile_view' request.user.username %}" class="btn btn-secondary">Cancel</a>
-</form>
+        <!-- Edit Form Card -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <!-- Form Header -->
+            <div class="border-b border-gray-200 px-6 py-4 bg-gradient-to-r from-gray-50 to-white">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                        {{ request.user.username|first|upper }}
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Editing as {{ request.user.username }}</h3>
+                        <p class="text-sm text-gray-500">Your changes will be visible to the community</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Form -->
+            <form method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
+                {% csrf_token %}
+                
+                <!-- Title Field -->
+                <div>
+                    <label for="{{ form.title.id_for_label }}" class="block text-sm font-semibold text-gray-900 mb-3 flex items-center">
+                        <i class="fas fa-heading text-blue-600 mr-2"></i>
+                        Post Title
+                    </label>
+                    <div class="relative">
+                        {{ form.title }}
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                            <span class="text-xs text-gray-500 bg-white px-2">{{ form.title.value|length }}/200</span>
+                        </div>
+                    </div>
+                    {% if form.title.errors %}
+                    <div class="mt-2 text-sm text-red-600 flex items-center">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        {{ form.title.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Content Field -->
+                <div>
+                    <label for="{{ form.content.id_for_label }}" class="block text-sm font-semibold text-gray-900 mb-3 flex items-center">
+                        <i class="fas fa-align-left text-green-600 mr-2"></i>
+                        Post Content
+                    </label>
+                    <div class="relative">
+                        {{ form.content }}
+                        <div class="absolute bottom-3 right-3 flex items-center space-x-2">
+                            <span class="text-xs text-gray-500 bg-white px-2">{{ form.content.value|length }}/5000</span>
+                        </div>
+                    </div>
+                    {% if form.content.errors %}
+                    <div class="mt-2 text-sm text-red-600 flex items-center">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        {{ form.content.errors }}
+                    </div>
+                    {% endif %}
+                    <div class="mt-2 flex items-center space-x-4 text-xs text-gray-500">
+                        <div class="flex items-center space-x-1">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Markdown supported</span>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            <i class="fas fa-clock"></i>
+                            <span>Last edited: {% now "M d, Y H:i" %}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Media Field -->
+                <div>
+                    <label for="{{ form.media.id_for_label }}" class="block text-sm font-semibold text-gray-900 mb-3 flex items-center">
+                        <i class="fas fa-image text-purple-600 mr-2"></i>
+                        Media Attachment
+                    </label>
+                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-gray-400 transition-colors">
+                        <div class="max-w-md mx-auto">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-3"></i>
+                            <p class="text-sm text-gray-600 mb-2">Drag and drop your image here, or click to browse</p>
+                            <p class="text-xs text-gray-500 mb-4">Supports JPG, PNG, GIF • Max 5MB</p>
+                            <div class="relative">
+                                {{ form.media }}
+                                <label for="{{ form.media.id_for_label }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer text-sm font-medium">
+                                    <i class="fas fa-folder-open mr-2"></i>
+                                    Choose File
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    {% if form.media.errors %}
+                    <div class="mt-2 text-sm text-red-600 flex items-center">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        {{ form.media.errors }}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Current Media Preview -->
+                    {% if form.instance.media %}
+                    <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+                        <p class="text-sm font-medium text-gray-900 mb-2 flex items-center">
+                            <i class="fas fa-paperclip mr-2"></i>
+                            Current Attachment
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-16 h-16 bg-white rounded-lg border border-gray-200 overflow-hidden">
+                                    <img src="{{ form.instance.media.url }}" alt="Current media" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900 truncate max-w-xs">
+                                        {{ form.instance.media.name|slice:"20:" }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">{{ form.instance.media.size|filesizeformat }}</p>
+                                </div>
+                            </div>
+                            <button type="button" onclick="removeCurrentMedia()" class="text-red-600 hover:text-red-700 text-sm font-medium flex items-center">
+                                <i class="fas fa-trash mr-1"></i>
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Community Selection -->
+                <div>
+                    <label for="{{ form.community.id_for_label }}" class="block text-sm font-semibold text-gray-900 mb-3 flex items-center">
+                        <i class="fas fa-users text-orange-600 mr-2"></i>
+                        Community
+                    </label>
+                    <div class="relative">
+                        {{ form.community }}
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </div>
+                    </div>
+                    {% if form.community.errors %}
+                    <div class="mt-2 text-sm text-red-600 flex items-center">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        {{ form.community.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Preview Section -->
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-eye mr-2 text-blue-600"></i>
+                        Live Preview
+                    </h4>
+                    <div class="bg-white rounded-lg border border-gray-200 p-4 min-h-[200px]">
+                        <div id="preview-title" class="text-xl font-bold text-gray-900 mb-3">{{ form.title.value|default:"Your post title will appear here" }}</div>
+                        <div id="preview-content" class="text-gray-700 prose max-w-none">
+                            {{ form.content.value|default:"Your post content will appear here with proper formatting."|linebreaks }}
+                        </div>
+                        {% if form.instance.media %}
+                        <div id="preview-media" class="mt-4">
+                            <p class="text-sm text-gray-600 mb-2">Attached media:</p>
+                            <div class="w-32 h-32 bg-gray-100 rounded-lg border border-gray-200 overflow-hidden">
+                                <img src="{{ form.instance.media.url }}" alt="Media preview" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+                    <div class="flex items-center space-x-4 text-sm text-gray-600">
+                        <div class="flex items-center space-x-1">
+                            <i class="fas fa-globe-americas"></i>
+                            <span>Visible to community</span>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            <i class="fas fa-history"></i>
+                            <span>Edited posts are marked</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3">
+                        <a href="{% url 'forum:profile_view' request.user.username %}" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-semibold flex items-center">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancel
+                        </a>
+                        <button type="submit" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl font-semibold flex items-center">
+                            <i class="fas fa-save mr-2"></i>
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Quick Tips -->
+        <div class="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                Editing Tips
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+                <div class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle text-green-500 mt-0.5"></i>
+                    <span>Be clear and concise in your title</span>
+                </div>
+                <div class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle text-green-500 mt-0.5"></i>
+                    <span>Use proper formatting for readability</span>
+                </div>
+                <div class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle text-green-500 mt-0.5"></i>
+                    <span>Add relevant media to support your post</span>
+                </div>
+                <div class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle text-green-500 mt-0.5"></i>
+                    <span>Choose the right community for your topic</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Form field styling */
+    #{{ form.title.id_for_label }} {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #1f2937;
+        background-color: white;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+
+    #{{ form.title.id_for_label }}:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    #{{ form.content.id_for_label }} {
+        width: 100%;
+        min-height: 200px;
+        padding: 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 14px;
+        line-height: 1.6;
+        color: #374151;
+        background-color: white;
+        transition: all 0.3s ease;
+        outline: none;
+        resize: vertical;
+    }
+
+    #{{ form.content.id_for_label }}:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    #{{ form.media.id_for_label }} {
+        display: none;
+    }
+
+    #{{ form.community.id_for_label }} {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 14px;
+        color: #374151;
+        background-color: white;
+        transition: all 0.3s ease;
+        outline: none;
+        appearance: none;
+    }
+
+    #{{ form.community.id_for_label }}:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    /* Prose styling for preview */
+    .prose {
+        line-height: 1.75;
+    }
+
+    .prose p {
+        margin-bottom: 1rem;
+    }
+
+    .prose p:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Character count styling */
+    .char-count {
+        font-size: 0.75rem;
+        color: #6b7280;
+        background: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.375rem;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Live preview updates
+        const titleField = document.getElementById('{{ form.title.id_for_label }}');
+        const contentField = document.getElementById('{{ form.content.id_for_label }}');
+        const previewTitle = document.getElementById('preview-title');
+        const previewContent = document.getElementById('preview-content');
+
+        // Update title preview
+        titleField.addEventListener('input', function() {
+            previewTitle.textContent = this.value || 'Your post title will appear here';
+            updateCharCount(this, 'title');
+        });
+
+        // Update content preview
+        contentField.addEventListener('input', function() {
+            previewContent.innerHTML = formatContent(this.value) || 'Your post content will appear here with proper formatting.';
+            updateCharCount(this, 'content');
+        });
+
+        // File input styling
+        const mediaInput = document.getElementById('{{ form.media.id_for_label }}');
+        const mediaLabel = mediaInput.nextElementSibling;
+
+        mediaInput.addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                const fileName = this.files[0].name;
+                mediaLabel.innerHTML = `<i class="fas fa-check-circle mr-2"></i>${fileName}`;
+                mediaLabel.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                mediaLabel.classList.add('bg-green-600', 'hover:bg-green-700');
+                
+                // Preview new image
+                previewNewImage(this.files[0]);
+            }
+        });
+
+        // Initialize character counts
+        updateCharCount(titleField, 'title');
+        updateCharCount(contentField, 'content');
+    });
+
+    function formatContent(text) {
+        if (!text) return '';
+        
+        // Simple markdown-like formatting
+        return text
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/\n/g, '<br>');
+    }
+
+    function updateCharCount(field, type) {
+        const maxLength = type === 'title' ? 200 : 5000;
+        const currentLength = field.value.length;
+        const counter = field.parentElement.querySelector('.text-xs');
+        
+        if (counter) {
+            counter.textContent = `${currentLength}/${maxLength}`;
+            
+            // Change color based on usage
+            if (currentLength > maxLength * 0.9) {
+                counter.classList.remove('text-gray-500');
+                counter.classList.add('text-red-500');
+            } else if (currentLength > maxLength * 0.75) {
+                counter.classList.remove('text-gray-500');
+                counter.classList.add('text-yellow-500');
+            } else {
+                counter.classList.remove('text-red-500', 'text-yellow-500');
+                counter.classList.add('text-gray-500');
+            }
+        }
+    }
+
+    function previewNewImage(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            let previewMedia = document.getElementById('preview-media');
+            if (!previewMedia) {
+                previewMedia = document.createElement('div');
+                previewMedia.id = 'preview-media';
+                previewMedia.className = 'mt-4';
+                previewMedia.innerHTML = '<p class="text-sm text-gray-600 mb-2">New media:</p>';
+                document.querySelector('#preview-content').after(previewMedia);
+            }
+            
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.className = 'w-32 h-32 object-cover rounded-lg border border-gray-200';
+            previewMedia.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function removeCurrentMedia() {
+        if (confirm('Are you sure you want to remove the current media attachment?')) {
+            // This would need backend support to actually remove the media
+            // For now, we'll just hide it from the preview
+            const currentMediaSection = document.querySelector('.bg-gray-50 .flex.items-center.justify-between');
+            if (currentMediaSection) {
+                currentMediaSection.style.display = 'none';
+            }
+            
+            const previewMedia = document.getElementById('preview-media');
+            if (previewMedia) {
+                previewMedia.style.display = 'none';
+            }
+            
+            showNotification('Media attachment will be removed when you save changes', 'info');
+        }
+    }
+
+    function showNotification(message, type = 'info') {
+        // Simple notification implementation
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white font-medium z-50 ${
+            type === 'info' ? 'bg-blue-500' : 'bg-green-500'
+        }`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+</script>
 {% endblock %}

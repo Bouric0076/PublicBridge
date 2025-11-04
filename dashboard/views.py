@@ -23,6 +23,7 @@ from django.utils.timezone import now, timedelta
 def dashboard_overview(request):
     total_reports = Report.objects.count()
     resolved_reports = Report.objects.filter(status='resolved').count()
+    pending_reports = Report.objects.filter(status='pending').count()
     unresolved_reports = total_reports - resolved_reports
     total_users = User.objects.count()
     active_departments = GovernmentAdmin.objects.filter(is_active=True).count()
@@ -195,8 +196,8 @@ def dashboard(request):
     # User's reports statistics
     user_reports = Report.objects.filter(user=request.user)
     reports_submitted = user_reports.count()
-    reports_under_review = user_reports.filter(status='Under Review').count()
-    reports_resolved = user_reports.filter(status='Resolved').count()
+    reports_under_review = user_reports.filter(status='under_review').count()
+    reports_resolved = user_reports.filter(status='resolved').count()
 
     # Recent reports
     recent_reports = user_reports.order_by('-created_at')[:5]

@@ -1,0 +1,50 @@
+# Django Framework
+django==4.2.7
+djangorestframework==3.14.0
+
+# Django Extensions
+django-grappelli==3.0.8
+django-crispy-forms==2.1
+django-allauth==0.57.0
+django-cors-headers==4.3.1
+django-environ==0.11.2
+
+# Database
+# mysqlclient==2.2.0  # Commented out - using SQLite for development
+psycopg2-binary==2.9.9  # PostgreSQL support for production
+
+# Real-time Features
+channels==4.0.0
+daphne==4.0.0
+
+# NLP and Text Processing
+nltk==3.8.1
+textblob==0.17.1
+spacy==3.7.2
+
+# File Processing
+Pillow==10.1.0
+python-magic==0.4.27
+
+# Utilities
+python-decouple==3.8
+django-extensions==3.2.3
+requests==2.31.0
+
+# Additional Dependencies
+sqlparse==0.4.4  # SQL parsing for Django
+asgiref==3.7.2  # ASGI support
+certifi==2023.11.17  # SSL certificates
+charset-normalizer==3.3.2  # Character encoding
+cryptography==41.0.7  # Cryptography support
+idna==3.6  # Internationalized domain names
+urllib3==2.1.0  # HTTP library
+
+# Development Tools (only for development)
+# django-debug-toolbar==4.2.0  # Comment out for production
+# django-silk==5.0.4  # Comment out for production
+
+# Production
+whitenoise==6.6.0
+gunicorn==21.2.0
+django-heroku==0.3.1  # For environment configuration

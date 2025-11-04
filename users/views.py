@@ -1,22 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth import logout
-# users/views.py
-
 from django.contrib.auth import authenticate, login
-from django.contrib.auth import logout
-# users/views.py
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.core.exceptions import PermissionDenied
 
 from .forms import UserRegistrationForm
-
-
-# users/views.py
-
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
-from django.contrib import messages
-from django.core.exceptions import PermissionDenied
+from .models import User  # Import your custom User model
 
 
 def government_admin_login(request):
@@ -26,7 +16,8 @@ def government_admin_login(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            if "GovernmentAdmin" == user.role:
+            # FIX: Use the correct role value from your model
+            if user.role == "government_admin":  # Changed from "GovernmentAdmin" to "government_admin"
                 login(request, user)
                 return redirect("govadmin_dashboard")
             else:
@@ -37,13 +28,15 @@ def government_admin_login(request):
 
     return render(request, "governmentadmin/login.html")
 
+
 def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()  # Save the user if the form is valid
 
-            # Automatically log the user in
+            # Fix: Set the backend attribute before login
+            user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)
 
             # Redirect to the dashboard after registration
@@ -56,20 +49,36 @@ def register(request):
 
     return render(request, 'users/register.html', {'form': form})
 
+
 def login_user(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        
+        # Debug information
+        print(f"DEBUG: Login attempt - Username: {username}")
+        
         user = authenticate(request, username=username, password=password)
+        
         if user is not None:
+            print(f"DEBUG: Login successful - User: {user.username}, Role: {user.role}")
             login(request, user)
             return redirect('dashboard')
         else:
-            return render(request, 'users/login.html', {'error': 'Invalid credentials'})
+            print(f"DEBUG: Login failed - Username: {username}")
+            
+            # Check if user exists but password is wrong
+            try:
+                user_exists = User.objects.get(username=username)
+                print(f"DEBUG: User exists but authentication failed - {user_exists.username}")
+                error_message = 'Invalid password'
+            except User.DoesNotExist:
+                print(f"DEBUG: User does not exist - {username}")
+                error_message = 'Username does not exist'
+                
+            return render(request, 'users/login.html', {'error': error_message})
+    
     return render(request, 'users/login.html')
-
-# Create your views here.
-
 
 
 def logout_user(request):

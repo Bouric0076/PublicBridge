@@ -4,117 +4,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discussion Forum</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/forum.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <title>{% block title %}Community Forum - PublicBridge{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+        * {
+            font-family: 'Inter', sans-serif;
         }
-
-        .content {
-            flex: 1;
+        
+        .forum-gradient {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
         }
-
-        .footer {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
+        
+        .nav-item {
+            transition: all 0.3s ease;
         }
-
-        .navbar {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(4px);
         }
-
-        .navbar-brand {
-            font-weight: bold;
+        
+        .post-card {
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
         }
-
-        .post-summary {
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 15px;
-            background: #f9f9f9;
-            margin-bottom: 20px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        
+        .post-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            border-color: #3b82f6;
         }
-
-        .post-summary:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        
+        .vote-btn {
+            transition: all 0.2s ease;
         }
-
-        .post-actions .btn {
-            margin-right: 5px;
+        
+        .vote-btn:hover {
+            transform: scale(1.1);
         }
-
-        .vote-buttons button {
-            margin: 5px 0;
+        
+        .upvote-btn:hover {
+            color: #10b981;
+        }
+        
+        .downvote-btn:hover {
+            color: #ef4444;
         }
     </style>
 </head>
-<body>
-    <!-- Header -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'forum:feed' %}">Discussion Forum</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'forum:profile_view' user.username %}">Profile</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'forum:create_post' %}">Create Post</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'forum:notifications' %}">Notifications</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'forum:inbox' %}">Messages</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
-                        </li>
-                    {% endif %}
-                </ul>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Enhanced Header -->
+    <header class="forum-gradient shadow-lg">
+        <nav class="border-b border-blue-600/20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <!-- Logo and Brand -->
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-comments text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-white font-bold text-xl">Public<span class="text-blue-200">Forum</span></h1>
+                            <p class="text-blue-200 text-xs">Community Discussions</p>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Menu -->
+                    <div class="hidden md:flex items-center space-x-1">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'dashboard' %}" class="nav-item text-white/90 hover:text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                                <i class="fas fa-tachometer-alt text-sm"></i>
+                                <span>Dashboard</span>
+                            </a>
+                            <a href="{% url 'forum:profile_view' user.username %}" class="nav-item text-white/90 hover:text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                                <i class="fas fa-user text-sm"></i>
+                                <span>Profile</span>
+                            </a>
+                            <a href="{% url 'forum:create_post' %}" class="nav-item bg-white/20 text-white hover:bg-white/30 px-4 py-2 rounded-lg flex items-center space-x-2 transition-all">
+                                <i class="fas fa-plus text-sm"></i>
+                                <span>Create Post</span>
+                            </a>
+                            <a href="{% url 'forum:notifications' %}" class="nav-item text-white/90 hover:text-white px-4 py-2 rounded-lg flex items-center space-x-2 relative">
+                                <i class="fas fa-bell text-sm"></i>
+                                <span>Alerts</span>
+                                <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-400 rounded-full border-2 border-blue-800"></span>
+                            </a>
+                            <a href="{% url 'forum:inbox' %}" class="nav-item text-white/90 hover:text-white px-4 py-2 rounded-lg flex items-center space-x-2 relative">
+                                <i class="fas fa-envelope text-sm"></i>
+                                <span>Messages</span>
+                            </a>
+                            <a href="{% url 'logout' %}" class="nav-item text-white/90 hover:text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                                <i class="fas fa-sign-out-alt text-sm"></i>
+                                <span>Logout</span>
+                            </a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="nav-item text-white/90 hover:text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                                <i class="fas fa-sign-in-alt text-sm"></i>
+                                <span>Login</span>
+                            </a>
+                            <a href="{% url 'signup' %}" class="nav-item bg-white/20 text-white hover:bg-white/30 px-4 py-2 rounded-lg flex items-center space-x-2">
+                                <i class="fas fa-user-plus text-sm"></i>
+                                <span>Sign Up</span>
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Mobile menu button -->
+                    <div class="md:hidden">
+                        <button type="button" class="text-white hover:text-blue-200 p-2" id="mobile-menu-button">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Mobile Navigation Menu -->
+        <div class="md:hidden bg-blue-800 border-t border-blue-700 hidden" id="mobile-menu">
+            <div class="px-4 py-3 space-y-1">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="nav-item text-white/90 hover:text-white block px-3 py-2 rounded-lg flex items-center space-x-3">
+                        <i class="fas fa-tachometer-alt w-5 text-center"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="{% url 'forum:profile_view' user.username %}" class="nav-item text-white/90 hover:text-white block px-3 py-2 rounded-lg flex items-center space-x-3">
+                        <i class="fas fa-user w-5 text-center"></i>
+                        <span>Profile</span>
+                    </a>
+                    <a href="{% url 'forum:create_post' %}" class="nav-item bg-white/20 text-white hover:bg-white/30 block px-3 py-2 rounded-lg flex items-center space-x-3">
+                        <i class="fas fa-plus w-5 text-center"></i>
+                        <span>Create Post</span>
+                    </a>
+                    <a href="{% url 'forum:notifications' %}" class="nav-item text-white/90 hover:text-white block px-3 py-2 rounded-lg flex items-center space-x-3 relative">
+                        <i class="fas fa-bell w-5 text-center"></i>
+                        <span>Alerts</span>
+                        <span class="absolute left-8 top-1 w-3 h-3 bg-red-400 rounded-full border-2 border-blue-800"></span>
+                    </a>
+                    <a href="{% url 'forum:inbox' %}" class="nav-item text-white/90 hover:text-white block px-3 py-2 rounded-lg flex items-center space-x-3">
+                        <i class="fas fa-envelope w-5 text-center"></i>
+                        <span>Messages</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="nav-item text-white/90 hover:text-white block px-3 py-2 rounded-lg flex items-center space-x-3">
+                        <i class="fas fa-sign-out-alt w-5 text-center"></i>
+                        <span>Logout</span>
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="nav-item text-white/90 hover:text-white block px-3 py-2 rounded-lg flex items-center space-x-3">
+                        <i class="fas fa-sign-in-alt w-5 text-center"></i>
+                        <span>Login</span>
+                    </a>
+                    <a href="{% url 'signup' %}" class="nav-item bg-white/20 text-white hover:bg-white/30 block px-3 py-2 rounded-lg flex items-center space-x-3">
+                        <i class="fas fa-user-plus w-5 text-center"></i>
+                        <span>Sign Up</span>
+                    </a>
+                {% endif %}
             </div>
         </div>
-    </nav>
+    </header>
 
-    <!-- Main Content -->
-    <div class="container mt-4 content">
-        {% block content %}
-        {% endblock %}
+    <!-- Breadcrumb Navigation -->
+    <div class="bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav class="flex py-3" aria-label="Breadcrumb">
+                <ol class="flex items-center space-x-2 text-sm text-gray-600">
+                    <li>
+                        <a href="{% url 'dashboard' %}" class="hover:text-blue-600 transition-colors">
+                            <i class="fas fa-home mr-1"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                    </li>
+                    <li class="text-blue-600 font-medium">
+                        <i class="fas fa-comments mr-1"></i>
+                        Community Forum
+                    </li>
+                </ol>
+            </nav>
+        </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer bg-dark text-white py-3">
-        <div class="container text-center">
-            <p>&copy; 2024 Discussion Forum. All Rights Reserved.</p>
+    <!-- Main Content -->
+    <main class="flex-1 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {% block content %}
+            <!-- Forum content will be inserted here -->
+            {% endblock %}
+        </div>
+    </main>
+
+    <!-- Enhanced Footer -->
+    <footer class="bg-gray-800 text-white border-t border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Brand Section -->
+                <div class="md:col-span-2">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-comments text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg">Public<span class="text-blue-300">Forum</span></h3>
+                            <p class="text-gray-400 text-sm">Community Engagement Platform</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm max-w-md">
+                        A dedicated space for community discussions, issue reporting, and civic engagement. 
+                        Together we can build a better community.
+                    </p>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li>
+                            <a href="{% url 'forum:feed' %}" class="hover:text-white transition-colors flex items-center space-x-2">
+                                <i class="fas fa-stream text-xs w-4"></i>
+                                <span>Forum Feed</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'submit_report' %}" class="hover:text-white transition-colors flex items-center space-x-2">
+                                <i class="fas fa-flag text-xs w-4"></i>
+                                <span>Report Issue</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="hover:text-white transition-colors flex items-center space-x-2">
+                                <i class="fas fa-question-circle text-xs w-4"></i>
+                                <span>Help Center</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Contact</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li class="flex items-center space-x-2">
+                            <i class="fas fa-envelope text-xs w-4"></i>
+                            <span>support@publicbridge.gov</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <i class="fas fa-phone text-xs w-4"></i>
+                            <span>+1 (555) 123-4567</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <i class="fas fa-clock text-xs w-4"></i>
+                            <span>Mon-Fri: 8AM-6PM</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Bottom Bar -->
+            <div class="border-t border-gray-700 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm">
+                    &copy; 2024 PublicBridge Civic Platform. All rights reserved.
+                </p>
+                <div class="flex space-x-4 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                </div>
+            </div>
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+    <!-- JavaScript -->
     <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Voting functionality
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.upvote-btn').forEach(function (button) {
                 button.addEventListener('click', function () {
@@ -141,6 +324,16 @@
                     document.querySelector(`.downvote-btn[data-post-id="${postId}"]`).textContent = `Downvote (${data.downvotes})`;
                 });
         }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            
+            if (!mobileMenu.contains(event.target) && !mobileMenuButton.contains(event.target)) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
     </script>
 </body>
 </html>

@@ -18,6 +18,7 @@
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
 
   <!-- Vendor CSS Files -->
   <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -25,291 +26,558 @@
   <link href="{% static 'assets/vendor/aos/aos.css" rel="stylesheet' %} ">
   <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
   <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <!-- Main CSS File -->
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Original CSS -->
   <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
+  
+  <!-- Custom Mobile Menu CSS -->
+  <style>
+    .hamburger-line {
+      transform-origin: center;
+    }
+    
+    .mobile-dropdown .rotate-180 {
+      transform: rotate(180deg);
+    }
+    
+    #mobile-menu {
+      max-height: calc(100vh - 80px);
+      overflow-y: auto;
+    }
+    
+    @media (max-width: 640px) {
+      #mobile-menu {
+        max-height: calc(100vh - 64px);
+      }
+    }
+    
+    .bg-green-25 {
+      background-color: rgba(34, 197, 94, 0.05);
+    }
+    
+    /* Smooth transitions for mobile menu */
+    #mobile-menu > div {
+      animation: slideDown 0.3s ease-out;
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
 
 </head>
 
 <body class="index-page">
 
-  <header id="header" class="header d-flex align-items-center position-relative">
-    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+<header id="header" class="header fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm shadow-lg transition-all duration-300">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 lg:h-20">
 
-      <a href="#" class="logo d-flex align-items-center">
-  <span class="logo-text">Public<span class="highlight">Bridge</span></span>
-    </a>
+        <!-- Logo -->
+        <a href="#" class="flex items-center space-x-3 group">
+          <div class="relative">
+            <div class="w-10 h-10 bg-gradient-to-br from-green-600 to-green-700 rounded-lg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-200">
+              <i class="fas fa-microphone text-white text-lg"></i>
+            </div>
+            <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
+                <i class="fas fa-handshake text-white text-xs"></i>
+              </div>
+          </div>
+          <div>
+            <span class="text-2xl font-bold text-gray-800 group-hover:text-green-600 transition-colors duration-200">Public<span class="text-green-600">Bridge</span></span>
+            <p class="text-xs text-gray-500 font-medium">Connecting Citizens & Government</p>
+          </div>
+        </a>
 
+        <!-- Desktop Navigation -->
+        <nav class="hidden lg:flex items-center space-x-4 xl:space-x-6">
+          <!-- Home -->
+          <a href="#" class="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200 relative group">
+            Home
+            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
+          </a>
+          
+          <!-- About -->
+          <a href="#" class="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200 relative group">
+            About
+            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
+          </a>
+          
+          <!-- Reports -->
+          <a href="#" class="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200 relative group">
+            Reports
+            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
+          </a>
+          
+          <!-- News -->
+          <a href="#" class="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200 relative group">
+            News
+            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
+          </a>
+          
+          <!-- Government -->
+          <a href="#" class="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200 relative group">
+            Government
+            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
+          </a>
+          
+          <!-- Account -->
+          <a href="#" class="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200 relative group">
+            Account
+            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
+          </a>
+        </nav>
 
-<nav id="navmenu" class="navmenu">
-  <ul>
-    <!-- Main Navigation -->
-    <li><a href="#">Home</a></li>
-    <li><a href="#">About Us</a></li>
-    <li><a href="#">How It Works</a></li>
-    <li><a href="#">Public Reports</a></li>
-    <li><a href="#">News & Updates</a></li>
+        <!-- Action Buttons & Mobile Menu -->
+        <div class="flex items-center space-x-2">
+          <!-- Report Issue Button -->
+          <a href="#" class="hidden sm:inline-flex items-center px-3 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+            <i class="fas fa-flag mr-1"></i>
+            <span class="hidden lg:inline">Report</span>
+          </a>
+          
+          <!-- Emergency Button -->
+          <a href="#" class="hidden md:inline-flex items-center px-3 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+            <i class="fas fa-phone-alt mr-1"></i>
+            <span class="hidden xl:inline">Emergency</span>
+          </a>
 
-    <li><a href="contact.html">Contact</a></li>
+          <!-- Mobile Menu Button (Hamburger) -->
+          <button class="lg:hidden p-2 text-gray-700 hover:text-green-600 transition-colors duration-200 relative" id="mobile-menu-button">
+            <div class="w-6 h-6 flex flex-col justify-center items-center">
+              <span class="hamburger-line w-5 h-0.5 bg-current block transition-all duration-300"></span>
+              <span class="hamburger-line w-5 h-0.5 bg-current block my-1 transition-all duration-300"></span>
+              <span class="hamburger-line w-5 h-0.5 bg-current block transition-all duration-300"></span>
+            </div>
+          </button>
+        </div>
 
-    <!-- Government Portal Dropdown -->
-    <li class="dropdown">
-      <a href="#">Government Portal <i class="bi bi-chevron-down"></i></a>
-      <ul class="dropdown-menu">
-        <li><a href="users/admin-login/">Government Admin</a></li>
-        <li><a href="ministries/login/">Ministry Dashboard</a></li>
-        <li><a href="#">Legislation & Policies</a></li>
-        <li><a href="#">Budget Reports</a></li>
-        <li><a href="#">Transparency Index</a></li>
-      </ul>
-    </li>
+      </div>
 
+      <!-- Mobile Navigation -->
+      <div class="lg:hidden hidden bg-white border-t border-gray-200 shadow-lg" id="mobile-menu">
+        <div class="px-4 py-6 space-y-2">
+          <!-- Main Navigation -->
+          <a href="#" class="flex items-center space-x-3 px-3 py-3 text-gray-700 hover:text-green-600 hover:bg-green-50 font-medium transition-all duration-200 rounded-lg">
+            
+            <span>Home</span>
+          </a>
+          
+          <a href="#" class="flex items-center space-x-3 px-3 py-3 text-gray-700 hover:text-green-600 hover:bg-green-50 font-medium transition-all duration-200 rounded-lg">
+            <span>About</span>
+          </a>
+          
+          <a href="#" class="flex items-center space-x-3 px-3 py-3 text-gray-700 hover:text-green-600 hover:bg-green-50 font-medium transition-all duration-200 rounded-lg">
+            
+            <span>Reports</span>
+          </a>
+          
+          <a href="#" class="flex items-center space-x-3 px-3 py-3 text-gray-700 hover:text-green-600 hover:bg-green-50 font-medium transition-all duration-200 rounded-lg">
+            
+            <span>News</span>
+          </a>
+          
+          <a href="#" class="flex items-center space-x-3 px-3 py-3 text-gray-700 hover:text-green-600 hover:bg-green-50 font-medium transition-all duration-200 rounded-lg">
+            
+            <span>Government</span>
+          </a>
+          
+          <a href="#" class="flex items-center space-x-3 px-3 py-3 text-gray-700 hover:text-green-600 hover:bg-green-50 font-medium transition-all duration-200 rounded-lg">
+            
+            <span>Account</span>
+          </a>
 
-    <!-- Authentication Dropdown -->
-    <li class="dropdown">
-      <a href="#">Account <i class="bi bi-chevron-down"></i></a>
-      <ul class="dropdown-menu">
-        <li><a href="/users/admin-login/">Admin Login</a></li>
-        <li><a href="/users/login/">Login</a></li>
-        <li><a href="/users/register/">Register</a></li>
-      </ul>
-    </li>
-  </ul>
+          <!-- Action Buttons -->
+          <div class="pt-4 border-t border-gray-200 space-y-3">
+            <a href="#" class="flex items-center justify-center space-x-2 w-full px-4 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-all duration-200 shadow-lg">
+              <i class="fas fa-exclamation-triangle"></i>
+              <span>Report Issue</span>
+            </a>
+            <a href="#" class="flex items-center justify-center space-x-2 w-full px-4 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-all duration-200 shadow-lg">
+              <i class="fas fa-phone-alt"></i>
+              <span>Emergency</span>
+            </a>
+          </div>
+        </div>
+      </div>
 
-  <!-- Mobile Nav Toggle -->
-  <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-</nav>
-
-</div>
-  </header>
+    </div>
+</header>
+  <!-- Add margin to prevent content from hiding under fixed header -->
+  <div class="h-20 lg:h-24"></div>
 
   <main class="main">
 
     <!-- Hero Section -->
-    <section id="hero" class="hero section dark-background">
+    <!-- Hero Section -->
+<!-- Hero Section -->
+<section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-900">
+  
+  <!-- Static Hero Content - First slide always visible -->
+  <div class="absolute inset-0 z-0">
+    <div class="absolute inset-0 bg-gradient-to-r from-gray-900/80 to-green-900/60 z-10"></div>
+    <img 
+      src="{% static 'assets/img/hero_1.jpg' %}" 
+      alt="Connecting Citizens & Government" 
+      class="w-full h-full object-cover"
+      onerror="this.style.display='none'"
+    >
+  </div>
 
-      <div id="hero-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
-
-        <div class="carousel-item active">
-          <img src="{% static 'assets/img/hero_1.jpg' %}" alt="">
-          <div class="carousel-container">
-            <h2>Connecting Citizens & Government</h2>
-            <p>Report issues, track progress, and build a transparent society where every voice counts.</p>
-          </div>
+  <!-- Content -->
+  <div class="relative z-20 w-full">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-4xl">
+        <div class="inline-flex items-center px-4 py-2 bg-green-500/20 backdrop-blur-sm rounded-full border border-green-400/30 mb-6">
+          <div class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></div>
+          <span class="text-green-300 text-sm font-medium">Transparency in Action</span>
         </div>
-
-        <div class="carousel-item">
-          <img src="{% static 'assets/img/hero_5.jpg' %}" alt="">
-          <div class="carousel-container">
-            <h2>Government Accountability Starts Here</h2>
-            <p>PublicBridge ensures that concerns are heard, tracked, and resolved efficiently.</p>
-          </div>
+        <h1 class="text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+          Connecting 
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-green-100">Citizens</span> 
+          & Government
+        </h1>
+        <p class="text-xl lg:text-2xl text-gray-200 mb-8 max-w-3xl leading-relaxed">
+          Report issues, track progress, and build a transparent society where every voice counts.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="#" class="inline-flex items-center px-8 py-4 bg-green-500 text-white font-semibold rounded-xl hover:bg-green-600 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl">
+            <i class="fas fa-flag mr-3"></i>
+            Report an Issue
+          </a>
+          <a href="#" class="inline-flex items-center px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-xl hover:bg-white/20 transition-all duration-300 border border-white/20 hover:border-white/40">
+            <i class="fas fa-play-circle mr-3"></i>
+            Watch Demo
+          </a>
         </div>
-
-        <div class="carousel-item">
-          <img src="{% static 'assets/img/hero_2.jpg' %}" alt="">
-          <div class="carousel-container">
-            <h2>Be Part of the Change</h2>
-            <p>Your reports make an impact. Together, we create a responsible and responsive government.</p>
-          </div>
-        </div>
-
-        <div class="carousel-item">
-          <img src="{% static 'assets/img/hero_3.jpg' %}" alt="">
-          <div class="carousel-container">
-            <h2>Your Voice, Your Power</h2>
-            <p>Raise awareness on issues that matter. Join a community committed to making a difference.</p>
-          </div>
-        </div>
-
-        <a class="carousel-control-prev" href="#hero-carousel" role="button" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon bi bi-chevron-left" aria-hidden="true"></span>
-        </a>
-
-        <a class="carousel-control-next" href="#hero-carousel" role="button" data-bs-slide="next">
-          <span class="carousel-control-next-icon bi bi-chevron-right" aria-hidden="true"></span>
-        </a>
-
-        <ol class="carousel-indicators"></ol>
-
       </div>
+    </div>
+  </div>
 
-    </section><!-- /Hero Section -->
+  <!-- Scroll Indicator -->
+  <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30">
+    <div class="flex flex-col items-center text-white/60">
+      <span class="text-sm mb-2">Scroll to explore</span>
+      <div class="w-5 h-8 border-2 border-white/30 rounded-full flex justify-center">
+        <div class="w-1 h-2 bg-white/50 rounded-full mt-2 animate-bounce"></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+    <!-- /Hero Section -->
 
 
 
 
 <!-- Services Section -->
-<section id="services" class="services section">
-  <!-- Section Title -->
-  <div class="container section-title" data-aos="fade-up">
-    <h2>SERVICES</h2>
-    <p>Empowering Citizens, Enhancing Transparency</p>
-  </div>
-  <!-- End Section Title -->
+<section id="services" class="py-20 bg-gradient-to-br from-gray-50 to-white">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Section Header -->
+    <div class="text-center mb-16" data-aos="fade-up">
+      <span class="inline-block px-4 py-1.5 bg-green-100 text-green-700 rounded-full text-sm font-semibold mb-4">
+        Our Services
+      </span>
+      <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+        Empowering Citizens, <span class="text-green-600">Enhancing Transparency</span>
+      </h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Bridging the gap between citizens and government through innovative digital solutions
+      </p>
+    </div>
 
-  <div class="content">
-    <div class="container">
-      <div class="row g-0">
-        <!-- Report Submission -->
-        <div class="col-lg-3 col-md-6">
-          <div class="service-item">
-            <span class="number">01</span>
-            <div class="service-item-icon">
-              <i class="fas fa-file-alt"></i>
-            </div>
-            <div class="service-item-content">
-              <h3 class="service-heading">Report Issues</h3>
-              <p>Citizens can submit reports about infrastructure, governance, and public services.</p>
-            </div>
+    <!-- Services Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+      
+      <!-- Report Issues -->
+      <div class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 p-8 border border-gray-100 hover:border-green-200" data-aos="fade-up" data-aos-delay="100">
+        <div class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform duration-300">
+          01
+        </div>
+        <div class="mb-6 pt-4">
+          <div class="w-16 h-16 bg-gradient-to-br from-green-100 to-green-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <i class="fas fa-file-alt text-2xl text-green-600"></i>
           </div>
         </div>
-
-        <!-- Ministry & Department Management -->
-        <div class="col-lg-3 col-md-6">
-          <div class="service-item">
-            <span class="number">02</span>
-            <div class="service-item-icon">
-              <i class="fas fa-building"></i>
-            </div>
-            <div class="service-item-content">
-              <h3 class="service-heading">Government Departments</h3>
-              <p>Ministries and departments can manage reports and provide timely responses.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Real-Time Report Tracking -->
-        <div class="col-lg-3 col-md-6">
-          <div class="service-item">
-            <span class="number">03</span>
-            <div class="service-item-icon">
-              <i class="fas fa-chart-line"></i>
-            </div>
-            <div class="service-item-content">
-              <h3 class="service-heading">Track Progress</h3>
-              <p>Citizens can track report status and receive updates from authorities via email and sms.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Emergency Reporting & Response -->
-        <div class="col-lg-3 col-md-6">
-          <div class="service-item">
-            <span class="number">04</span>
-            <div class="service-item-icon">
-              <i class="fas fa-chart-line"></i>
-            </div>
-            <div class="service-item-content">
-              <h3 class="service-heading">Emergency Reporting</h3>
-              <p>Report fires, disasters, and emergencies via map pinpointing for faster response.</p>
-            </div>
-          </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-green-600 transition-colors duration-300">
+          Report Issues
+        </h3>
+        <p class="text-gray-600 leading-relaxed">
+          Submit detailed reports about infrastructure, governance, and public services with ease.
+        </p>
+        <div class="mt-6 pt-4 border-t border-gray-100">
+          <span class="inline-flex items-center text-green-600 font-semibold text-sm group-hover:translate-x-2 transition-transform duration-300">
+            Learn more
+            <i class="fas fa-arrow-right ml-2 text-xs"></i>
+          </span>
         </div>
       </div>
 
-      <!-- Additional Services -->
-      <div class="row g-0 mt-4">
-        <!-- Government Transparency -->
-        <div class="col-lg-3 col-md-6">
-          <div class="service-item">
-            <span class="number">05</span>
-            <div class="service-item-icon">
-              <i class="fas fa-university"></i>
-            </div>
-            <div class="service-item-content">
-              <h3 class="service-heading">Government Transparency</h3>
-              <p>Providing real-time access to government data for public accountability.</p>
-            </div>
+      <!-- Government Departments -->
+      <div class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 p-8 border border-gray-100 hover:border-blue-200" data-aos="fade-up" data-aos-delay="150">
+        <div class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform duration-300">
+          02
+        </div>
+        <div class="mb-6 pt-4">
+          <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <i class="fas fa-building text-2xl text-blue-600"></i>
           </div>
         </div>
-
-        <!-- Citizen Engagement -->
-        <div class="col-lg-3 col-md-6">
-          <div class="service-item">
-            <span class="number">06</span>
-            <div class="service-item-icon">
-              <i class="fas fa-users"></i>
-            </div>
-            <div class="service-item-content">
-              <h3 class="service-heading">Citizen Engagement</h3>
-              <p>A platform for citizens to voice concerns and interact with officials.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Efficient Reporting -->
-        <div class="col-lg-3 col-md-6">
-          <div class="service-item">
-            <span class="number">07</span>
-            <div class="service-item-icon">
-              <i class="fas fa-tasks"></i>
-            </div>
-            <div class="service-item-content">
-              <h3 class="service-heading">Efficient Reporting</h3>
-              <p>Streamlined report submission and tracking for better issue resolution.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Data-Driven Insights -->
-        <div class="col-lg-3 col-md-6">
-          <div class="service-item">
-            <span class="number">08</span>
-            <div class="service-item-icon">
-              <i class="fas fa-brain"></i>
-            </div>
-            <div class="service-item-content">
-              <h3 class="service-heading">Data-Driven Insights</h3>
-              <p>Advanced analytics to help government agencies make informed decisions.</p>
-            </div>
-          </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors duration-300">
+          Government Departments
+        </h3>
+        <p class="text-gray-600 leading-relaxed">
+          Ministries and departments efficiently manage reports and provide timely responses.
+        </p>
+        <div class="mt-6 pt-4 border-t border-gray-100">
+          <span class="inline-flex items-center text-blue-600 font-semibold text-sm group-hover:translate-x-2 transition-transform duration-300">
+            Learn more
+            <i class="fas fa-arrow-right ml-2 text-xs"></i>
+          </span>
         </div>
       </div>
-      <!-- End Additional Services -->
+
+      <!-- Track Progress -->
+      <div class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 p-8 border border-gray-100 hover:border-purple-200" data-aos="fade-up" data-aos-delay="200">
+        <div class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform duration-300">
+          03
+        </div>
+        <div class="mb-6 pt-4">
+          <div class="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <i class="fas fa-chart-line text-2xl text-purple-600"></i>
+          </div>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors duration-300">
+          Track Progress
+        </h3>
+        <p class="text-gray-600 leading-relaxed">
+          Real-time tracking of report status with email and SMS notifications for updates.
+        </p>
+        <div class="mt-6 pt-4 border-t border-gray-100">
+          <span class="inline-flex items-center text-purple-600 font-semibold text-sm group-hover:translate-x-2 transition-transform duration-300">
+            Learn more
+            <i class="fas fa-arrow-right ml-2 text-xs"></i>
+          </span>
+        </div>
+      </div>
+
+      <!-- Emergency Reporting -->
+      <div class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 p-8 border border-gray-100 hover:border-red-200" data-aos="fade-up" data-aos-delay="250">
+        <div class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform duration-300">
+          04
+        </div>
+        <div class="mb-6 pt-4">
+          <div class="w-16 h-16 bg-gradient-to-br from-red-100 to-red-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <i class="fas fa-exclamation-triangle text-2xl text-red-600"></i>
+          </div>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-red-600 transition-colors duration-300">
+          Emergency Reporting
+        </h3>
+        <p class="text-gray-600 leading-relaxed">
+          Report emergencies with map pinpointing for faster, more accurate response times.
+        </p>
+        <div class="mt-6 pt-4 border-t border-gray-100">
+          <span class="inline-flex items-center text-red-600 font-semibold text-sm group-hover:translate-x-2 transition-transform duration-300">
+            Learn more
+            <i class="fas fa-arrow-right ml-2 text-xs"></i>
+          </span>
+        </div>
+      </div>
 
     </div>
+
+    <!-- Second Row of Services -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mt-8 lg:mt-12">
+      
+      <!-- Government Transparency -->
+      <div class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 p-8 border border-gray-100 hover:border-indigo-200" data-aos="fade-up" data-aos-delay="300">
+        <div class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform duration-300">
+          05
+        </div>
+        <div class="mb-6 pt-4">
+          <div class="w-16 h-16 bg-gradient-to-br from-indigo-100 to-indigo-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <i class="fas fa-university text-2xl text-indigo-600"></i>
+          </div>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-indigo-600 transition-colors duration-300">
+          Government Transparency
+        </h3>
+        <p class="text-gray-600 leading-relaxed">
+          Real-time access to government data ensuring public accountability and trust.
+        </p>
+        <div class="mt-6 pt-4 border-t border-gray-100">
+          <span class="inline-flex items-center text-indigo-600 font-semibold text-sm group-hover:translate-x-2 transition-transform duration-300">
+            Learn more
+            <i class="fas fa-arrow-right ml-2 text-xs"></i>
+          </span>
+        </div>
+      </div>
+
+      <!-- Citizen Engagement -->
+      <div class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 p-8 border border-gray-100 hover:border-cyan-200" data-aos="fade-up" data-aos-delay="350">
+        <div class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform duration-300">
+          06
+        </div>
+        <div class="mb-6 pt-4">
+          <div class="w-16 h-16 bg-gradient-to-br from-cyan-100 to-cyan-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <i class="fas fa-users text-2xl text-cyan-600"></i>
+          </div>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-cyan-600 transition-colors duration-300">
+          Citizen Engagement
+        </h3>
+        <p class="text-gray-600 leading-relaxed">
+          A platform for citizens to voice concerns and interact directly with officials.
+        </p>
+        <div class="mt-6 pt-4 border-t border-gray-100">
+          <span class="inline-flex items-center text-cyan-600 font-semibold text-sm group-hover:translate-x-2 transition-transform duration-300">
+            Learn more
+            <i class="fas fa-arrow-right ml-2 text-xs"></i>
+          </span>
+        </div>
+      </div>
+
+      <!-- Efficient Reporting -->
+      <div class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 p-8 border border-gray-100 hover:border-orange-200" data-aos="fade-up" data-aos-delay="400">
+        <div class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform duration-300">
+          07
+        </div>
+        <div class="mb-6 pt-4">
+          <div class="w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <i class="fas fa-tasks text-2xl text-orange-600"></i>
+          </div>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-orange-600 transition-colors duration-300">
+          Efficient Reporting
+        </h3>
+        <p class="text-gray-600 leading-relaxed">
+          Streamlined submission and tracking processes for better issue resolution.
+        </p>
+        <div class="mt-6 pt-4 border-t border-gray-100">
+          <span class="inline-flex items-center text-orange-600 font-semibold text-sm group-hover:translate-x-2 transition-transform duration-300">
+            Learn more
+            <i class="fas fa-arrow-right ml-2 text-xs"></i>
+          </span>
+        </div>
+      </div>
+
+      <!-- Data-Driven Insights -->
+      <div class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 p-8 border border-gray-100 hover:border-pink-200" data-aos="fade-up" data-aos-delay="450">
+        <div class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform duration-300">
+          08
+        </div>
+        <div class="mb-6 pt-4">
+          <div class="w-16 h-16 bg-gradient-to-br from-pink-100 to-pink-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <i class="fas fa-brain text-2xl text-pink-600"></i>
+          </div>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-pink-600 transition-colors duration-300">
+          Data-Driven Insights
+        </h3>
+        <p class="text-gray-600 leading-relaxed">
+          Advanced analytics to help government agencies make informed decisions.
+        </p>
+        <div class="mt-6 pt-4 border-t border-gray-100">
+          <span class="inline-flex items-center text-pink-600 font-semibold text-sm group-hover:translate-x-2 transition-transform duration-300">
+            Learn more
+            <i class="fas fa-arrow-right ml-2 text-xs"></i>
+          </span>
+        </div>
+      </div>
+
+    </div>
+
   </div>
 </section>
 
 <!-- About Section -->
-<section id="about" class="about section">
-  <div class="content">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-6 mb-4 mb-lg-0">
-          <img src="{% static 'assets/img/img_long_5.jpg' %} " alt="About PublicBridge" class="img-fluid img-overlap" data-aos="zoom-out">
+<!-- About Section -->
+<section id="about" class="py-16 bg-gradient-to-br from-gray-900 to-green-900">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+      
+      <!-- Image Section - Reduced Size -->
+      <div class="relative" data-aos="zoom-out">
+        <div class="relative rounded-2xl overflow-hidden shadow-2xl">
+          <img 
+            src="{% static 'assets/img/kenya-map.jpg' %}" 
+            alt="About PublicBridge" 
+            class="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-700"
+          >
+          <!-- Gradient Overlay -->
+          <div class="absolute inset-0 bg-gradient-to-t from-green-900/20 to-transparent"></div>
         </div>
-        <div class="col-lg-5 ml-auto" data-aos="fade-up" data-aos-delay="100">
-          <h3 class="content-subtitle text-white opacity-50">Why PublicBridge?</h3>
-          <h2 class="content-title mb-4">
-            Empowering Citizens, Enhancing <strong>Government Transparency</strong>
-          </h2>
-          <p class="opacity-50">
-            PublicBridge is a civic technology platform designed to <b> bridge the gap </b> between citizens and government agencies. We enable <b> seamless reporting, real-time engagement, and data-driven governance </b> to foster accountability.
-          </p>
+      </div>
 
-          <div class="row my-5">
-            <div class="col-lg-12 d-flex align-items-start mb-4">
-              <i class="bi bi-megaphone me-4 display-6"></i>
-              <div>
-                <h4 class="m-0 h5 text-white">Voice Your Concerns</h4>
-                <p class="text-white opacity-50">Submit reports on infrastructure, governance, and public services directly to the right authorities.</p>
-              </div>
+      <!-- Content Section -->
+      <div class="lg:pl-6" data-aos="fade-up" data-aos-delay="100">
+        <!-- Badge -->
+        <span class="inline-block px-4 py-2 bg-green-500/20 text-green-300 rounded-full text-sm font-semibold mb-4 border border-green-500/30">
+          Why PublicBridge?
+        </span>
+
+        <!-- Title -->
+        <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4 leading-tight">
+          Empowering Citizens, <br>
+          <span class="text-green-400">Enhancing Transparency</span>
+        </h2>
+
+        <!-- Description -->
+        <p class="text-gray-300 mb-6 leading-relaxed">
+          PublicBridge is a civic technology platform designed to <span class="text-green-300 font-semibold">bridge the gap</span> between citizens and government agencies. We enable <span class="text-green-300 font-semibold">seamless reporting, real-time engagement, and data-driven governance</span> to foster accountability.
+        </p>
+
+        <!-- Features List -->
+        <div class="space-y-4">
+          <!-- Feature 1 -->
+          <div class="flex items-start space-x-4 group">
+            <div class="flex-shrink-0 w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center group-hover:bg-green-500/30 transition-colors duration-300 mt-1">
+              <i class="fas fa-bullhorn text-green-400"></i>
             </div>
-            <div class="col-lg-12 d-flex align-items-start mb-4">
-              <i class="bi bi-clock-history me-4 display-6"></i>
-              <div>
-                <h4 class="m-0 h5 text-white">Track Government Action</h4>
-                <p class="text-white opacity-50">Get real-time updates on submitted reports and monitor government responses.</p>
-              </div>
+            <div class="flex-1">
+              <h4 class="text-lg font-semibold text-white mb-1">Voice Your Concerns</h4>
+              <p class="text-gray-300 text-sm leading-relaxed">
+                Submit reports on infrastructure, governance, and public services directly to the right authorities.
+              </p>
             </div>
-            <div class="col-lg-12 d-flex align-items-start">
-              <i class="bi bi-bar-chart-line me-4 display-6"></i>
-              <div>
-                <h4 class="m-0 h5 text-white">Data-Driven Insights</h4>
-                <p class="text-white opacity-50">Leverage analytics to identify trends, improve policies, and drive better governance.</p>
-              </div>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="flex items-start space-x-4 group">
+            <div class="flex-shrink-0 w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center group-hover:bg-blue-500/30 transition-colors duration-300 mt-1">
+              <i class="fas fa-clock text-blue-400"></i>
+            </div>
+            <div class="flex-1">
+              <h4 class="text-lg font-semibold text-white mb-1">Track Government Action</h4>
+              <p class="text-gray-300 text-sm leading-relaxed">
+                Get real-time updates on submitted reports and monitor government responses.
+              </p>
+            </div>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="flex items-start space-x-4 group">
+            <div class="flex-shrink-0 w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center group-hover:bg-purple-500/30 transition-colors duration-300 mt-1">
+              <i class="fas fa-chart-bar text-purple-400"></i>
+            </div>
+            <div class="flex-1">
+              <h4 class="text-lg font-semibold text-white mb-1">Data-Driven Insights</h4>
+              <p class="text-gray-300 text-sm leading-relaxed">
+                Leverage analytics to identify trends, improve policies, and drive better governance.
+              </p>
             </div>
           </div>
         </div>
@@ -319,368 +587,313 @@
 </section>
 <!-- /About Section -->
 
-<!-- About 3 Section -->
-<section id="about-3" class="about-3 section">
-  <div class="container">
-    <div class="row gy-4 justify-content-between align-items-center">
-      <div class="col-lg-6 order-lg-2 position-relative" data-aos="zoom-out">
-        <img src="{% static 'assets/img/img_sq_1.jpg' %} " alt="PublicBridge Video" class="img-fluid">
-        <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8" class="glightbox pulsating-play-btn">
-          <span class="play"><i class="bi bi-play-fill"></i></span>
-        </a>
-      </div>
-      <div class="col-lg-5 order-lg-1" data-aos="fade-up" data-aos-delay="100">
-        <h2 class="content-title mb-4">Building Trust Through Transparency</h2>
-        <p class="mb-4">
-          PublicBridge enables <b> open communication </b> between governments and citizens. By <b> facilitating transparent reporting and real-time tracking </b>, we strengthen democracy and ensure that <b> every voice is heard.</b>
+<!-- About 3 Section - Without Video -->
+<section id="about-3" class="py-16 bg-white">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+      
+      <!-- Content Section -->
+      <div data-aos="fade-up">
+        <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
+          Building Trust Through <span class="text-green-600">Transparency</span>
+        </h2>
+        
+        <p class="text-gray-600 mb-6 leading-relaxed">
+          PublicBridge enables <span class="font-semibold text-green-700">open communication</span> between governments and citizens. By <span class="font-semibold text-green-700">facilitating transparent reporting and real-time tracking</span>, we strengthen democracy and ensure that <span class="font-semibold text-green-700">every voice is heard.</span>
         </p>
-        <ul class="list-unstyled list-check">
-          <li>Submit and track reports seamlessly</li>
-          <li>Ensure government accountability through transparency</li>
-          <li>Access real-time data for better decision-making</li>
+
+        <!-- Features List -->
+        <ul class="space-y-4 mb-8">
+          <li class="flex items-start space-x-3">
+            <div class="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-1">
+              <i class="fas fa-check text-green-600 text-xs"></i>
+            </div>
+            <span class="text-gray-700">Submit and track reports seamlessly</span>
+          </li>
+          <li class="flex items-start space-x-3">
+            <div class="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-1">
+              <i class="fas fa-check text-green-600 text-xs"></i>
+            </div>
+            <span class="text-gray-700">Ensure government accountability through transparency</span>
+          </li>
+          <li class="flex items-start space-x-3">
+            <div class="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-1">
+              <i class="fas fa-check text-green-600 text-xs"></i>
+            </div>
+            <span class="text-gray-700">Access real-time data for better decision-making</span>
+          </li>
         </ul>
 
-        <p><a href="users/register/" class="btn-cta">Get Started</a></p>
+        <!-- CTA Button -->
+        <a href="users/register/" class="inline-flex items-center px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl">
+          <i class="fas fa-rocket mr-2"></i>
+          Get Started
+        </a>
+      </div>
+
+      <!-- Image Section - Replaced Video -->
+      <div class="relative" data-aos="zoom-out" data-aos-delay="100">
+        <div class="relative rounded-2xl overflow-hidden shadow-2xl">
+          <img 
+            src="{% static 'assets/img/kenya-flag.jpg' %}" 
+            alt="PublicBridge Transparency" 
+            class="w-full h-64 lg:h-80 object-cover transform hover:scale-105 transition-transform duration-700"
+          >
+          <!-- Stats Overlay -->
+          <div class="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-4 transform hover:scale-105 transition-transform duration-300">
+            <div class="grid grid-cols-2 gap-4 text-center">
+              <div>
+                <div class="text-xl font-bold text-green-600">95%</div>
+                <div class="text-xs text-gray-600">Resolution Rate</div>
+              </div>
+              <div>
+                <div class="text-xl font-bold text-blue-600">24h</div>
+                <div class="text-xs text-gray-600">Avg Response</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+
   </div>
 </section>
 <!-- /About 3 Section -->
 
-    <!-- Services 2 Section -->
-<section id="services-2" class="services-2 section dark-background">
-  <!-- Section Title -->
-  <div class="container section-title" data-aos="fade-up">
-    <h2>Our Services</h2>
-    <p>Empowering citizens, enhancing governance</p>
-  </div><!-- End Section Title -->
-
-  <div class="services-carousel-wrap">
-    <div class="container">
-      <div class="swiper init-swiper">
-        <script type="application/json" class="swiper-config">
-          {
-            "loop": true,
-            "speed": 600,
-            "autoplay": {
-              "delay": 5000
-            },
-            "slidesPerView": "auto",
-            "pagination": {
-              "el": ".swiper-pagination",
-              "type": "bullets",
-              "clickable": true
-            },
-            "navigation": {
-              "nextEl": ".js-custom-next",
-              "prevEl": ".js-custom-prev"
-            },
-            "breakpoints": {
-              "320": {
-                "slidesPerView": 1,
-                "spaceBetween": 40
-              },
-              "1200": {
-                "slidesPerView": 3,
-                "spaceBetween": 40
-              }
-            }
-          }
-        </script>
-        <button class="navigation-prev js-custom-prev">
-          <i class="bi bi-arrow-left-short"></i>
-        </button>
-        <button class="navigation-next js-custom-next">
-          <i class="bi bi-arrow-right-short"></i>
-        </button>
-        <div class="swiper-wrapper">
-          
-          <div class="swiper-slide">
-            <div class="service-item">
-              <div class="service-item-contents">
-                <a href="#">
-                  <span class="service-item-category">We provide</span>
-                  <h2 class="service-item-title">Citizen Issue Reporting</h2>
-                </a>
-              </div>
-              <img src="{% static 'assets/img/img_sq_3.jpg' %} " alt="Citizen Reporting" class="img-fluid">
-            </div>
-          </div>
-
-          <div class="swiper-slide">
-            <div class="service-item">
-              <div class="service-item-contents">
-                <a href="#">
-                  <span class="service-item-category">We provide</span>
-                  <h2 class="service-item-title">Emergency & Disaster Alerts</h2>
-                </a>
-              </div>
-              <img src="{% static 'assets/img/img_sq_4.jpg' %} " alt="Emergency Alerts" class="img-fluid">
-            </div>
-          </div>
-
-          <div class="swiper-slide">
-            <div class="service-item">
-              <div class="service-item-contents">
-                <a href="#">
-                  <span class="service-item-category">We provide</span>
-                  <h2 class="service-item-title">Real-Time Report Tracking</h2>
-                </a>
-              </div>
-              <img src="{% static 'assets/img/img_sq_5.jpg' %} " alt="Real-Time Tracking" class="img-fluid">
-            </div>
-          </div>
-
-          <div class="swiper-slide">
-            <div class="service-item">
-              <div class="service-item-contents">
-                <a href="#">
-                  <span class="service-item-category">We provide</span>
-                  <h2 class="service-item-title">Government Accountability</h2>
-                </a>
-              </div>
-              <img src="{% static 'assets/img/img_sq_6.jpg' %} " alt="Government Transparency" class="img-fluid">
-            </div>
-          </div>
-
-          <div class="swiper-slide">
-            <div class="service-item">
-              <div class="service-item-contents">
-                <a href="#">
-                  <span class="service-item-category">We provide</span>
-                  <h2 class="service-item-title">Interactive Public Dashboards</h2>
-                </a>
-              </div>
-              <img src="{% static 'assets/img/img_sq_7.jpg' %} " alt="Public Dashboard" class="img-fluid">
-            </div>
-          </div>
-
-          <div class="swiper-slide">
-            <div class="service-item">
-              <div class="service-item-contents">
-                <a href="#">
-                  <span class="service-item-category">We provide</span>
-                  <h2 class="service-item-title">Anonymous Whistleblowing</h2>
-                </a>
-              </div>
-              <img src="{% static 'assets/img/img_sq_8.jpg' %} " alt="Whistleblowing" class="img-fluid">
-            </div>
-          </div>
-
-        </div>
-        <div class="swiper-pagination"></div>
-      </div>
-    </div>
-  </div>
-</section><!-- /Services 2 Section -->
-
-
-    <!-- Testimonials Section -->
-<section class="testimonials-12 testimonials section" id="testimonials">
-  <!-- Section Title -->
-  <div class="container section-title" data-aos="fade-up">
-    <h2>What People Say About PublicBridge</h2>
-    <p>Real stories from citizens and government officials</p>
-  </div><!-- End Section Title -->
-
-  <div class="testimonial-wrap">
-    <div class="container">
-      <div class="row">
-        
-        <div class="col-md-6 mb-4 mb-md-4">
-          <div class="testimonial">
-            <img src="{% static 'assets/img/testimonials/testimonials-1.jpg' %} " alt="Testimonial author">
-            <blockquote>
-              <p>
-                “PublicBridge made it easy for me to report infrastructure issues in my neighborhood. The response time was faster than ever before!”
-              </p>
-            </blockquote>
-            <p class="client-name">Maria Gonzalez, Concerned Citizen</p>
-          </div>
-        </div>
-
-        <div class="col-md-6 mb-4 mb-md-4">
-          <div class="testimonial">
-            <img src="{% static 'assets/img/testimonials/testimonials-2.jpg' %} " alt="Testimonial author">
-            <blockquote>
-              <p>
-                “I finally feel heard! My complaint about broken streetlights was resolved within days after using PublicBridge.”
-              </p>
-            </blockquote>
-            <p class="client-name">Liam Johnson, Community Member</p>
-          </div>
-        </div>
-
-        <div class="col-md-6 mb-4 mb-md-4">
-          <div class="testimonial">
-            <img src="{% static 'assets/img/testimonials/testimonials-3.jpg' %} " alt="Testimonial author">
-            <blockquote>
-              <p>
-                “PublicBridge has helped us manage citizen reports more effectively, improving transparency and accountability in our department.”
-              </p>
-            </blockquote>
-            <p class="client-name">Sarah Mitchell, Government Official</p>
-          </div>
-        </div>
-
-        <div class="col-md-6 mb-4 mb-md-4">
-          <div class="testimonial">
-            <img src="{% static 'assets/img/testimonials/testimonials-4.jpg' %} " alt="Testimonial author">
-            <blockquote>
-              <p>
-                “This platform bridges the gap between the government and the people. It’s an essential tool for modern governance.”
-              </p>
-            </blockquote>
-            <p class="client-name">David Brown, City Administrator</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</section><!-- /Testimonials Section -->
-
     <!-- Recent Posts Section -->
-<section id="recent-posts" class="recent-posts section">
+    <section id="recent-posts" class="py-20 bg-gradient-to-br from-gray-50 to-white">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Section Header -->
+    <div class="text-center mb-16" data-aos="fade-up">
+      <span class="inline-block px-4 py-1.5 bg-green-100 text-green-700 rounded-full text-sm font-semibold mb-4">
+        Latest Updates
+      </span>
+      <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+        Insights & <span class="text-green-600">Updates</span>
+      </h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Stay informed about policies, reports, and public initiatives shaping our community
+      </p>
+    </div>
 
-  <!-- Section Title -->
-  <div class="container section-title" data-aos="fade-up">
-    <h2>Latest Updates & Insights</h2>
-    <p>Stay informed about policies, reports, and public initiatives</p>
-  </div><!-- End Section Title -->
-
-  <div class="container">
-
-    <div class="row gy-5">
-
-      <div class="col-xl-4 col-md-6">
-        <div class="post-item position-relative h-100" data-aos="fade-up" data-aos-delay="100">
-
-          <div class="post-img position-relative overflow-hidden">
-            <img src="{% static 'assets/img/blog/blog-1.jpg' %} " class="img-fluid" alt="">
-            <span class="post-date">February 20</span>
+    <!-- Posts Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+      
+      <!-- Post 1 -->
+      <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-green-200" data-aos="fade-up" data-aos-delay="100">
+        <div class="relative overflow-hidden">
+          <img 
+            src="{% static 'assets/img/blog/blog-1.jpg' %}" 
+            alt="New Policy on Infrastructure Development Announced" 
+            class="w-full h-48 lg:h-56 object-cover transform group-hover:scale-110 transition-transform duration-700"
+          >
+          <!-- Date Badge -->
+          <div class="absolute top-4 left-4 bg-green-500 text-white px-3 py-1.5 rounded-lg text-sm font-semibold shadow-lg">
+            Feb 20
           </div>
-
-          <div class="post-content d-flex flex-column">
-
-            <h3 class="post-title">New Policy on Infrastructure Development Announced</h3>
-
-            <div class="meta d-flex align-items-center">
-              <div class="d-flex align-items-center">
-                <i class="bi bi-person"></i> <span class="ps-2">PublicBridge Team</span>
-              </div>
-              <span class="px-3 text-black-50">/</span>
-              <div class="d-flex align-items-center">
-                <i class="bi bi-folder2"></i> <span class="ps-2">Government</span>
-              </div>
-            </div>
-
-            <hr>
-
-            <a href="blog-details.html" class="readmore stretched-link"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
-
+          <!-- Category Badge -->
+          <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-gray-700 px-3 py-1.5 rounded-lg text-xs font-medium">
+            Government
           </div>
-
         </div>
-      </div><!-- End post item -->
 
-      <div class="col-xl-4 col-md-6">
-        <div class="post-item position-relative h-100" data-aos="fade-up" data-aos-delay="200">
-
-          <div class="post-img position-relative overflow-hidden">
-            <img src="{% static 'assets/img/blog/blog-2.jpg' %} " class="img-fluid" alt="">
-            <span class="post-date">January 15</span>
-          </div>
-
-          <div class="post-content d-flex flex-column">
-
-            <h3 class="post-title">How Citizens Can Track Their Reported Issues</h3>
-
-            <div class="meta d-flex align-items-center">
-              <div class="d-flex align-items-center">
-                <i class="bi bi-person"></i> <span class="ps-2">Anna Thompson</span>
-              </div>
-              <span class="px-3 text-black-50">/</span>
-              <div class="d-flex align-items-center">
-                <i class="bi bi-folder2"></i> <span class="ps-2">Civic Engagement</span>
-              </div>
+        <div class="p-6 lg:p-8">
+          <!-- Meta Info -->
+          <div class="flex items-center text-sm text-gray-500 mb-4">
+            <div class="flex items-center">
+              <i class="fas fa-user-circle text-green-500 mr-2"></i>
+              <span>PublicBridge Team</span>
             </div>
-
-            <hr>
-
-            <a href="blog-details.html" class="readmore stretched-link"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
-
-          </div>
-
-        </div>
-      </div><!-- End post item -->
-
-      <div class="col-xl-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-        <div class="post-item position-relative h-100">
-
-          <div class="post-img position-relative overflow-hidden">
-            <img src="{% static 'assets/img/blog/blog-3.jpg' %}" class="img-fluid" alt="">
-            <span class="post-date">December 28</span>
-          </div>
-
-          <div class="post-content d-flex flex-column">
-
-            <h3 class="post-title">Government Transparency: Progress & Challenges</h3>
-
-            <div class="meta d-flex align-items-center">
-              <div class="d-flex align-items-center">
-                <i class="bi bi-person"></i> <span class="ps-2">David Brown</span>
-              </div>
-              <span class="px-3 text-black-50">/</span>
-              <div class="d-flex align-items-center">
-                <i class="bi bi-folder2"></i> <span class="ps-2">Public Policy</span>
-              </div>
+            <div class="w-1 h-1 bg-gray-300 rounded-full mx-3"></div>
+            <div class="flex items-center">
+              <i class="fas fa-clock text-green-500 mr-2"></i>
+              <span>5 min read</span>
             </div>
-
-            <hr>
-
-            <a href="blog-details.html" class="readmore stretched-link"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
-
           </div>
 
+          <!-- Title -->
+          <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-green-600 transition-colors duration-300 line-clamp-2">
+            New Policy on Infrastructure Development Announced
+          </h3>
+
+          <!-- Excerpt -->
+          <p class="text-gray-600 mb-6 leading-relaxed line-clamp-3">
+            The government has unveiled a comprehensive new policy framework aimed at accelerating infrastructure development across urban and rural areas.
+          </p>
+
+          <!-- Read More Link -->
+          <a href="blog-details.html" class="inline-flex items-center text-green-600 font-semibold group-hover:text-green-700 transition-colors duration-300">
+            <span class="mr-2">Read More</span>
+            <i class="fas fa-arrow-right transform group-hover:translate-x-1 transition-transform duration-300"></i>
+          </a>
         </div>
-      </div><!-- End post item -->
+      </div>
+
+      <!-- Post 2 -->
+      <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-blue-200" data-aos="fade-up" data-aos-delay="200">
+        <div class="relative overflow-hidden">
+          <img 
+            src="{% static 'assets/img/blog/blog-2.jpg' %}" 
+            alt="How Citizens Can Track Their Reported Issues" 
+            class="w-full h-48 lg:h-56 object-cover transform group-hover:scale-110 transition-transform duration-700"
+          >
+          <!-- Date Badge -->
+          <div class="absolute top-4 left-4 bg-blue-500 text-white px-3 py-1.5 rounded-lg text-sm font-semibold shadow-lg">
+            Jan 15
+          </div>
+          <!-- Category Badge -->
+          <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-gray-700 px-3 py-1.5 rounded-lg text-xs font-medium">
+            Civic Engagement
+          </div>
+        </div>
+
+        <div class="p-6 lg:p-8">
+          <!-- Meta Info -->
+          <div class="flex items-center text-sm text-gray-500 mb-4">
+            <div class="flex items-center">
+              <i class="fas fa-user-circle text-blue-500 mr-2"></i>
+              <span>Anna Thompson</span>
+            </div>
+            <div class="w-1 h-1 bg-gray-300 rounded-full mx-3"></div>
+            <div class="flex items-center">
+              <i class="fas fa-clock text-blue-500 mr-2"></i>
+              <span>4 min read</span>
+            </div>
+          </div>
+
+          <!-- Title -->
+          <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors duration-300 line-clamp-2">
+            How Citizens Can Track Their Reported Issues
+          </h3>
+
+          <!-- Excerpt -->
+          <p class="text-gray-600 mb-6 leading-relaxed line-clamp-3">
+            Learn how to effectively use PublicBridge's tracking system to monitor the progress of your submitted reports and stay updated on government responses.
+          </p>
+
+          <!-- Read More Link -->
+          <a href="blog-details.html" class="inline-flex items-center text-blue-600 font-semibold group-hover:text-blue-700 transition-colors duration-300">
+            <span class="mr-2">Read More</span>
+            <i class="fas fa-arrow-right transform group-hover:translate-x-1 transition-transform duration-300"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Post 3 -->
+      <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-purple-200" data-aos="fade-up" data-aos-delay="300">
+        <div class="relative overflow-hidden">
+          <img 
+            src="{% static 'assets/img/blog/blog-3.jpg' %}" 
+            alt="Government Transparency: Progress & Challenges" 
+            class="w-full h-48 lg:h-56 object-cover transform group-hover:scale-110 transition-transform duration-700"
+          >
+          <!-- Date Badge -->
+          <div class="absolute top-4 left-4 bg-purple-500 text-white px-3 py-1.5 rounded-lg text-sm font-semibold shadow-lg">
+            Dec 28
+          </div>
+          <!-- Category Badge -->
+          <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-gray-700 px-3 py-1.5 rounded-lg text-xs font-medium">
+            Public Policy
+          </div>
+        </div>
+
+        <div class="p-6 lg:p-8">
+          <!-- Meta Info -->
+          <div class="flex items-center text-sm text-gray-500 mb-4">
+            <div class="flex items-center">
+              <i class="fas fa-user-circle text-purple-500 mr-2"></i>
+              <span>David Brown</span>
+            </div>
+            <div class="w-1 h-1 bg-gray-300 rounded-full mx-3"></div>
+            <div class="flex items-center">
+              <i class="fas fa-clock text-purple-500 mr-2"></i>
+              <span>6 min read</span>
+            </div>
+          </div>
+
+          <!-- Title -->
+          <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors duration-300 line-clamp-2">
+            Government Transparency: Progress & Challenges
+          </h3>
+
+          <!-- Excerpt -->
+          <p class="text-gray-600 mb-6 leading-relaxed line-clamp-3">
+            An in-depth analysis of the current state of government transparency initiatives and the challenges faced in implementing open governance practices.
+          </p>
+
+          <!-- Read More Link -->
+          <a href="blog-details.html" class="inline-flex items-center text-purple-600 font-semibold group-hover:text-purple-700 transition-colors duration-300">
+            <span class="mr-2">Read More</span>
+            <i class="fas fa-arrow-right transform group-hover:translate-x-1 transition-transform duration-300"></i>
+          </a>
+        </div>
+      </div>
 
     </div>
 
-  </div>
+    <!-- View All Button -->
+    <div class="text-center mt-12" data-aos="fade-up" data-aos-delay="400">
+      <a href="#" class="inline-flex items-center px-8 py-4 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl">
+        <span class="mr-3">View All Updates</span>
+        <i class="fas fa-arrow-right transform group-hover:translate-x-1 transition-transform duration-300"></i>
+      </a>
+    </div>
 
-</section><!-- /Recent Posts Section -->
+  </div>
+</section>
+ <!-- /Recent Posts Section -->
 
 <!-- Call To Action Section -->
-<section id="call-to-action" class="call-to-action section light-background">
-  <div class="content">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-lg-6">
-          <h3>Stay Informed, Stay Engaged</h3>
-          <p class="opacity-50">
+<section id="call-to-action" class="py-16 bg-gray-50">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+        
+        <!-- Content Section -->
+        <div>
+          <h3 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
+            Stay Informed, Stay Engaged
+          </h3>
+          <p class="text-gray-600 leading-relaxed">
             Subscribe to our newsletter and get updates on public reports, 
             government actions, and citizen-driven change.
           </p>
         </div>
-        <div class="col-lg-6">
-          <form action="forms/newsletter.php" class="form-subscribe php-email-form">
-            <div class="form-group d-flex align-items-stretch">
-              <input type="email" name="email" class="form-control h-100" placeholder="Enter your email">
-              <input type="submit" class="btn btn-secondary px-4" value="Subscribe">
+
+        <!-- Form Section -->
+        <div>
+          <form action="forms/newsletter.php" class="php-email-form">
+            <div class="flex flex-col sm:flex-row gap-3">
+              <input 
+                type="email" 
+                name="email" 
+                class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200"
+                placeholder="Enter your email"
+                required
+              >
+              <button 
+                type="submit" 
+                class="px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 whitespace-nowrap"
+              >
+                Subscribe
+              </button>
             </div>
-            <div class="loading">Loading</div>
-            <div class="error-message"></div>
-            <div class="sent-message">
+            
+            <!-- Form Messages -->
+            <div class="loading mt-2 text-sm text-gray-500 hidden">Loading...</div>
+            <div class="error-message mt-2 text-sm text-red-600 hidden"></div>
+            <div class="sent-message mt-2 text-sm text-green-600 hidden">
               Your subscription request has been sent. Thank you!
             </div>
           </form>
         </div>
+
       </div>
     </div>
   </div>
-</section><!-- /Call To Action Section -->
+</section>
+<!-- /Call To Action Section -->
 
 <footer id="footer" class="footer dark-background">
   <div class="footer-top">
@@ -773,8 +986,111 @@
   <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
   <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
 
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
   <!-- Main JS File -->
   <script src="{% static 'assets/js/main.js' %}"></script>
+
+  <!-- Navigation JavaScript -->
+  <script>
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (mobileMenuButton && mobileMenu) {
+      mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+        
+        // Animate hamburger icon
+        const hamburgerLines = mobileMenuButton.querySelectorAll('.hamburger-line');
+        if (mobileMenu.classList.contains('hidden')) {
+          // Reset to hamburger
+          hamburgerLines[0].style.transform = 'rotate(0deg) translateY(0)';
+          hamburgerLines[1].style.opacity = '1';
+          hamburgerLines[2].style.transform = 'rotate(0deg) translateY(0)';
+        } else {
+          // Transform to X
+          hamburgerLines[0].style.transform = 'rotate(45deg) translateY(8px)';
+          hamburgerLines[1].style.opacity = '0';
+          hamburgerLines[2].style.transform = 'rotate(-45deg) translateY(-8px)';
+        }
+      });
+    }
+
+    // Mobile dropdown toggle
+    function toggleMobileDropdown(dropdownId) {
+      const dropdown = document.getElementById(dropdownId);
+      const icon = document.getElementById(dropdownId + '-icon');
+      
+      if (dropdown && icon) {
+        dropdown.classList.toggle('hidden');
+        icon.classList.toggle('rotate-180');
+      }
+    }
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+      const isClickInsideMenu = mobileMenu.contains(event.target);
+      const isClickOnMenuButton = mobileMenuButton.contains(event.target);
+      
+      if (!mobileMenu.classList.contains('hidden') && !isClickInsideMenu && !isClickOnMenuButton) {
+        mobileMenu.classList.add('hidden');
+        const hamburgerLines = mobileMenuButton.querySelectorAll('.hamburger-line');
+        hamburgerLines[0].style.transform = 'rotate(0deg) translateY(0)';
+        hamburgerLines[1].style.opacity = '1';
+        hamburgerLines[2].style.transform = 'rotate(0deg) translateY(0)';
+      }
+    });
+
+    // Header scroll effect
+    window.addEventListener('scroll', () => {
+      const header = document.getElementById('header');
+      if (window.scrollY > 100) {
+        header.classList.add('bg-white/98', 'shadow-xl');
+        header.classList.remove('bg-white/95');
+      } else {
+        header.classList.add('bg-white/95');
+        header.classList.remove('bg-white/98', 'shadow-xl');
+      }
+    });
+
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Active navigation highlighting
+    window.addEventListener('scroll', () => {
+      const sections = document.querySelectorAll('section[id]');
+      const navLinks = document.querySelectorAll('nav a[href^="#"]');
+      
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (window.scrollY >= sectionTop - 200) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('text-green-600');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.add('text-green-600');
+        }
+      });
+    });
+  </script>
 
 </body>
 

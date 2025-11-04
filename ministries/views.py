@@ -75,8 +75,19 @@ def ministry_dashboard(request):
 
     ministry = get_object_or_404(Ministry, ministry_id=ministry_id)  # Fetch Ministry instance
     reports = Report.objects.filter(ministry=ministry)
+    resolved_reports = reports.filter(status="resolved").count()
+    pending_reports = reports.filter(status="pending").count()
+    under_review_reports = reports.filter(status="under_review").count()
+    rejected_reports = reports.filter(status="rejected").count()
 
-    return render(request, "ministries/ministry_dashboard.html", {"ministry": ministry, "reports": reports})
+    return render(request, "ministries/ministry_dashboard.html", {
+        "ministry": ministry, 
+        "reports": reports,
+        "resolved_reports": resolved_reports,
+        "pending_reports": pending_reports,
+        "under_review_reports": under_review_reports,
+        "rejected_reports": rejected_reports,
+    })
 
 
 def update_report_status(request, report_id):
@@ -114,7 +125,7 @@ def assigned_reports(request):
         return redirect("ministry-login")
 
     ministry = get_object_or_404(Ministry, ministry_id=ministry_id)
-    reports = Report.objects.filter(ministry=ministry, status="Under Review")
+    reports = Report.objects.filter(ministry=ministry, status="under_review")
 
     return render(request, "ministries/assigned_reports.html", {"reports": reports})
 
@@ -128,7 +139,7 @@ def resolved_reports(request):
         return redirect("ministry-login")
 
     ministry = get_object_or_404(Ministry, ministry_id=ministry_id)
-    reports = Report.objects.filter(ministry=ministry, status="Resolved")
+    reports = Report.objects.filter(ministry=ministry, status="resolved")
 
     return render(request, "ministries/resolved_reports.html", {"reports": reports})
 

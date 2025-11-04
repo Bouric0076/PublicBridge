@@ -1,41 +1,511 @@
-{% extends 'dashboard/base.html' %}  
+{% extends 'dashboard/base.html' %}
 
-{% block content %}  
-<h1>Submit a New Report</h1>  
-<form method="POST">  
-    {% csrf_token %}  
-    {{ form.title.label }} {{ form.title }}<br>  
-    {{ form.description.label }} {{ form.description }}<br>  
-  
-    <label for="id_urgency">Urgency (1 to 5):</label>  
-    <input   
-        type="number"   
-        id="id_urgency"   
-        name="urgency"   
-        min="1"   
-        max="5"   
-        required  
-        value="{{ form.urgency.value|default:1 }}">  <!-- Optional: Set default to 1 -->  
-    <br>  
+{% block page_title %}Submit Report{% endblock %}
+{% block page_subtitle %}Help improve your community by reporting issues{% endblock %}
 
-    {{ form.user_contact.label }} {{ form.user_contact }}<br>  
-    
-    <button type="submit">Submit Report</button>  
-</form>  
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100/70 py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header Section with Enhanced Design -->
+        <div class="text-center mb-12">
+            <div class="relative inline-flex mb-6">
+                <div class="absolute inset-0 bg-gradient-to-r from-emerald-400 to-cyan-500 rounded-3xl blur-lg opacity-75 animate-pulse"></div>
+                <div class="relative inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-emerald-500 to-cyan-600 rounded-2xl shadow-2xl">
+                    <i class="fas fa-flag text-white text-2xl"></i>
+                </div>
+            </div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-700 bg-clip-text text-transparent mb-4">
+                Report Community Issue
+            </h1>
+            <p class="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
+                Help us maintain and improve your neighborhood by reporting issues that need attention
+            </p>
+        </div>
 
-{% if form.errors %}  
-    <div style="color:red;">  
-        <p>Please correct the following errors:</p>  
-        <ul>  
-            {% for field in form %}  
-                {% for error in field.errors %}  
-                    <li>{{ error }}</li>  
-                {% endfor %}  
-            {% endfor %}  
-            {% for error in form.non_field_errors %}  
-                <li>{{ error }}</li>  
-            {% endfor %}  
-        </ul>  
-    </div>  
-{% endif %}  
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Main Form Section -->
+            <div class="lg:col-span-2">
+                <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
+                    <!-- Progress Steps with Enhanced Design -->
+                    <div class="bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 px-8 py-6 border-b border-slate-200/60">
+                        <div class="flex items-center justify-between max-w-md mx-auto">
+                            <div class="flex items-center">
+                                <div class="relative">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg">
+                                        1
+                                    </div>
+                                    <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full border-2 border-white"></div>
+                                </div>
+                                <span class="ml-3 text-sm font-semibold text-emerald-700">Report Details</span>
+                            </div>
+                            <div class="flex-1 h-1 bg-gradient-to-r from-emerald-200 to-slate-200 mx-6 rounded-full"></div>
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-slate-200 text-slate-500 rounded-full flex items-center justify-center text-sm font-bold">
+                                    2
+                                </div>
+                                <span class="ml-3 text-sm font-medium text-slate-500">Review & Submit</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Form Section -->
+                    <div class="p-8">
+                        <form method="POST" class="space-y-8">
+                            {% csrf_token %}
+
+                            <!-- Title Field with Enhanced Styling -->
+                            <div class="group">
+                                <label for="id_title" class="block text-sm font-semibold text-slate-700 mb-3 flex items-center">
+                                    <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-heading text-emerald-600 text-sm"></i>
+                                    </div>
+                                    Issue Title
+                                    <span class="text-red-500 ml-1">*</span>
+                                </label>
+                                <div class="relative">
+                                    <input 
+                                        type="text" 
+                                        id="id_title" 
+                                        name="title" 
+                                        required
+                                        value="{{ form.title.value|default:'' }}"
+                                        placeholder="e.g., Broken street light on Main Street"
+                                        class="form-input w-full px-5 py-4 text-slate-700 border-2 border-slate-200 rounded-2xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 outline-none transition-all duration-300 bg-white/80 backdrop-blur-sm placeholder-slate-400 group-hover:border-slate-300">
+                                    <div class="absolute right-4 top-1/2 transform -translate-y-1/2">
+                                        <i class="fas fa-edit text-slate-400 group-hover:text-emerald-500 transition-colors"></i>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-2 ml-11">Choose a clear, descriptive title that summarizes the issue</p>
+                            </div>
+
+                            <!-- Description Field with Enhanced Styling -->
+                            <div class="group">
+                                <label for="id_description" class="block text-sm font-semibold text-slate-700 mb-3 flex items-center">
+                                    <div class="w-8 h-8 bg-cyan-100 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-align-left text-cyan-600 text-sm"></i>
+                                    </div>
+                                    Detailed Description
+                                    <span class="text-red-500 ml-1">*</span>
+                                </label>
+                                <div class="relative">
+                                    <textarea 
+                                        id="id_description" 
+                                        name="description" 
+                                        required
+                                        placeholder="Please provide detailed information about the issue, including location specifics, time first noticed, and any relevant details..."
+                                        rows="5"
+                                        class="form-textarea w-full px-5 py-4 text-slate-700 border-2 border-slate-200 rounded-2xl focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/20 outline-none transition-all duration-300 bg-white/80 backdrop-blur-sm resize-none placeholder-slate-400 group-hover:border-slate-300">{{ form.description.value|default:'' }}</textarea>
+                                    <div class="absolute right-4 top-4">
+                                        <i class="fas fa-text-height text-slate-400 group-hover:text-cyan-500 transition-colors"></i>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between items-center mt-2 ml-11">
+                                    <p class="text-xs text-slate-500">Be specific about what, where, and when you observed the issue</p>
+                                    <span id="charCount" class="text-xs text-slate-400">0 characters</span>
+                                </div>
+                            </div>
+
+                            <!-- Enhanced Urgency Field -->
+                            <div class="group">
+                                <label class="block text-sm font-semibold text-slate-700 mb-3 flex items-center">
+                                    <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-exclamation-triangle text-orange-500 text-sm"></i>
+                                    </div>
+                                    Urgency Level
+                                    <span class="text-red-500 ml-1">*</span>
+                                </label>
+                                <div class="bg-gradient-to-br from-slate-50 to-white rounded-2xl p-6 border-2 border-slate-200 group-hover:border-slate-300 transition-all duration-300">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <span class="text-sm font-medium text-slate-700">How urgent is this issue?</span>
+                                        <span id="urgencyValue" class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold">Low Priority</span>
+                                    </div>
+                                    <div class="relative">
+                                        <input 
+                                            type="range" 
+                                            id="id_urgency" 
+                                            name="urgency" 
+                                            min="1" 
+                                            max="5" 
+                                            value="{{ form.urgency.value|default:1 }}"
+                                            class="urgency-slider w-full h-3 bg-gradient-to-r from-green-200 via-yellow-200 to-red-200 rounded-full appearance-none cursor-pointer"
+                                            oninput="updateUrgency(this.value)">
+                                    </div>
+                                    <div class="flex justify-between text-xs text-slate-600 mt-4 px-2">
+                                        <span class="flex flex-col items-center">
+                                            <i class="fas fa-leaf text-green-500 mb-1"></i>
+                                            Low
+                                        </span>
+                                        <span class="flex flex-col items-center">
+                                            <i class="fas fa-info-circle text-blue-500 mb-1"></i>
+                                            Medium
+                                        </span>
+                                        <span class="flex flex-col items-center">
+                                            <i class="fas fa-exclamation text-yellow-500 mb-1"></i>
+                                            High
+                                        </span>
+                                        <span class="flex flex-col items-center">
+                                            <i class="fas fa-times-circle text-orange-500 mb-1"></i>
+                                            Critical
+                                        </span>
+                                        <span class="flex flex-col items-center">
+                                            <i class="fas fa-skull-crossbones text-red-500 mb-1"></i>
+                                            Emergency
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Enhanced Contact Field -->
+                            <div class="group">
+                                <label for="id_user_contact" class="block text-sm font-semibold text-slate-700 mb-3 flex items-center">
+                                    <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-envelope text-purple-600 text-sm"></i>
+                                    </div>
+                                    Contact Information
+                                    <span class="text-red-500 ml-1">*</span>
+                                </label>
+                                <div class="relative">
+                                    <input 
+                                        type="text" 
+                                        id="id_user_contact" 
+                                        name="user_contact" 
+                                        required
+                                        value="{{ form.user_contact.value|default:'' }}"
+                                        placeholder="Email or phone number for updates"
+                                        class="form-input w-full px-5 py-4 text-slate-700 border-2 border-slate-200 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20 outline-none transition-all duration-300 bg-white/80 backdrop-blur-sm placeholder-slate-400 group-hover:border-slate-300">
+                                    <div class="absolute right-4 top-1/2 transform -translate-y-1/2">
+                                        <i class="fas fa-user-circle text-slate-400 group-hover:text-purple-500 transition-colors"></i>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-2 ml-11">We'll use this to provide updates on your report status</p>
+                            </div>
+
+                            <!-- Single Submit Button -->
+                            <div class="pt-6">
+                                <button type="submit" class="w-full inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-emerald-500 to-cyan-600 text-white font-bold rounded-2xl hover:from-emerald-600 hover:to-cyan-700 transform hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 shadow-lg group relative overflow-hidden">
+                                    <div class="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                                    <i class="fas fa-paper-plane mr-3 group-hover:scale-110 transition-transform relative z-10"></i>
+                                    <span class="relative z-10">Submit Report</span>
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Enhanced Error Messages -->
+                        {% if form.errors %}
+                        <div class="mt-8 bg-gradient-to-br from-red-50 to-red-100/50 border-2 border-red-200 rounded-2xl p-6 animate-pulse">
+                            <div class="flex items-center mb-3">
+                                <div class="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center mr-3">
+                                    <i class="fas fa-exclamation-triangle text-white"></i>
+                                </div>
+                                <h4 class="text-red-800 font-bold text-lg">Please fix the following errors:</h4>
+                            </div>
+                            <ul class="space-y-2 text-red-700">
+                                {% for field in form %}
+                                    {% for error in field.errors %}
+                                        <li class="flex items-center bg-white/50 rounded-lg px-3 py-2">
+                                            <i class="fas fa-chevron-circle-right text-red-500 mr-2 text-sm"></i>
+                                            <span class="font-medium">{{ field.label }}:</span>
+                                            <span class="ml-2">{{ error }}</span>
+                                        </li>
+                                    {% endfor %}
+                                {% endfor %}
+                                {% for error in form.non_field_errors %}
+                                    <li class="flex items-center bg-white/50 rounded-lg px-3 py-2">
+                                        <i class="fas fa-chevron-circle-right text-red-500 mr-2 text-sm"></i>
+                                        {{ error }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Enhanced Help Section -->
+                    <div class="bg-gradient-to-r from-slate-50 to-slate-100/50 border-t border-slate-200/60 px-8 py-5">
+                        <div class="flex items-center text-sm text-slate-600">
+                            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-shield-alt text-blue-500"></i>
+                            </div>
+                            <div>
+                                <span class="font-semibold">Your privacy is protected.</span>
+                                <span class="ml-2">Reports are anonymous and reviewed within 24 hours by community moderators.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Tips & Guidelines Sidebar -->
+            <div class="space-y-6">
+                <!-- Quick Tips Card -->
+                <div class="bg-gradient-to-br from-white to-slate-50/50 rounded-2xl shadow-xl border border-white/20 p-6 backdrop-blur-sm">
+                    <h3 class="font-bold text-slate-800 text-lg mb-4 flex items-center">
+                        <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-lightbulb text-yellow-500"></i>
+                        </div>
+                        Quick Tips
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3 group">
+                            <div class="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i class="fas fa-camera text-emerald-500 text-xs"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-slate-700">Include Photos</p>
+                                <p class="text-xs text-slate-500 mt-1">Visual evidence helps us understand the issue better</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3 group">
+                            <div class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i class="fas fa-map-marker-alt text-blue-500 text-xs"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-slate-700">Be Specific</p>
+                                <p class="text-xs text-slate-500 mt-1">Exact locations help us respond faster</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3 group">
+                            <div class="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i class="fas fa-clock text-purple-500 text-xs"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-slate-700">Timing Matters</p>
+                                <p class="text-xs text-slate-500 mt-1">When did you first notice the issue?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Community Impact Card -->
+                <div class="bg-gradient-to-br from-emerald-500 to-cyan-600 rounded-2xl shadow-2xl p-6 text-white">
+                    <h3 class="font-bold text-lg mb-3 flex items-center">
+                        <i class="fas fa-chart-line mr-2"></i>
+                        Community Impact
+                    </h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="text-emerald-100">Reports Resolved</span>
+                            <span class="font-bold">89%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-emerald-100">Avg. Response Time</span>
+                            <span class="font-bold">6.2h</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-emerald-100">Active Volunteers</span>
+                            <span class="font-bold">247</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-emerald-400/30">
+                        <p class="text-emerald-100 text-xs">Your report makes a difference in your community</p>
+                    </div>
+                </div>
+
+                <!-- Support Card -->
+                <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-xl p-6 text-white">
+                    <h3 class="font-bold text-lg mb-3 flex items-center">
+                        <i class="fas fa-life-ring mr-2"></i>
+                        Need Help?
+                    </h3>
+                    <p class="text-slate-300 text-sm mb-4">Our community support team is here to assist you</p>
+                    <button class="w-full bg-white/10 hover:bg-white/20 text-white font-medium py-2 px-4 rounded-xl transition-all duration-300 flex items-center justify-center group">
+                        <i class="fas fa-comments mr-2 group-hover:scale-110 transition-transform"></i>
+                        Contact Support
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Enhanced Custom Slider Styling */
+    .urgency-slider {
+        background: linear-gradient(to right, #10b981, #f59e0b, #ef4444);
+        outline: none;
+        -webkit-appearance: none;
+    }
+
+    .urgency-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 24px;
+        height: 24px;
+        background: white;
+        border: 3px solid #10b981;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        transition: all 0.2s ease;
+    }
+
+    .urgency-slider::-webkit-slider-thumb:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .urgency-slider::-moz-range-thumb {
+        width: 24px;
+        height: 24px;
+        background: white;
+        border: 3px solid #10b981;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        transition: all 0.2s ease;
+    }
+
+    .urgency-slider::-moz-range-thumb:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .urgency-slider::-webkit-slider-track {
+        width: 100%;
+        height: 12px;
+        background: linear-gradient(to right, #10b981, #f59e0b, #ef4444);
+        border-radius: 10px;
+        border: none;
+    }
+
+    .urgency-slider::-moz-range-track {
+        width: 100%;
+        height: 12px;
+        background: linear-gradient(to right, #10b981, #f59e0b, #ef4444);
+        border-radius: 10px;
+        border: none;
+    }
+
+    /* Enhanced Form Input Styling */
+    .form-input, .form-textarea {
+        @apply w-full px-5 py-4 text-slate-700 border-2 border-slate-200 rounded-2xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 outline-none transition-all duration-300 bg-white/80 backdrop-blur-sm placeholder-slate-400;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.1);
+    }
+
+    .form-input:hover, .form-textarea:hover {
+        border-color: #cbd5e1;
+    }
+
+    /* Specific focus colors for different fields */
+    #id_description:focus {
+        border-color: #06b6d4;
+        --tw-ring-color: rgba(6, 182, 212, 0.2);
+    }
+
+    #id_user_contact:focus {
+        border-color: #8b5cf6;
+        --tw-ring-color: rgba(139, 92, 246, 0.2);
+    }
+
+    /* Enhanced Focus States */
+    input:focus, textarea:focus {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.1);
+    }
+
+    /* Smooth Animations */
+    .group:hover .group-hover\:scale-110 {
+        transform: scale(1.1);
+    }
+
+    /* Character Count Animation */
+    #charCount {
+        transition: all 0.3s ease;
+    }
+
+    /* Ensure proper placeholder styling */
+    .form-input::placeholder, .form-textarea::placeholder {
+        color: #94a3b8;
+        opacity: 1;
+    }
+
+    /* Remove default browser styles */
+    .form-input, .form-textarea {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+</style>
+
+<script>
+    function updateUrgency(value) {
+        const urgencyText = document.getElementById('urgencyValue');
+        const levels = {
+            1: { text: 'Low Priority', color: 'bg-green-100 text-green-700', icon: 'fa-leaf' },
+            2: { text: 'Medium Priority', color: 'bg-blue-100 text-blue-700', icon: 'fa-info-circle' },
+            3: { text: 'High Priority', color: 'bg-yellow-100 text-yellow-700', icon: 'fa-exclamation' },
+            4: { text: 'Critical', color: 'bg-orange-100 text-orange-700', icon: 'fa-times-circle' },
+            5: { text: 'Emergency', color: 'bg-red-100 text-red-700', icon: 'fa-skull-crossbones' }
+        };
+        
+        urgencyText.textContent = levels[value].text;
+        urgencyText.className = `px-3 py-1 ${levels[value].color} rounded-full text-sm font-semibold`;
+        
+        // Update slider thumb color based on urgency
+        const slider = document.getElementById('id_urgency');
+        const colors = ['#10b981', '#3b82f6', '#f59e0b', '#f97316', '#ef4444'];
+        slider.style.setProperty('--thumb-color', colors[value - 1]);
+    }
+
+    // Character count for description
+    function updateCharCount() {
+        const description = document.getElementById('id_description');
+        const charCount = document.getElementById('charCount');
+        if (description && charCount) {
+            charCount.textContent = `${description.value.length} characters`;
+            
+            if (description.value.length > 500) {
+                charCount.classList.add('text-red-500');
+                charCount.classList.remove('text-slate-400');
+            } else {
+                charCount.classList.remove('text-red-500');
+                charCount.classList.add('text-slate-400');
+            }
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize urgency display
+        const initialUrgency = document.getElementById('id_urgency').value || 1;
+        updateUrgency(initialUrgency);
+        
+        // Initialize character count
+        updateCharCount();
+        
+        // Add character count listener
+        const description = document.getElementById('id_description');
+        if (description) {
+            description.addEventListener('input', updateCharCount);
+        }
+        
+        // Enhanced focus effects
+        const formFields = document.querySelectorAll('.form-input, .form-textarea');
+        formFields.forEach(field => {
+            field.addEventListener('focus', function() {
+                this.parentElement.classList.add('ring-4', 'ring-opacity-20', 'rounded-2xl');
+                const focusColor = this.id === 'id_description' ? 'ring-cyan-500' : 
+                                 this.id === 'id_user_contact' ? 'ring-purple-500' : 'ring-emerald-500';
+                this.parentElement.classList.add(focusColor);
+            });
+            
+            field.addEventListener('blur', function() {
+                this.parentElement.classList.remove('ring-4', 'ring-opacity-20', 'rounded-2xl', 'ring-emerald-500', 'ring-cyan-500', 'ring-purple-500');
+            });
+        });
+
+        // Test slider functionality
+        const slider = document.getElementById('id_urgency');
+        if (slider) {
+            console.log('Slider found, value:', slider.value);
+            slider.addEventListener('input', function(e) {
+                console.log('Slider value changed:', e.target.value);
+            });
+        }
+    });
+</script>
 {% endblock %}
