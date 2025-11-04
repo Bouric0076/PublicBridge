@@ -1,0 +1,60 @@
+# Fly.io configuration file for PublicBridge
+
+app = "publicbridge"
+primary_region = "iad"  # US East (Virginia)
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "8080"
+  DJANGO_SETTINGS_MODULE = "PublicBridge.fly_io_config"
+  DEBUG = "False"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 256
+
+[mounts]
+  source = "publicbridge_data"
+  destination = "/app/media"
+
+[[services]]
+  internal_port = 8080
+  protocol = "tcp"
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    force_https = true
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+  
+  [services.concurrency]
+    type = "connections"
+    hard_limit = 25
+    soft_limit = 20
+
+  [[services.tcp_checks]]
+    interval = "15s"
+    timeout = "2s"
+    grace_period = "1s"
+
+[checks]
+  [checks.alive]
+    grace_period = "5s"
+    interval = "10s"
+    method = "GET"
+    timeout = "2s"
+    path = "/health/"

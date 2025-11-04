@@ -10,7 +10,7 @@ services:
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        value: "publicbridge.onrender.com,www.publicbridge.com"
+        value: "publicbridge.onrender.com,*.onrender.com"
       - key: DATABASE_URL
         fromDatabase:
           name: publicbridge-db
@@ -19,7 +19,13 @@ services:
         value: "PublicBridge.settings"
       - key: PYTHON_VERSION
         value: "3.11.0"
-    # Removed disk for free tier - media files will be stored in database or external storage
+      - key: WEB_CONCURRENCY
+        value: "2"  # Reduce to save resources
+      - key: DJANGO_LOG_LEVEL
+        value: "INFO"  # Reduce logging to save bandwidth
+    scaling:
+      minInstances: 0  # Scale to zero when idle (saves instance hours)
+      maxInstances: 1  # Limit to 1 instance (free tier limit)
 
 databases:
   - name: publicbridge-db

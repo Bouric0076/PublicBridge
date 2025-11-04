@@ -257,5 +257,37 @@ if not DEBUG:
     SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
     SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
 
+# Free tier optimizations for Render
+if not DEBUG:
+    # Reduce logging to save bandwidth
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+                'level': os.environ.get('DJANGO_LOG_LEVEL', 'WARNING'),
+            },
+        },
+        'root': {
+            'handlers': ['console'],
+            'level': os.environ.get('DJANGO_LOG_LEVEL', 'WARNING'),
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['console'],
+                'level': os.environ.get('DJANGO_LOG_LEVEL', 'WARNING'),
+                'propagate': False,
+            },
+        },
+    }
+    
+    # Optimize database connections for free tier
+    DATABASES['default']['CONN_MAX_AGE'] = 60  # Connection pooling
+    DATABASES['default']['CONN_HEALTH_CHECKS'] = True
+    
+    # Reduce worker processes to save memory
+    WEB_CONCURRENCY = int(os.environ.get('WEB_CONCURRENCY', '2'))
+
 # settings.py
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
