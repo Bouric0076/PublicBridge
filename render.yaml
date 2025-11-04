@@ -23,10 +23,7 @@ services:
         value: "2"  # Reduce to save resources
       - key: DJANGO_LOG_LEVEL
         value: "INFO"  # Reduce logging to save bandwidth
-    scaling:
-       minInstances: 1  # Must be at least 1 for web services
-       maxInstances: 1  # Limit to 1 instance (free tier limit)
-       targetCPUPercent: 70  # Scale up at 70% CPU usage
+    
 
 databases:
   - name: publicbridge-db
