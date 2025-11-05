@@ -15,11 +15,15 @@ from disaster_reporting.routing import websocket_urlpatterns
 from django.urls import path
 from disaster_reporting import consumers
 
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'PublicBridge.settings')
 
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
-    "websocket": URLRouter(websocket_urlpatterns),
+    "websocket": AuthMiddlewareStack(
+        URLRouter(websocket_urlpatterns)
+    ),
 })
+
 
