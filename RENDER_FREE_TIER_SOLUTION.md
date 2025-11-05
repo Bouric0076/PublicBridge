@@ -9,6 +9,8 @@ Based on Render's official documentation and your experience, here's what's happ
 2. **Account Verification**: Payment method serves as identity verification
 3. **Policy Change**: Render recently started requiring payment info even for free services
 
+**Important Note**: Updated information confirms Render now consistently requires payment information for all Blueprint deployments, even for free tier services—this applies even if you use the optimized `render.yaml` file. The only potential workaround to avoid payment details on Render is to set up services manually, bypassing the Blueprint system entirely (though this means not using the `render.yaml` file).
+
 ### Free Tier Limits That Trigger Charges
 - **Instance Hours**: 750 hours/month (about 1 instance running 24/7)
 - **Outbound Bandwidth**: 100GB/month included
