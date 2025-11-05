@@ -1,9 +1,7 @@
 from django.db import models
-from django.contrib.auth import get_user_model
+from django.conf import settings  # Use settings instead of get_user_model()
 from geopy.geocoders import Nominatim
 import math
-
-User = get_user_model()
 from django.utils.timezone import now
 
 class DisasterAgency(models.Model):
@@ -58,7 +56,8 @@ class DisasterReport(models.Model):
         ('invalid', 'Invalid'),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role': 'citizen'})
+    # Use string reference instead of direct import
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, limit_choices_to={'role': 'citizen'})
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
     other_category = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField()

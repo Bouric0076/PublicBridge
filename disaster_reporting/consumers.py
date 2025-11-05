@@ -1,6 +1,5 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .models import DisasterReport
 from asgiref.sync import sync_to_async
 
 class DisasterReportConsumer(AsyncWebsocketConsumer):
@@ -30,8 +29,16 @@ class DisasterReportConsumer(AsyncWebsocketConsumer):
     @sync_to_async
     def get_reports(self):
         """Fetches recent reports for WebSocket clients."""
+        # Import inside method to avoid circular imports
+        from .models import DisasterReport
         reports = DisasterReport.objects.filter(status="pending").order_by("-created_at")[:10]
         return [
-            {"id": r.id, "category": r.category, "status": r.status, "latitude": r.latitude, "longitude": r.longitude}
+            {
+                "id": r.id, 
+                "category": r.category, 
+                "status": r.status, 
+                "latitude": float(r.latitude), 
+                "longitude": float(r.longitude)
+            }
             for r in reports
         ]
