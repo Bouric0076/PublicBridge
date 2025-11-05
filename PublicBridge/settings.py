@@ -36,9 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'daphne',
+    'daphne',  # Daphne should be before django.contrib.staticfiles
     'django.contrib.staticfiles',
-    'channels',
+    'channels',  # Channels for WebSockets
     'crispy_forms',
     'GovernmentAdmin',
     'rest_framework',
@@ -87,19 +87,29 @@ TEMPLATES = [
     },
 ]
 
-# WSGI/ASGI setup
+# WSGI/ASGI setup - CRITICAL: Use ASGI for Channels
 WSGI_APPLICATION = 'PublicBridge.wsgi.application'
 ASGI_APPLICATION = 'PublicBridge.asgi.application'
 
-# Channel layers
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [get_env_variable("REDIS_URL", "redis://127.0.0.1:6379")],
+# Channel layers configuration with fallback for Render
+# Try to use Redis if available, otherwise use in-memory for development
+REDIS_URL = os.environ.get('REDIS_URL')
+if REDIS_URL:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [REDIS_URL],
+            },
         },
-    },
-}
+    }
+else:
+    # Fallback for environments without Redis (like Render free tier)
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer"
+        }
+    }
 
 # Database
 DATABASES = {
@@ -132,7 +142,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Localization
+# Internationalization
 LANGUAGE_CODE = 'en-us'
 LANGUAGES = [
     ('en', 'English'),
@@ -142,20 +152,20 @@ USE_I18N = True
 TIME_ZONE = 'Africa/Nairobi'
 USE_TZ = True
 
-# Static files
+# Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media files
+# Media files (User uploaded files)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Default field type
+# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Security (for production)
+# Security settings (for production)
 if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -174,9 +184,35 @@ if not DEBUG:
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': False,
-        'handlers': {'console': {'class': 'logging.StreamHandler'}},
-        'root': {'handlers': ['console'], 'level': 'WARNING'},
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+            },
+        },
+        'root': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+        },
     }
 
 # Email backend (development)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Crispy Forms
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# Django Allauth settings
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
+
+# REST Framework settings
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+}

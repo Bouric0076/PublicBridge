@@ -12,12 +12,8 @@ from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from disaster_reporting.routing import websocket_urlpatterns
-from django.urls import path
-from disaster_reporting import consumers
-
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'PublicBridge.settings')
-
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
@@ -25,5 +21,3 @@ application = ProtocolTypeRouter({
         URLRouter(websocket_urlpatterns)
     ),
 })
-
-
