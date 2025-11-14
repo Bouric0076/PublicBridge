@@ -268,8 +268,10 @@
                         <option value="earthquake">Earthquake</option>
                         <option value="medical">Medical Emergency</option>
                         <option value="road_damage">Road Damage/Accident</option>
-                        <option value="infrastructure">Infrastructure Failure</option>
-                        <option value="weather">Severe Weather</option>
+                        <option value="building_collapse">Building Collapse</option>
+                        <option value="power_outage">Power Outage</option>
+                        <option value="pothole">Pothole</option>
+                        <option value="theft">Theft/Robbery</option>
                         <option value="other">Other Emergency</option>
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -337,8 +339,8 @@
                     <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
                         Choose Files
                     </button>
-                    <input type="file" id="image" hidden accept="image/*,video/*" multiple>
                 </div>
+                <input type="file" id="image" hidden accept="image/*,video/*" multiple>
                 <div id="image-preview" class="mt-3 grid grid-cols-3 gap-2 hidden"></div>
             </div>
 
@@ -707,6 +709,35 @@
         document.getElementById('report-form-sidebar').classList.add('translate-x-full');
         setTimeout(() => {
             document.getElementById('report-form-overlay').classList.add('hidden');
+            // Clear text inputs and selects manually to preserve file input
+            const form = document.getElementById('report-form');
+            form.querySelectorAll('input[type="text"], textarea, select').forEach(input => {
+                if (input.type !== 'checkbox') {
+                    input.value = '';
+                } else {
+                    input.checked = false;
+                }
+            });
+            
+            // Clear image previews
+            document.getElementById('image-preview').innerHTML = '';
+            document.getElementById('image-preview').classList.add('hidden');
+            
+            // Reset drop area to original state but preserve the file input
+            const dropArea = document.getElementById('drop-area');
+            const fileInput = document.getElementById('image');
+            dropArea.innerHTML = `
+                <svg class="w-8 h-8 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                </svg>
+                <p class="text-sm text-gray-600 mb-2">Drag & drop images or videos here</p>
+                <p class="text-xs text-gray-500 mb-4">Supports JPG, PNG, GIF (max 5MB) and MP4 (max 25MB)</p>
+                <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                    Choose Files
+                </button>
+            `;
+            // Re-attach event listeners
+            dropArea.addEventListener("click", () => fileInput.click());
         }, 300);
     }
 
@@ -734,6 +765,13 @@
     const dropArea = document.getElementById("drop-area");
     const imageInput = document.getElementById("image");
     const imagePreview = document.getElementById("image-preview");
+    
+    // File management system
+    let selectedFiles = []; // Array to manage selected files
+    let fileProcessingController = null; // For cancellation
+    const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MB
+    const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'video/mp4'];
+    const MAX_FILES = 10; // Maximum number of files
 
     dropArea.addEventListener("click", () => imageInput.click());
     
@@ -771,200 +809,156 @@
         handleFiles({ target: { files } });
     }
 
-    function handleFiles(e) {
-        const files = e.target.files;
-        
-        // Show loading state - preserve the file input element
-        const originalContent = dropArea.innerHTML;
+    function validateFile(file) {
+        if (!ALLOWED_TYPES.includes(file.type)) {
+            return { valid: false, error: `File type ${file.type} not supported. Please use JPG, PNG, GIF, or MP4.` };
+        }
+        if (file.size > MAX_FILE_SIZE) {
+            return { valid: false, error: `File ${file.name} is too large. Maximum size is 25MB.` };
+        }
+        return { valid: true };
+    }
+
+    function clearSelectedFiles() {
+        selectedFiles = [];
+        imagePreview.innerHTML = '';
+        imagePreview.classList.add('hidden');
+        imageInput.value = ''; // Clear the actual file input
+        updateDropAreaDefault();
+    }
+
+    function updateDropAreaDefault() {
         dropArea.innerHTML = `
-            <svg class="w-8 h-8 text-blue-600 mx-auto mb-3 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            <svg class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9.9.9 0 01-1 1.9h-7.9z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
             </svg>
-            <p class="text-sm text-blue-600 mb-2">Processing files...</p>
-            <p class="text-xs text-gray-500">${files.length} file(s) selected</p>
-            <input type="file" id="image" hidden accept="image/*,video/*" multiple>
+            <p class="text-gray-600 mb-2">Drag & drop images/videos here</p>
+            <p class="text-xs text-gray-500 mb-4">or click to browse</p>
+            <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                Choose Files
+            </button>
+        `;
+    }
+
+    function updateDropAreaWithFiles() {
+        const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
+        const totalSizeMB = (totalSize / (1024 * 1024)).toFixed(1);
+        
+        dropArea.innerHTML = `
+            <div class="flex items-center justify-between w-full">
+                <div class="flex items-center">
+                    <svg class="w-8 h-8 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">${selectedFiles.length} file(s) selected</p>
+                        <p class="text-xs text-gray-500">${totalSizeMB} MB total</p>
+                    </div>
+                </div>
+                <button type="button" id="clear-files-btn" class="text-red-600 hover:text-red-800 text-sm font-medium">
+                    Clear All
+                </button>
+            </div>
         `;
         
-        setTimeout(() => {
-            imagePreview.classList.remove('hidden');
-            let processedCount = 0;
-            let validCount = 0;
+        // Add event listener for clear button
+        document.getElementById('clear-files-btn').addEventListener('click', clearSelectedFiles);
+    }
+
+    function handleFiles(e) {
+        const newFiles = Array.from(e.target.files);
+        console.log('New files selected:', newFiles.length);
+        console.log('File details:', newFiles.map(f => ({name: f.name, type: f.type, size: f.size})));
+        
+        // Validate new files
+        const validFiles = [];
+        const errors = [];
+        
+        newFiles.forEach(file => {
+            const validation = validateFile(file);
+            if (validation.valid) {
+                validFiles.push(file);
+            } else {
+                errors.push(validation.error);
+            }
+        });
+        
+        // Check total file limit
+        if (selectedFiles.length + validFiles.length > MAX_FILES) {
+            errors.push(`Maximum ${MAX_FILES} files allowed. You have ${selectedFiles.length} already selected.`);
+            validFiles.splice(MAX_FILES - selectedFiles.length);
+        }
+        
+        // Show errors if any
+        if (errors.length > 0) {
+            alert('File validation errors:\n' + errors.join('\n'));
+        }
+        
+        // Add valid files to selected files
+        if (validFiles.length > 0) {
+            selectedFiles = [...selectedFiles, ...validFiles];
+            updateDropAreaWithFiles();
+            renderFilePreviews();
+        }
+        
+        // Reset file input value to allow re-selecting the same files
+        imageInput.value = '';
+    }
+
+    function renderFilePreviews() {
+        imagePreview.innerHTML = '';
+        if (selectedFiles.length === 0) {
+            imagePreview.classList.add('hidden');
+            return;
+        }
+        
+        imagePreview.classList.remove('hidden');
+        
+        selectedFiles.forEach((file, index) => {
+            const div = document.createElement('div');
+            div.className = 'image-preview-item relative';
+            div.id = `preview-${index}`;
             
-            // Handle case where no files are selected
-            if (files.length === 0) {
-                dropArea.innerHTML = `
-                    <svg class="w-8 h-8 text-yellow-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-                    </svg>
-                    <p class="text-sm text-yellow-600 mb-2">No files selected</p>
-                    <p class="text-xs text-gray-500 mb-4">Please select valid image or video files</p>
-                    <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-                        Choose Files
-                    </button>
-                    <input type="file" id="image" hidden accept="image/*,video/*" multiple>
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    div.innerHTML = `<img src="${e.target.result}" class="w-full h-20 object-cover rounded" alt="${file.name}">`;
+                };
+                reader.readAsDataURL(file);
+            } else if (file.type.startsWith('video/')) {
+                div.innerHTML = `
+                    <video class="w-full h-20 object-cover rounded" muted>
+                        <source src="${URL.createObjectURL(file)}" type="${file.type}">
+                    </video>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
                 `;
-                
-                // Re-attach click event to the new button
-                const newButton = dropArea.querySelector('button');
-                if (newButton) {
-                    newButton.addEventListener('click', () => imageInput.click());
-                }
-                
-                setTimeout(() => {
-                    dropArea.innerHTML = originalContent;
-                    dropArea.addEventListener("click", () => imageInput.click());
-                }, 3000);
-                return;
             }
             
-            Array.from(files).forEach(file => {
-                const isImage = file.type.startsWith('image/');
-                const isVideo = file.type.startsWith('video/');
-                
-                if (!isImage && !isVideo) {
-                    processedCount++;
-                    return;
-                }
+            // Add remove button
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'remove-image';
+            removeBtn.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
+            removeBtn.onclick = () => removeFile(index);
+            
+            div.appendChild(removeBtn);
+            imagePreview.appendChild(div);
+        });
+    }
 
-                var maxSize = isImage ? 5 * 1024 * 1024 : 25 * 1024 * 1024;
-                if (file.size > maxSize) {
-                    processedCount++;
-                    return;
-                }
-
-                validCount++;
-                const reader = new FileReader();
-                
-                reader.onloadstart = function() {
-                    // Show individual file loading state
-                    const loadingDiv = document.createElement('div');
-                    loadingDiv.className = 'image-preview-item loading';
-                    loadingDiv.id = `loading-${file.name}`;
-                    loadingDiv.innerHTML = `
-                        <div class="w-full h-20 bg-gray-200 rounded flex items-center justify-center">
-                            <svg class="w-6 h-6 text-gray-400 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                            </svg>
-                        </div>
-                    `;
-                    imagePreview.appendChild(loadingDiv);
-                };
-                
-                reader.onload = function(ev) {
-                    // Remove loading state
-                    const loadingDiv = document.getElementById(`loading-${file.name}`);
-                    if (loadingDiv) loadingDiv.remove();
-                    
-                    const div = document.createElement('div');
-                    div.className = 'image-preview-item';
-                    div.innerHTML = isImage
-                        ? `<img src="${ev.target.result}" class="w-full h-20 object-cover">`
-                        : `<video src="${ev.target.result}" class="w-full h-20 object-cover" controls></video>`;
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = 'remove-image';
-                    btn.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
-                    btn.onclick = () => div.remove();
-                    div.appendChild(btn);
-                    imagePreview.appendChild(div);
-                    
-                    processedCount++;
-                    
-                    // Show success feedback when all files are processed
-                    if (processedCount === files.length) {
-                        if (validCount === 0) {
-                            // All files were invalid
-                            dropArea.innerHTML = `
-                                <svg class="w-8 h-8 text-red-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                <p class="text-sm text-red-600 mb-2">No valid files selected</p>
-                                <p class="text-xs text-gray-500 mb-4">Please select JPG, PNG, GIF images (max 5MB) or MP4 videos (max 25MB)</p>
-                                <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-                                    Choose Files
-                                </button>
-                                <input type="file" id="image" hidden accept="image/*,video/*" multiple>
-                            `;
-                        } else {
-                            // Some files were valid
-                            dropArea.innerHTML = `
-                                <svg class="w-8 h-8 text-green-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                </svg>
-                                <p class="text-sm text-green-600 mb-2">${validCount} file(s) uploaded successfully!</p>
-                                <p class="text-xs text-gray-500 mb-4">Drag & drop more images or click to choose files</p>
-                                <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-                                    Choose More Files
-                                </button>
-                                <input type="file" id="image" hidden accept="image/*,video/*" multiple>
-                            `;
-                        }
-                        
-                        // Re-attach click event to the new button
-                        const newButton = dropArea.querySelector('button');
-                        if (newButton) {
-                            newButton.addEventListener('click', () => imageInput.click());
-                        }
-                        
-                        // Reset to original state after 3 seconds
-                        setTimeout(() => {
-                            dropArea.innerHTML = originalContent;
-                            dropArea.addEventListener("click", () => imageInput.click());
-                        }, 3000);
-                    }
-                };
-                
-                reader.onerror = function() {
-                    const loadingDiv = document.getElementById(`loading-${file.name}`);
-                    if (loadingDiv) loadingDiv.remove();
-                    processedCount++;
-                    
-                    if (processedCount === files.length) {
-                        // Determine the type of error to provide appropriate feedback
-                        if (validCount === 0) {
-                            // All files failed to process
-                            dropArea.innerHTML = `
-                                <svg class="w-8 h-8 text-red-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                <p class="text-sm text-red-600 mb-2">Unable to process files</p>
-                                <p class="text-xs text-gray-500 mb-4">Files may be corrupted or unsupported. Try different files.</p>
-                                <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-                                    Choose Files
-                                </button>
-                                <input type="file" id="image" hidden accept="image/*,video/*" multiple>
-                            `;
-                        } else {
-                            // Some files succeeded, some failed
-                            dropArea.innerHTML = `
-                                <svg class="w-8 h-8 text-yellow-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-                                </svg>
-                                <p class="text-sm text-yellow-600 mb-2">${validCount} file(s) uploaded, ${files.length - validCount} failed</p>
-                                <p class="text-xs text-gray-500 mb-4">Some files couldn't be processed. Try different files if needed.</p>
-                                <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-                                    Choose More Files
-                                </button>
-                                <input type="file" id="image" hidden accept="image/*,video/*" multiple>
-                            `;
-                        }
-                        
-                        // Re-attach click event to the new button
-                        const newButton = dropArea.querySelector('button');
-                        if (newButton) {
-                            newButton.addEventListener('click', () => imageInput.click());
-                        }
-                        
-                        setTimeout(() => {
-                            dropArea.innerHTML = originalContent;
-                            dropArea.addEventListener("click", () => imageInput.click());
-                        }, 3000);
-                    }
-                };
-                
-                reader.readAsDataURL(file);
-            });
-        }, 500); // Small delay to show loading state
+    function removeFile(index) {
+        selectedFiles.splice(index, 1);
+        if (selectedFiles.length === 0) {
+            clearSelectedFiles();
+        } else {
+            renderFilePreviews();
+            updateDropAreaWithFiles();
+        }
     }
 
     // Form Submission
@@ -979,7 +973,6 @@
         var category = document.getElementById("category").value;
         var description = document.getElementById("description").value;
         var severity = document.getElementById("severity").value;
-        var images = document.getElementById("image").files;
         var isAnonymous = document.getElementById('is_anonymous').checked;
 
         if (!description || description.length > 500) {
@@ -995,52 +988,119 @@
         formData.append("longitude", selectedLng);
         formData.append("is_anonymous", isAnonymous);
         
-        for (let i = 0; i < images.length; i++) {
-            const file = images[i];
-            if (file.type.startsWith('image/')) {
-                compressImage(file, 0.7).then(blob => {
-                    formData.append('media', blob, file.name);
-                });
-            } else if (file.type.startsWith('video/')) {
-                formData.append('media', file);
-            }
-        }
-
-        document.getElementById("loading").classList.remove("hidden");
-
-        fetch('/disaster-reporting/api/reports/', {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: { 'X-CSRFToken': getCookie('csrftoken') },
-            body: formData
-        }).then(async (resp) => {
-            document.getElementById("loading").classList.add("hidden");
-            if (!resp.ok) {
-                alert('Submission failed. Please try again.');
+        // Process all files before submitting
+        const processFiles = async () => {
+            const filePromises = [];
+            
+            if (selectedFiles.length === 0) {
                 return;
             }
-            const data = await resp.json();
-            const tracking = data.tracking_code || data.id;
-            document.querySelector('#success-modal h3').textContent = 'Report Submitted';
-            document.querySelector('#success-modal p').textContent = `Your tracking code: ${tracking}. Authorities have been notified.`;
-            document.getElementById("success-modal").classList.remove("hidden");
             
-            // Reset form and close sidebar
-            closeReportForm();
-            document.getElementById('report-button').classList.add('hidden');
-            document.getElementById('location-instructions').classList.remove('hidden');
-            if (selectedMarker) {
-                map.removeLayer(selectedMarker);
-                selectedMarker = null;
+            // Create cancellation controller
+            fileProcessingController = new AbortController();
+            
+            for (let i = 0; i < selectedFiles.length; i++) {
+                // Check for cancellation
+                if (fileProcessingController.signal.aborted) {
+                    console.log('File processing cancelled');
+                    throw new Error('File processing cancelled by user');
+                }
+                
+                const file = selectedFiles[i];
+                if (file.type.startsWith('image/')) {
+                    // Create a promise for image compression with cancellation support
+                    const compressionPromise = compressImage(file, 0.7).then(blob => {
+                        formData.append('media', blob, file.name);
+                    }).catch(err => {
+                        throw err;
+                    });
+                    
+                    filePromises.push(compressionPromise);
+                } else if (file.type.startsWith('video/')) {
+                    // Add video files directly
+                    formData.append('media', file);
+                }
             }
-            selectedLat = null;
-            selectedLng = null;
             
-            // Reload recent reports
-            loadExistingReports();
-        }).catch(() => {
-            document.getElementById("loading").classList.add("hidden");
-            alert('Network error. Please check your connection.');
+            // Wait for all image compression to complete with timeout
+            
+            // Add timeout to prevent infinite loading
+            const timeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => reject(new Error('File processing timeout')), 30000); // 30 second timeout
+            });
+            
+            try {
+                await Promise.race([Promise.all(filePromises), timeoutPromise]);
+
+            } catch (error) {
+                if (error.message === 'File processing cancelled by user') {
+                    throw error;
+                } else if (error.message === 'File processing timeout') {
+                    throw new Error('File processing timed out. Please try with smaller files or fewer files.');
+                } else {
+                    throw error;
+                }
+            }
+        };
+
+        // Process files first, then submit form
+        processFiles().then(() => {
+            // Check if any files were actually added
+            if (formData.getAll('media').length === 0) {
+                alert('No files were successfully processed. Please try different files.');
+                return;
+            }
+            
+            // Show loading overlay with cancellation option
+            showLoadingOverlay();
+
+            fetch('/disaster-reporting/api/reports/', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                body: formData
+            }).then(async (resp) => {
+                hideLoadingOverlay();
+                if (!resp.ok) {
+                    const errorData = await resp.json().catch(() => ({error: 'Unknown error'}));
+                    const errorMessage = errorData.error || errorData.detail || 'Submission failed. Please try again.';
+                    alert(`Submission failed: ${errorMessage}`);
+                    return;
+                }
+                const data = await resp.json();
+                const tracking = data.tracking_code || data.id;
+                document.querySelector('#success-modal h3').textContent = 'Report Submitted';
+                document.querySelector('#success-modal p').textContent = `Your tracking code: ${tracking}. Authorities have been notified.`;
+                document.getElementById("success-modal").classList.remove("hidden");
+                
+                // Reset form and close sidebar
+                closeReportForm();
+                document.getElementById('report-button').classList.add('hidden');
+                document.getElementById('location-instructions').classList.remove('hidden');
+                if (selectedMarker) {
+                    map.removeLayer(selectedMarker);
+                    selectedMarker = null;
+                }
+                selectedLat = null;
+                selectedLng = null;
+                
+                // Reload recent reports
+                loadExistingReports();
+            }).catch((error) => {
+                hideLoadingOverlay();
+                console.error('Network error:', error);
+                alert('Network error. Please check your connection and try again.');
+            });
+        }).catch((error) => {
+            hideLoadingOverlay();
+            console.error('File processing error:', error);
+            if (error.message === 'File processing cancelled by user') {
+                alert('File upload cancelled. You can continue with your report or add different files.');
+            } else if (error.message === 'File processing timed out. Please try with smaller files or fewer files.') {
+                alert(error.message);
+            } else {
+                alert('Error processing files. Please try with different files or fewer files.');
+            }
         });
     });
 
@@ -1069,6 +1129,48 @@
             };
             reader.readAsDataURL(file);
         });
+    }
+
+    // Loading overlay functions with cancellation
+    function showLoadingOverlay() {
+        const loadingOverlay = document.getElementById("loading");
+        
+        // Update loading overlay with cancellation option
+        loadingOverlay.innerHTML = `
+            <div class="bg-white rounded-2xl p-6 text-center max-w-sm mx-4 shadow-2xl">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-blue-600 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Processing Files</h3>
+                <p class="text-gray-600 text-sm mb-4">Please wait while we process your media files...</p>
+                <button type="button" id="cancel-upload-btn" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium">
+                    Cancel Upload
+                </button>
+            </div>
+        `;
+        
+        loadingOverlay.classList.remove("hidden");
+        
+        // Add cancellation event listener
+        document.getElementById('cancel-upload-btn').addEventListener('click', cancelFileProcessing);
+    }
+    
+    function hideLoadingOverlay() {
+        document.getElementById("loading").classList.add("hidden");
+        // Reset controller for next use
+        if (fileProcessingController) {
+            fileProcessingController = null;
+        }
+    }
+    
+    function cancelFileProcessing() {
+        if (fileProcessingController) {
+            fileProcessingController.abort();
+    
+        }
+        hideLoadingOverlay();
     }
 
     function getCookie(name) {
