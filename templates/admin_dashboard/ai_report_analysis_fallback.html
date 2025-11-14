@@ -1,0 +1,79 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block title %}AI Report Analysis - PublicBridge{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>AI Analysis Temporarily Unavailable</strong>
+                <p>{{ error|default:"Our AI analysis system is currently undergoing maintenance. Basic report information is still available below." }}</p>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-file-alt"></i> Report Details</h3>
+                </div>
+                <div class="card-body">
+                    <h4>{{ report.title }}</h4>
+                    <p class="text-muted">Category: {{ report.category }} | Status: {{ report.status }}</p>
+                    <hr>
+                    <p>{{ report.description }}</p>
+                    
+                    <div class="mt-4">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar"></i> Created: {{ report.created_at|date:"F j, Y g:i A" }}
+                            {% if report.updated_at != report.created_at %}
+                                | <i class="fas fa-edit"></i> Updated: {{ report.updated_at|date:"F j, Y g:i A" }}
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-robot"></i> AI Analysis</h5>
+                </div>
+                <div class="card-body text-center">
+                    <i class="fas fa-cog fa-spin fa-2x text-muted mb-3"></i>
+                    <p class="text-muted">AI analysis is currently unavailable</p>
+                    <p class="small text-muted">Please check back later for automated insights and recommendations.</p>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5><i class="fas fa-link"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'manage_reports' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-list"></i> All Reports
+                        </a>
+                        <button onclick="location.reload()" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-redo"></i> Retry AI Analysis
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-retry after 30 seconds
+setTimeout(function() {
+    location.reload();
+}, 30000);
+</script>
+{% endblock %}

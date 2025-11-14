@@ -56,6 +56,13 @@ class DisasterReport(models.Model):
         ('invalid', 'Invalid'),
     ]
 
+    SEVERITY_CHOICES = [
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High'),
+        ('critical', 'Critical'),
+    ]
+
     # Use string reference instead of direct import
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, limit_choices_to={'role': 'citizen'})
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
@@ -65,6 +72,9 @@ class DisasterReport(models.Model):
     longitude = models.FloatField()
     address = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to='disaster_reports/', blank=True, null=True)
+    severity = models.CharField(max_length=10, choices=SEVERITY_CHOICES, default='medium')
+    is_anonymous = models.BooleanField(default=False)
+    tracking_code = models.CharField(max_length=24, blank=True, null=True, unique=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     assigned_agency = models.ForeignKey(DisasterAgency, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -118,7 +128,30 @@ class DisasterReport(models.Model):
         if not self.assigned_agency:  # Prevents reassignment if already set
             self.assigned_agency = self.find_nearest_agency()
 
+        if not self.tracking_code:
+            from datetime import datetime
+            import random, string
+            date_part = datetime.now().strftime('%Y%m%d')
+            rand_part = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+            self.tracking_code = f"KE-{date_part}-{rand_part}"
+
         super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.get_category_display()} by {self.user.username} - {self.get_status_display()}"
+
+
+class DisasterMedia(models.Model):
+    """Media attachments for disaster reports (images/videos)."""
+    MEDIA_TYPE_CHOICES = [
+        ('image', 'Image'),
+        ('video', 'Video'),
+    ]
+
+    report = models.ForeignKey(DisasterReport, related_name='media_files', on_delete=models.CASCADE)
+    media_type = models.CharField(max_length=10, choices=MEDIA_TYPE_CHOICES)
+    file = models.FileField(upload_to='disaster_reports/media/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.media_type} for report {self.report_id}"

@@ -15,6 +15,18 @@
                     <a class="nav-link" href="{% url 'dashboard_overview' %}">Dashboard</a>
                 </li>
                 <li class="nav-item">
+                        <a class="nav-link" href="{% url 'ai_dashboard' %}">
+                            <i class="fas fa-brain me-1"></i>
+                            AI Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'ai_chatbot_interface' %}">
+                            <i class="fas fa-robot me-1"></i>
+                            AI Chatbot
+                        </a>
+                    </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'manage_departments' %}">Departments</a>
                 </li>
                 <li class="nav-item">
@@ -39,5 +51,34 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <!-- CSRF Token Setup for AJAX -->
+    <script>
+        // Get CSRF token from cookie
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        // Set up AJAX defaults
+        const csrftoken = getCookie('csrftoken');
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,571 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}PublicBridge AI Assistant{% endblock %}
+
+{% block page_title %}AI Assistant{% endblock %}
+{% block page_subtitle %}Your intelligent guide to civic services and community engagement{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-red-50 via-white to-green-50 py-6">
+    <div class="max-w-7xl mx-auto px-4">
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-red-600 via-black to-green-600 rounded-3xl shadow-2xl shadow-black/25 mb-4">
+               <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
+                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                </svg>
+            </div>
+            <h1 class="text-4xl font-bold text-gray-900 mb-3">PublicBridge AI Assistant</h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                Your trusted companion for Kenyan civic services, community engagement, and government assistance
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Sidebar - Quick Actions & Info -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Status Card -->
+                <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-gray-900">AI Status</h3>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-2 h-2 bg-green-600 rounded-full animate-pulse"></div>
+                            <span class="text-sm text-green-700 font-medium">Online</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3 text-sm text-gray-600">
+                        <div class="flex items-center justify-between">
+                            <span>Response Time</span>
+                            <span class="font-medium text-gray-900">~2s</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>Language Support</span>
+                            <span class="font-medium text-gray-900">EN/SW</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>Context Memory</span>
+                            <span class="font-medium text-gray-900">10K tokens</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+                    <h3 class="font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                    <div class="space-y-3">
+                        <button type="button" data-message="How do I submit a service request to the county government?" 
+                                class="quick-action-btn w-full flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:border-red-500 hover:bg-red-50 transition-all duration-200 group">
+                            <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200 transition-colors">
+                                <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-0.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm font-medium text-gray-700">County Services</span>
+                        </button>
+
+                        <button type="button" data-message="Check the status of my recent reports" 
+                                class="quick-action-btn w-full flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:border-green-600 hover:bg-green-50 transition-all duration-200 group">
+                            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                                <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm font-medium text-gray-700">Report Status</span>
+                        </button>
+
+                        <button type="button" data-message="What community events are happening in my area?" 
+                                class="quick-action-btn w-full flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:border-black hover:bg-gray-100 transition-all duration-200 group">
+                            <div class="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center group-hover:bg-gray-300 transition-colors">
+                                <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm font-medium text-gray-700">Community Events</span>
+                        </button>
+
+                        <button type="button" data-message="Help me understand national government services" 
+                                class="quick-action-btn w-full flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:border-red-600 hover:bg-red-50 transition-all duration-200 group">
+                            <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200 transition-colors">
+                                <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21H3z"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm font-medium text-gray-700">Gov Services</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Capabilities -->
+                <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+                    <h3 class="font-semibold text-gray-900 mb-4">Kenyan Services</h3>
+                    <div class="space-y-3 text-sm text-gray-600">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-1.5 h-1.5 bg-red-600 rounded-full"></div>
+                            <span>County government services</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-1.5 h-1.5 bg-green-600 rounded-full"></div>
+                            <span>National government info</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-1.5 h-1.5 bg-black rounded-full"></div>
+                            <span>Community development</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-1.5 h-1.5 bg-red-600 rounded-full"></div>
+                            <span>Emergency services</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Chat Area -->
+            <div class="lg:col-span-3">
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden h-[600px] flex flex-col">
+                    <!-- Chat Header -->
+                    <div class="border-b border-gray-200 p-6 bg-gradient-to-r from-red-600 via-black to-green-600">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-white">Kenya AI Assistant</h2>
+                                    <p class="text-white/80 text-sm">Serving Kenyan citizens with civic information</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button type="button" id="clear-chat-btn"
+                                        class="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-200 text-white/80 hover:text-white"
+                                        title="Clear conversation">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Messages -->
+                    <div class="flex-1 overflow-y-auto p-6 bg-gradient-to-b from-white to-gray-50 scrollbar-thin" id="chat-messages">
+                        <div class="text-center py-12" id="welcome-message">
+                            <div class="w-20 h-20 bg-gradient-to-br from-red-600 via-black to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-3">Jambo! I'm PublicBridge AI</h3>
+                            <p class="text-gray-600 mb-8 max-w-md mx-auto text-lg">
+                                Your trusted guide to Kenyan civic services, community resources, and government procedures. How can I assist you today?
+                            </p>
+                            <div class="flex flex-wrap justify-center gap-4 max-w-2xl mx-auto">
+                                <button type="button" data-message="How do I report a pothole to the county?" 
+                                        class="quick-action-btn px-6 py-3 bg-white border-2 border-red-200 rounded-xl text-base font-semibold text-gray-800 hover:border-red-500 hover:bg-red-50 transition-all duration-200 shadow-sm hover:shadow-md">
+                                    🚧 Report Road Issue
+                                </button>
+                                <button type="button" data-message="What community events are happening in Nairobi?" 
+                                        class="quick-action-btn px-6 py-3 bg-white border-2 border-green-200 rounded-xl text-base font-semibold text-gray-800 hover:border-green-500 hover:bg-green-50 transition-all duration-200 shadow-sm hover:shadow-md">
+                                    🎉 Local Events
+                                </button>
+                                <button type="button" data-message="How do I apply for a business permit?" 
+                                        class="quick-action-btn px-6 py-3 bg-white border-2 border-black rounded-xl text-base font-semibold text-gray-800 hover:border-gray-700 hover:bg-gray-100 transition-all duration-200 shadow-sm hover:shadow-md">
+                                    📋 Business Permit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Typing Indicator -->
+                    <div class="hidden items-center space-x-3 px-6 py-4 bg-white border-t border-gray-200" id="typing-indicator">
+                        <div class="w-8 h-8 bg-gradient-to-br from-red-600 to-green-600 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                            </svg>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            <div class="w-2 h-2 bg-red-600 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+                            <div class="w-2 h-2 bg-black rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+                            <div class="w-2 h-2 bg-green-600 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+                        </div>
+                        <span class="text-sm text-gray-600">PublicBridge AI is thinking...</span>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div class="hidden items-center space-x-3 px-6 py-4 bg-red-50 border-t border-red-200" id="error-message">
+                        <svg class="w-5 h-5 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span class="text-sm text-red-700" id="error-text"></span>
+                    </div>
+
+                    <!-- Chat Input Area (NOT a form) -->
+                    <div class="border-t border-gray-200 bg-white p-6">
+                        <div class="flex items-end space-x-4">
+                            <div class="flex-1 bg-gray-50 rounded-xl border border-gray-300 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-500/10 transition-all duration-200">
+                                <textarea 
+                                    id="chat-input" 
+                                    class="w-full bg-transparent border-0 focus:ring-0 resize-none py-4 px-5 text-gray-900 placeholder-gray-500 text-base"
+                                    placeholder="Type your message here... (Press Enter to send, Shift+Enter for new line)"
+                                    rows="1"
+                                    maxlength="1000"
+                                ></textarea>
+                                <div class="flex items-center justify-between px-5 pb-3">
+                                    <div class="flex items-center space-x-2 text-xs text-gray-500">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        <span>I understand Kenyan civic services and Swahili</span>
+                                    </div>
+                                    <span class="text-xs text-gray-500" id="char-count">0/1000</span>
+                                </div>
+                            </div>
+                            <button 
+                                id="send-button" 
+                                type="button"
+                                class="bg-gradient-to-r from-red-600 via-black to-green-600 text-white rounded-xl p-4 transition-all duration-200 hover:from-red-700 hover:via-black hover:to-green-700 hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSRF Token -->
+<input type="hidden" id="csrf-token" value="{{ csrf_token }}">
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+class PublicBridgeChat {
+    constructor() {
+        this.conversationHistory = [];
+        this.isProcessing = false;
+        this.initializeChat();
+    }
+
+    initializeChat() {
+        this.attachEventListeners();
+        this.focusInput();
+    }
+
+    attachEventListeners() {
+        // Send button click
+        const sendButton = document.getElementById('send-button');
+        if (sendButton) {
+            sendButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleSendMessage();
+            });
+        }
+
+        // Quick action buttons
+        const quickActionButtons = document.querySelectorAll('.quick-action-btn');
+        quickActionButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const message = button.getAttribute('data-message');
+                if (message) {
+                    this.handleQuickMessage(message);
+                }
+            });
+        });
+
+        // Clear chat button
+        const clearChatBtn = document.getElementById('clear-chat-btn');
+        if (clearChatBtn) {
+            clearChatBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.clearChat();
+            });
+        }
+
+        // Input auto-resize and character count
+        const chatInput = document.getElementById('chat-input');
+        if (chatInput) {
+            chatInput.addEventListener('input', () => {
+                this.handleInputResize();
+                this.updateCharacterCount();
+            });
+
+            // Enter key handling (submit on Enter, new line on Shift+Enter)
+            chatInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (chatInput.value.trim() && !this.isProcessing) {
+                        this.handleSendMessage();
+                    }
+                }
+            });
+        }
+    }
+
+    handleInputResize() {
+        const input = document.getElementById('chat-input');
+        if (input) {
+            input.style.height = 'auto';
+            input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+        }
+    }
+
+    updateCharacterCount() {
+        const input = document.getElementById('chat-input');
+        const charCount = document.getElementById('char-count');
+        if (input && charCount) {
+            charCount.textContent = `${input.value.length}/1000`;
+        }
+    }
+
+    focusInput() {
+        const input = document.getElementById('chat-input');
+        if (input) {
+            input.focus();
+        }
+    }
+
+    async handleSendMessage() {
+        if (this.isProcessing) return;
+
+        const input = document.getElementById('chat-input');
+        if (!input) return;
+
+        const message = input.value.trim();
+        if (!message) return;
+
+        await this.sendMessageToBackend(message);
+    }
+
+    handleQuickMessage(message) {
+        this.sendMessageToBackend(message);
+    }
+
+    async sendMessageToBackend(message) {
+        if (this.isProcessing) return;
+        
+        this.isProcessing = true;
+        this.disableForm(true);
+
+        // Add user message to chat
+        this.addMessage('user', message);
+
+        // Clear input if it matches the message (for manual typing)
+        const input = document.getElementById('chat-input');
+        if (input && input.value.trim() === message) {
+            input.value = '';
+            this.handleInputResize();
+            this.updateCharacterCount();
+        }
+
+        // Show typing indicator
+        this.showTypingIndicator();
+
+        try {
+            
+            const response = await fetch("/dashboard/chatbot-api/", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "X-CSRFToken": this.getCsrfToken()
+                },
+                body: JSON.stringify({ 
+                    message: message,
+                    conversation_history: this.conversationHistory
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+
+            // Handle response
+            const replyText = data.response || data.reply || "I received your message but couldn't generate a proper response.";
+            this.addMessage('bot', replyText);
+
+            // Update conversation history
+            this.conversationHistory.push(
+                { role: "user", content: message },
+                { role: "assistant", content: replyText }
+            );
+
+        } catch (error) {
+            this.addMessage('bot', "Samahani, nina shida ya kuunganisha kwa sasa. Tafadhali jaribu tena baadaye.");
+            this.showError(`Network error: ${error.message}`);
+        } finally {
+            this.hideTypingIndicator();
+            this.disableForm(false);
+            this.isProcessing = false;
+            this.focusInput();
+        }
+    }
+
+    addMessage(sender, text) {
+        const container = document.getElementById("chat-messages");
+        if (!container) return;
+
+        // Hide welcome message if it's the first user message
+        const welcomeMessage = document.getElementById("welcome-message");
+        if (welcomeMessage && sender === 'user') {
+            welcomeMessage.style.display = "none";
+        }
+
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `flex items-start space-x-3 mb-6 ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+        
+        if (sender === 'user') {
+            messageDiv.innerHTML = `
+                <div class="flex items-end space-x-2 max-w-[80%]">
+                    <div class="bg-gradient-to-r from-red-600 to-green-600 text-white rounded-2xl rounded-br-md px-4 py-3 shadow-sm">
+                        <p class="text-white text-sm leading-relaxed">${this.escapeHtml(text)}</p>
+                    </div>
+                    <div class="w-8 h-8 bg-gradient-to-r from-red-600 to-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                    </div>
+                </div>
+            `;
+        } else {
+            messageDiv.innerHTML = `
+                <div class="flex items-start space-x-3 max-w-[80%]">
+                    <div class="w-8 h-8 bg-gradient-to-r from-red-600 to-green-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
+                                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                         </svg>
+                    </div>
+                    <div class="bg-white border border-gray-200 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
+                        <p class="text-gray-700 text-sm leading-relaxed">${this.escapeHtml(text)}</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        container.appendChild(messageDiv);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    showTypingIndicator() {
+        const indicator = document.getElementById("typing-indicator");
+        if (indicator) {
+            indicator.classList.remove("hidden");
+            const container = document.getElementById("chat-messages");
+            if (container) {
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+    }
+
+    hideTypingIndicator() {
+        const indicator = document.getElementById("typing-indicator");
+        if (indicator) {
+            indicator.classList.add("hidden");
+        }
+    }
+
+    showError(message) {
+        const errorDiv = document.getElementById("error-message");
+        const errorText = document.getElementById("error-text");
+        
+        if (errorDiv && errorText) {
+            errorText.textContent = message;
+            errorDiv.classList.remove("hidden");
+            setTimeout(() => errorDiv.classList.add("hidden"), 5000);
+        }
+    }
+
+    disableForm(disabled) {
+        const input = document.getElementById('chat-input');
+        const button = document.getElementById('send-button');
+        
+        if (input) input.disabled = disabled;
+        if (button) button.disabled = disabled;
+    }
+
+    clearChat() {
+        if (confirm('Are you sure you want to clear the chat history?')) {
+            const messagesContainer = document.getElementById('chat-messages');
+            if (messagesContainer) {
+                messagesContainer.innerHTML = `
+                    <div class="text-center py-12" id="welcome-message">
+                        <div class="w-20 h-20 bg-gradient-to-br from-red-600 via-black to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-3">Jambo! I'm PublicBridge AI</h3>
+                        <p class="text-gray-600 mb-8 max-w-md mx-auto text-lg">
+                            Your trusted guide to Kenyan civic services, community resources, and government procedures. How can I assist you today?
+                        </p>
+                        <div class="flex flex-wrap justify-center gap-4 max-w-2xl mx-auto">
+                            <button type="button" data-message="How do I report a pothole to the county?" 
+                                    class="quick-action-btn px-6 py-3 bg-white border-2 border-red-200 rounded-xl text-base font-semibold text-gray-800 hover:border-red-500 hover:bg-red-50 transition-all duration-200 shadow-sm hover:shadow-md">
+                                🚧 Report Road Issue
+                            </button>
+                            <button type="button" data-message="What community events are happening in Nairobi?" 
+                                    class="quick-action-btn px-6 py-3 bg-white border-2 border-green-200 rounded-xl text-base font-semibold text-gray-800 hover:border-green-500 hover:bg-green-50 transition-all duration-200 shadow-sm hover:shadow-md">
+                                🎉 Local Events
+                            </button>
+                            <button type="button" data-message="How do I apply for a business permit?" 
+                                    class="quick-action-btn px-6 py-3 bg-white border-2 border-black rounded-xl text-base font-semibold text-gray-800 hover:border-gray-700 hover:bg-gray-100 transition-all duration-200 shadow-sm hover:shadow-md">
+                                📋 Business Permit
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                // Re-attach event listeners to new quick action buttons
+                setTimeout(() => {
+                    const newQuickButtons = messagesContainer.querySelectorAll('.quick-action-btn');
+                    newQuickButtons.forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            const message = button.getAttribute('data-message');
+                            if (message) {
+                                this.handleQuickMessage(message);
+                            }
+                        });
+                    });
+                }, 100);
+            }
+            
+            this.conversationHistory = [];
+            this.focusInput();
+        }
+    }
+
+    getCsrfToken() {
+        const tokenElement = document.getElementById("csrf-token");
+        const value = tokenElement ? tokenElement.value : '';
+        if (value && value !== 'NOTPROVIDED') return value;
+        const match = document.cookie.match(/(^|;\s*)csrftoken=([^;]+)/);
+        return match ? decodeURIComponent(match[2]) : '';
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+}
+
+const __initPublicBridgeChat = () => { window.chatApp = new PublicBridgeChat(); };
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', __initPublicBridgeChat);
+} else {
+    __initPublicBridgeChat();
+}
+</script>
+{% endblock %}

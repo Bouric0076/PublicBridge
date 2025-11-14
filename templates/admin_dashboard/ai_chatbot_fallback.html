@@ -1,0 +1,89 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block title %}AI Chatbot - PublicBridge{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        AI Chatbot Temporarily Unavailable
+                    </h4>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-robot fa-4x text-warning mb-3"></i>
+                        <h5>We're experiencing technical difficulties</h5>
+                        <p class="text-muted">
+                            Our AI chatbot assistant is currently unavailable due to technical issues.
+                            We're working to resolve this as quickly as possible.
+                        </p>
+                    </div>
+
+                    {% if error %}
+                    <div class="alert alert-info">
+                        <strong>Details:</strong> {{ error }}
+                    </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card border-primary">
+                                <div class="card-body">
+                                    <i class="fas fa-phone fa-2x text-primary mb-2"></i>
+                                    <h6>Call 311</h6>
+                                    <p class="small text-muted">
+                                        For non-emergency city services and assistance
+                                    </p>
+                                    <a href="tel:311" class="btn btn-primary btn-sm">Call Now</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-danger">
+                                <div class="card-body">
+                                    <i class="fas fa-exclamation-triangle fa-2x text-danger mb-2"></i>
+                                    <h6>Emergency</h6>
+                                    <p class="small text-muted">
+                                        For life-threatening emergencies
+                                    </p>
+                                    <a href="tel:911" class="btn btn-danger btn-sm">Call 911</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="{% url 'analytics_view' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-chart-bar me-1"></i>
+                            View Analytics
+                        </a>
+                        <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-tachometer-alt me-1"></i>
+                            Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        The AI chatbot will automatically retry connection in 30 seconds
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-retry after 30 seconds
+setTimeout(function() {
+    location.reload();
+}, 30000);
+</script>
+{% endblock %}

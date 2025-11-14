@@ -29,4 +29,17 @@ urlpatterns = [
 
     # Custom Analytics View
     path('analytics/', views.analytics_view, name='analytics_view'),
+
+    # AI-Powered Dashboard URLs
+    path('ai-dashboard/', views.ai_dashboard, name='ai_dashboard'),
+    path('ai-report-analysis/<int:report_id>/', views.ai_report_analysis, name='ai_report_analysis'),
+    path('ai-predictive-insights/', views.ai_predictive_insights, name='ai_predictive_insights'),
+    path('ai-chatbot/', views.ai_chatbot_interface, name='ai_chatbot_interface'),
+    path('chatbot-api/', views.chatbot_api, name='chatbot_api'),
+    
+    # Citizen AI Features
+    path('citizen-ai-dashboard/', views.citizen_ai_dashboard, name='citizen_ai_dashboard'),
+    path('ai-recommendations/', views.citizen_ai_recommendations, name='ai_recommendations'),
+    path('ai-chat/', views.ai_chat_page, name='ai_chat_page'),
+    path('ai-status/', views.ai_status_api, name='ai_status_api'),
 ]

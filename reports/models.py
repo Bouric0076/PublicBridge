@@ -108,6 +108,15 @@ class Report(models.Model):
     sentiment = models.CharField(max_length=50, blank=True, null=True)  # Sentiment Analysis
     keywords = models.TextField(blank=True, null=True)  # Extracted Keywords
     nlp_category = models.CharField(max_length=100, blank=True, null=True)  # NLP-based Category
+    
+    # AI Integration Fields
+    ai_processed = models.BooleanField(default=False)  # Whether AI has processed this report
+    ai_processing_date = models.DateTimeField(blank=True, null=True)  # When AI last processed
+    ai_confidence_score = models.FloatField(blank=True, null=True)  # AI confidence in analysis
+    ai_recommendations = models.JSONField(default=list, blank=True)  # AI recommendations
+    ai_predicted_priority = models.CharField(max_length=10, blank=True, null=True)  # AI predicted priority
+    ai_hotspot_prediction = models.BooleanField(default=False)  # Whether AI predicts this as hotspot
+    ai_similar_reports = models.JSONField(default=list, blank=True)  # IDs of similar reports found by AI
 
     def analyze_report(self):
         """Runs NLP analysis on the report description."""
@@ -117,6 +126,61 @@ class Report(models.Model):
             self.keywords = ', '.join(analysis.get("keywords", [])) or None
             self.nlp_category = analysis.get("category", self.category)  # Default to selected category if NLP fails
             self.save()
+
+    def process_with_ai(self):
+        """Process report with AI agents for comprehensive analysis."""
+        from ai_agents import MultiAgentOrchestrator
+        from django.utils import timezone
+        
+        try:
+            # Initialize AI orchestrator
+            orchestrator = MultiAgentOrchestrator()
+            
+            # Prepare input data
+            input_data = {
+                'report_id': self.id,
+                'title': self.title,
+                'description': self.description,
+                'category': self.category,
+                'location': getattr(self, 'location', 'Unknown'),
+                'created_at': self.created_at.isoformat(),
+                'user_id': self.user.id,
+                'urgency': self.urgency
+            }
+            
+            # Process with AI
+            result = orchestrator.process_report(input_data)
+            
+            # Update AI fields
+            self.ai_processed = True
+            self.ai_processing_date = timezone.now()
+            self.ai_confidence_score = result.get('confidence', 0.0)
+            self.ai_recommendations = result.get('recommendations', [])
+            self.ai_predicted_priority = result.get('predicted_priority', self.priority)
+            self.ai_hotspot_prediction = result.get('hotspot_prediction', False)
+            self.ai_similar_reports = result.get('similar_reports', [])
+            
+            # Update priority if AI confidence is high
+            if result.get('confidence', 0.0) > 0.8:
+                self.priority = result.get('predicted_priority', self.priority)
+            
+            self.save()
+            return True
+            
+        except Exception as e:
+            print(f"AI processing failed for report {self.id}: {e}")
+            return False
+    
+    def get_ai_insights(self):
+        """Get AI insights for this report."""
+        return {
+            'confidence_score': self.ai_confidence_score,
+            'recommendations': self.ai_recommendations,
+            'predicted_priority': self.ai_predicted_priority,
+            'hotspot_prediction': self.ai_hotspot_prediction,
+            'similar_reports': self.ai_similar_reports,
+            'processing_date': self.ai_processing_date
+        }
 
     def update_status(self, new_status, updated_by):
         """Update the report status and log the change."""

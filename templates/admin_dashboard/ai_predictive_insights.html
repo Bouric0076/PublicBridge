@@ -1,0 +1,402 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block title %}AI Predictive Insights - PublicBridge{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Predictive Insights Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-0 text-gray-800">
+                        <i class="fas fa-crystal-ball text-primary me-2"></i>
+                        AI Predictive Insights
+                    </h1>
+                    <p class="text-muted mb-0">Advanced forecasting and predictive analytics for better decision making</p>
+                </div>
+                <div class="btn-group" role="group">
+                    <a href="{% url 'ai_dashboard' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-1"></i>
+                        Back to AI Dashboard
+                    </a>
+                    <button class="btn btn-primary" onclick="refreshPredictions()">
+                        <i class="fas fa-sync-alt me-1"></i>
+                        Refresh Predictions
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trend Analysis -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-line me-2"></i>
+                        Trend Analysis (60-Day Forecast)
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% if trend_analysis %}
+                        <div class="row">
+                            <div class="col-md-3 text-center mb-3">
+                                <div class="border rounded p-3">
+                                    <h4 class="text-primary">{{ trend_analysis.total_reports_forecast|floatformat:0 }}</h4>
+                                    <small class="text-muted">Predicted Reports</small>
+                                    <div class="mt-2">
+                                        {% if trend_analysis.growth_rate > 0 %}
+                                            <span class="text-success">
+                                                <i class="fas fa-arrow-up me-1"></i>
+                                                +{{ trend_analysis.growth_rate|floatformat:1 }}%
+                                            </span>
+                                        {% else %}
+                                            <span class="text-danger">
+                                                <i class="fas fa-arrow-down me-1"></i>
+                                                {{ trend_analysis.growth_rate|floatformat:1 }}%
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 text-center mb-3">
+                                <div class="border rounded p-3">
+                                    <h4 class="text-success">{{ trend_analysis.resolution_rate_forecast|floatformat:1 }}%</h4>
+                                    <small class="text-muted">Resolution Rate</small>
+                                    <div class="mt-2">
+                                        {% if trend_analysis.resolution_improvement > 0 %}
+                                            <span class="text-success">
+                                                <i class="fas fa-arrow-up me-1"></i>
+                                                +{{ trend_analysis.resolution_improvement|floatformat:1 }}%
+                                            </span>
+                                        {% else %}
+                                            <span class="text-danger">
+                                                <i class="fas fa-arrow-down me-1"></i>
+                                                {{ trend_analysis.resolution_improvement|floatformat:1 }}%
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 text-center mb-3">
+                                <div class="border rounded p-3">
+                                    <h4 class="text-warning">{{ trend_analysis.avg_response_time_forecast|floatformat:0 }}</h4>
+                                    <small class="text-muted">Avg Response (hrs)</small>
+                                    <div class="mt-2">
+                                        {% if trend_analysis.response_time_improvement < 0 %}
+                                            <span class="text-success">
+                                                <i class="fas fa-arrow-down me-1"></i>
+                                                {{ trend_analysis.response_time_improvement|abs|floatformat:1 }}%
+                                            </span>
+                                        {% else %}
+                                            <span class="text-danger">
+                                                <i class="fas fa-arrow-up me-1"></i>
+                                                +{{ trend_analysis.response_time_improvement|floatformat:1 }}%
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 text-center mb-3">
+                                <div class="border rounded p-3">
+                                    <h4 class="text-info">{{ trend_analysis.citizen_satisfaction_forecast|floatformat:1 }}%</h4>
+                                    <small class="text-muted">Satisfaction</small>
+                                    <div class="mt-2">
+                                        {% if trend_analysis.satisfaction_improvement > 0 %}
+                                            <span class="text-success">
+                                                <i class="fas fa-arrow-up me-1"></i>
+                                                +{{ trend_analysis.satisfaction_improvement|floatformat:1 }}%
+                                            </span>
+                                        {% else %}
+                                            <span class="text-danger">
+                                                <i class="fas fa-arrow-down me-1"></i>
+                                                {{ trend_analysis.satisfaction_improvement|floatformat:1 }}%
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if trend_analysis.seasonal_patterns %}
+                            <div class="mt-4">
+                                <h6 class="text-muted">Seasonal Patterns Detected</h6>
+                                <div class="row">
+                                    {% for pattern in trend_analysis.seasonal_patterns %}
+                                        <div class="col-md-4 mb-2">
+                                            <div class="alert alert-{{ pattern.severity|lower }} alert-sm">
+                                                <strong>{{ pattern.period }}:</strong> {{ pattern.description }}
+                                                <br><small>{{ pattern.impact }}% impact on report volume</small>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No trend analysis available.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resource Optimization -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-cogs me-2"></i>
+                        Resource Optimization Recommendations
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% if resource_optimization %}
+                        <div class="row">
+                            {% for dept, optimization in resource_optimization.items %}
+                                <div class="col-lg-4 col-md-6 mb-4">
+                                    <div class="card border-left-{{ optimization.priority|lower }} shadow h-100">
+                                        <div class="card-body">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="text-xs font-weight-bold text-{{ optimization.priority|lower }} text-uppercase mb-1">
+                                                        {{ dept|title }} Department
+                                                    </div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                        {{ optimization.current_workload }} reports
+                                                    </div>
+                                                    <div class="mt-2">
+                                                        <div class="progress progress-sm mb-2">
+                                                            <div class="progress-bar bg-{{ optimization.priority|lower }}" 
+                                                                 role="progressbar" 
+                                                                 style="width: {{ optimization.utilization_rate }}%">
+                                                            </div>
+                                                        </div>
+                                                        <small class="text-muted">{{ optimization.utilization_rate|floatformat:1 }}% utilization</small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <i class="fas fa-building fa-2x text-gray-300"></i>
+                                                </div>
+                                            </div>
+                                            
+                                            {% if optimization.recommendations %}
+                                                <div class="mt-3">
+                                                    <h6 class="small font-weight-bold text-primary">Recommendations:</h6>
+                                                    <ul class="list-unstyled small">
+                                                        {% for rec in optimization.recommendations %}
+                                                            <li class="mb-1">
+                                                                <i class="fas fa-arrow-right text-{{ optimization.priority|lower }} me-1"></i>
+                                                                {{ rec }}
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                            {% endif %}
+                                            
+                                            {% if optimization.predicted_impact %}
+                                                <div class="mt-2">
+                                                    <small class="text-success">
+                                                        <i class="fas fa-chart-line me-1"></i>
+                                                        Predicted impact: {{ optimization.predicted_impact }}
+                                                    </small>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        {% if resource_optimization.overall_summary %}
+                            <div class="mt-4">
+                                <div class="alert alert-info">
+                                    <h6><i class="fas fa-info-circle me-2"></i>Overall Optimization Summary</h6>
+                                    <p class="mb-0">{{ resource_optimization.overall_summary }}</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-cogs fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No resource optimization recommendations available.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Performance Metrics -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-tachometer-alt me-2"></i>
+                        AI Performance Metrics
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 text-center mb-3">
+                            <div class="border rounded p-3">
+                                <h4 class="text-primary">{{ performance_summary.prediction_accuracy|floatformat:1 }}%</h4>
+                                <small class="text-muted">Prediction Accuracy</small>
+                                <div class="progress progress-sm mt-2">
+                                    <div class="progress-bar bg-primary" role="progressbar" 
+                                         style="width: {{ performance_summary.prediction_accuracy }}%">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <div class="border rounded p-3">
+                                <h4 class="text-success">{{ performance_summary.models_trained }}</h4>
+                                <small class="text-muted">Models Trained</small>
+                                <div class="mt-2">
+                                    <small class="text-muted">Last updated: {{ performance_summary.last_model_update|date:"M d" }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <div class="border rounded p-3">
+                                <h4 class="text-warning">{{ performance_summary.data_points_analyzed|floatformat:0 }}</h4>
+                                <small class="text-muted">Data Points Analyzed</small>
+                                <div class="mt-2">
+                                    <small class="text-muted">{{ performance_summary.analysis_period }} days</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <div class="border rounded p-3">
+                                <h4 class="text-info">{{ performance_summary.computation_time|floatformat:2 }}s</h4>
+                                <small class="text-muted">Avg Computation Time</small>
+                                <div class="mt-2">
+                                    <small class="text-muted">Per prediction</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Items -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-tasks me-2"></i>
+                        Recommended Actions Based on AI Insights
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Immediate Actions (Next 7 Days)
+                            </h6>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Review high-risk hotspot areas
+                                    <span class="badge bg-danger">High Priority</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Optimize police department workload
+                                    <span class="badge bg-warning">Medium Priority</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Monitor citizen sentiment trends
+                                    <span class="badge bg-info">Ongoing</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-success">
+                                <i class="fas fa-calendar-alt me-2"></i>
+                                Strategic Actions (Next 30 Days)
+                            </h6>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Implement resource optimization recommendations
+                                    <span class="badge bg-success">Strategic</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Enhance seasonal pattern preparedness
+                                    <span class="badge bg-primary">Planning</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Update AI model training data
+                                    <span class="badge bg-secondary">Maintenance</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.border-left-critical {
+    border-left: 0.25rem solid #dc3545 !important;
+}
+
+.border-left-high {
+    border-left: 0.25rem solid #fd7e14 !important;
+}
+
+.border-left-medium {
+    border-left: 0.25rem solid #ffc107 !important;
+}
+
+.border-left-low {
+    border-left: 0.25rem solid #28a745 !important;
+}
+
+.alert-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+.progress-sm {
+    height: 0.5rem;
+}
+</style>
+
+<script>
+function refreshPredictions() {
+    const refreshBtn = event.target.closest('button');
+    const originalText = refreshBtn.innerHTML;
+    refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Refreshing...';
+    refreshBtn.disabled = true;
+    
+    setTimeout(() => {
+        location.reload();
+    }, 1500);
+}
+
+// Auto-refresh every 10 minutes
+setInterval(function() {
+    if (!document.hidden) {
+        location.reload();
+    }
+}, 600000);
+
+// Export predictions function
+function exportPredictions() {
+    alert('Export functionality will be implemented soon.');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}AI Recommendations - PublicBridge{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white rounded-xl shadow-sm border p-6 mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">AI Recommendations</h1>
+            <p class="text-gray-600">Personalized insights based on your activity</p>
+        </div>
+
+        {% if recommendations %}
+            <div class="bg-white rounded-xl shadow-sm border p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Your Personalized Recommendations</h2>
+                <div class="space-y-4">
+                    {% for action in recommendations.recommended_actions|default:recommendations %}
+                        <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                            <div class="flex items-start">
+                                <i class="fas fa-lightbulb text-blue-600 mt-1 mr-3"></i>
+                                <div>
+                                    <h3 class="font-medium text-gray-900">{{ action.title|default:action }}</h3>
+                                    {% if action.description %}
+                                        <p class="text-sm text-gray-600 mt-1">{{ action.description }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            <div class="bg-white rounded-xl shadow-sm border p-8 text-center">
+                <i class="fas fa-robot text-gray-400 text-4xl mb-4"></i>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No Recommendations Yet</h3>
+                <p class="text-gray-600 mb-4">AI recommendations will appear here as you continue using the platform.</p>
+                <a href="{% url 'submit_report' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    <i class="fas fa-plus mr-2"></i>
+                    Submit Your First Report
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

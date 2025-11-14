@@ -1,36 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Disaster Reports</title>
+{% extends 'dashboard/base.html' %}
 
-    <!-- Leaflet CSS & JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+{% block page_title %}Live Disaster Reports{% endblock %}
+{% block page_subtitle %}Real-time map of community-reported incidents{% endblock %}
 
-    <script>
-        function loadMap() {
-            var map = L.map('map').setView([1.2921, 36.8219], 12);
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>.marker-label{font-size:11px;font-weight:600;color:#1f2937}</style>
+{% endblock %}
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
-
-            fetch('/api/reports/')
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(report => {
-                        L.marker([report.latitude, report.longitude])
-                            .addTo(map)
-                            .bindPopup(`<b>${report.category}</b><br>${report.description}`);
-                    });
-                });
-        }
-    </script>
-</head>
-<body onload="loadMap()">
-    <h2>Live Disaster Reports</h2>
-    <div id="map" style="height: 500px;"></div>
-</body>
-</html>
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30 py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-6 flex items-center justify-between">
+            <div class="flex items-center space-x-2 text-sm text-gray-600">
+                <i class="fas fa-circle-info text-blue-600" aria-hidden="true"></i>
+                <span>Click markers for details. New reports appear instantly.</span>
+            </div>
+            <button id="recenter" class="px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm text-gray-700 hover:bg-gray-50">
+                <i class="fas fa-location-crosshairs mr-1" aria-hidden="true"></i>
+                <span>Recenter</span>
+            </button>
+        </div>
+        {% include 'disaster_reporting/components/live_reports_map.html' %}
+    </div>
+</div>
+{% endblock %}

@@ -135,7 +135,7 @@ function addGeotaggedReportToDashboard(report) {
 
 // ✅ Function to Mark Geotagged Report as Resolved (With CSRF Token)
 function markGeotaggedAsResolved(reportId) {
-    fetch(`http://127.0.0.1:8000/geotagging/api/reports/${reportId}/`, {  
+    fetch(`http://127.0.0.1:8000/disaster-reporting/api/reports/${reportId}/`, {  
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -167,7 +167,7 @@ function getCSRFToken() {
 
 // ✅ Mark Geotagged Report as Invalid
 function markGeotaggedAsInvalid(reportId) {
-    fetch(`http://127.0.0.1:8000/geotagging/api/reports/${reportId}/invalid/`, {  // ✅ Corrected URL
+    fetch(`http://127.0.0.1:8000/disaster-reporting/api/reports/${reportId}/invalid/`, {  // ✅ Corrected URL
         method: "POST",
         headers: {
             "Content-Type": "application/json",

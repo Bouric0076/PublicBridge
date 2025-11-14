@@ -10,6 +10,7 @@ media/
 
 # Environment variables
 .env
+.env.example
 .venv
 env/
 venv/

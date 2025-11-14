@@ -7,6 +7,10 @@ from pathlib import Path
 import os
 from django.core.exceptions import ImproperlyConfigured
 import dj_database_url
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 def get_env_variable(var_name, default=None):
     """Safely get environment variable or default."""
@@ -21,7 +25,7 @@ def get_env_variable(var_name, default=None):
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = get_env_variable('DJANGO_SECRET_KEY', 'django-insecure-dev-key-change-in-production')
+SECRET_KEY = get_env_variable('SECRET_KEY', 'django-insecure-dev-key-change-in-production')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = get_env_variable('DEBUG', 'False').lower() == 'true'
@@ -198,6 +202,45 @@ if not DEBUG:
 
 # Email backend (development)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# AI Integration Settings
+AUTO_AI_PROCESSING = True  # Enable automatic AI processing of reports and users
+AI_PROCESSING_DELAY_SECONDS = 2  # Delay before processing new content with AI
+AI_CONFIDENCE_THRESHOLD = 0.8  # Minimum confidence score for AI predictions
+AI_MAX_BATCH_SIZE = 100  # Maximum number of items to process in batch
+AI_PROCESSING_TIMEOUT = 30  # Maximum time in seconds for AI processing
+
+# AI Model Configuration
+AI_MODELS = {
+    'sentiment_analysis': {
+        'enabled': True,
+        'model_path': 'ai_agents/models/sentiment_model.pkl',
+        'confidence_threshold': 0.7
+    },
+    'trend_prediction': {
+        'enabled': True,
+        'model_path': 'ai_agents/models/trend_model.pkl',
+        'prediction_days': 30
+    },
+    'hotspot_detection': {
+        'enabled': True,
+        'model_path': 'ai_agents/models/hotspot_model.pkl',
+        'sensitivity': 0.8
+    },
+    'user_behavior': {
+        'enabled': True,
+        'model_path': 'ai_agents/models/user_behavior_model.pkl',
+        'risk_threshold': 0.7
+    }
+}
+
+# AI API Configuration
+AI_API_SETTINGS = {
+    'rate_limit_per_minute': 60,
+    'max_concurrent_requests': 5,
+    'timeout_seconds': 30,
+    'retry_attempts': 3
+}
 
 # Crispy Forms
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

@@ -1,0 +1,75 @@
+# Core Django dependencies
+Django>=4.2.0,<5.0
+djangorestframework>=3.14.0
+django-cors-headers>=4.0.0
+django-channels>=4.0.0
+channels-redis>=4.1.0
+
+# Database
+psycopg2-binary>=2.9.0
+sqlite3
+
+# AI/ML Dependencies
+torch>=2.0.0
+transformers>=4.30.0
+sentence-transformers>=2.2.0
+scikit-learn>=1.3.0
+numpy>=1.24.0
+pandas>=2.0.0
+
+# Groq API (replaces Llama)
+groq>=0.4.0
+
+# Optional: Other AI APIs
+openai>=1.0.0
+huggingface-hub>=0.16.0
+
+# Quantization (optional, for GPU optimization)
+bitsandbytes>=0.41.0
+accelerate>=0.20.0
+
+# NLP utilities
+nltk>=3.8.0
+spacy>=3.6.0
+textblob>=0.17.0
+
+# Web scraping and data processing
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Async and WebSocket support
+channels>=4.0.0
+redis>=4.5.0
+celery>=5.3.0
+
+# Development and testing
+pytest>=7.4.0
+pytest-django>=4.5.0
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.5.0
+
+# Production deployment
+gunicorn>=21.0.0
+whitenoise>=6.5.0
+python-dotenv>=1.0.0
+
+# Monitoring and logging
+sentry-sdk>=1.32.0
+structlog>=23.1.0
+
+# Security
+cryptography>=41.0.0
+python-jose>=3.3.0
+
+# File handling
+Pillow>=10.0.0
+python-magic>=0.4.27
+
+# Date/time handling
+python-dateutil>=2.8.0
+pytz>=2023.3
+
+# Environment management
+python-decouple>=3.8

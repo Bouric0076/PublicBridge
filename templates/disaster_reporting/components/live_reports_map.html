@@ -1,0 +1,57 @@
+<!-- Component: Live Reports Map -->
+<!-- Reusable map with dynamic markers and real-time updates -->
+<div class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+    <div id="live-map" class="w-full h-80 sm:h-96 lg:h-[500px]"></div>
+</div>
+
+<script>
+    (function initLiveMap(){
+        const map = L.map('live-map', { zoomControl: true }).setView([-1.286389, 36.817223], 11);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+
+        const icons = {
+            fire: L.divIcon({ html: '<div class="w-7 h-7 bg-red-600 rounded-full border-2 border-white shadow"><i class="fas fa-fire text-white text-xs" aria-hidden="true"></i></div>', iconSize: [28,28], iconAnchor:[14,14] }),
+            flood: L.divIcon({ html: '<div class="w-7 h-7 bg-blue-600 rounded-full border-2 border-white shadow"><i class="fas fa-water text-white text-xs" aria-hidden="true"></i></div>', iconSize: [28,28], iconAnchor:[14,14] }),
+            medical: L.divIcon({ html: '<div class="w-7 h-7 bg-green-600 rounded-full border-2 border-white shadow"><i class="fas fa-truck-medical text-white text-xs" aria-hidden="true"></i></div>', iconSize: [28,28], iconAnchor:[14,14] }),
+            road_damage: L.divIcon({ html: '<div class="w-7 h-7 bg-yellow-600 rounded-full border-2 border-white shadow"><i class="fas fa-road text-white text-xs" aria-hidden="true"></i></div>', iconSize: [28,28], iconAnchor:[14,14] }),
+            other: L.divIcon({ html: '<div class="w-7 h-7 bg-gray-700 rounded-full border-2 border-white shadow"><i class="fas fa-exclamation text-white text-xs" aria-hidden="true"></i></div>', iconSize: [28,28], iconAnchor:[14,14] })
+        };
+
+        const userIcon = L.divIcon({ html: '<div class="w-8 h-8 bg-blue-600 rounded-full border-2 border-white shadow flex items-center justify-center"><i class="fas fa-user text-white text-xs" aria-hidden="true"></i></div>', iconSize:[32,32], iconAnchor:[16,16] });
+        let userMarker;
+
+        navigator.geolocation.getCurrentPosition(function(position){
+            const { latitude, longitude } = position.coords;
+            userMarker = L.marker([latitude, longitude], { icon: userIcon }).addTo(map).bindPopup('<b>Your Location</b>').openPopup();
+            map.setView([latitude, longitude], 13);
+        });
+
+        function addMarker(report){
+            const icon = icons[report.category] || icons.other;
+            const label = `<div class="marker-label">${(report.category_display||report.category)} • ${(report.severity||'medium')}</div>`;
+            if (report.latitude && report.longitude) {
+                L.marker([report.latitude, report.longitude], { icon })
+                    .addTo(map)
+                    .bindPopup(`<b>${report.category_display||report.category}</b><br>Status: ${report.status_display||report.status}<br>Severity: ${report.severity||'medium'}<br>Tracking: ${report.tracking_code||''}`)
+                    .on('add', function(){ this.bindTooltip(label, {permanent:false}); });
+            }
+        }
+
+        fetch('/disaster-reporting/api/reports/')
+            .then(r => r.json())
+            .then(data => { (data||[]).forEach(addMarker); });
+
+        const wsScheme = location.protocol === 'https:' ? 'wss' : 'ws';
+        const socket = new WebSocket(`${wsScheme}://${location.host}/ws/reports/`);
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.new_report) addMarker(data.new_report);
+            if (data.report) addMarker(data.report);
+        };
+
+        const btn = document.getElementById('recenter');
+        if (btn) btn.addEventListener('click', () => {
+            if (userMarker) map.setView(userMarker.getLatLng(), 13);
+        });
+    })();
+</script>

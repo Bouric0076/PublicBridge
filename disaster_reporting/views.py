@@ -25,7 +25,32 @@ class DisasterReportListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         """Auto-assign user and broadcast new reports via WebSockets."""
-        geotagged_report = serializer.save(user=self.request.user)
+        # Anonymous toggle
+        is_anonymous = self.request.data.get('is_anonymous') in ['true', 'True', True]
+        severity = self.request.data.get('severity') or 'medium'
+
+        geotagged_report = serializer.save(user=self.request.user, is_anonymous=is_anonymous, severity=severity)
+
+        # AI-assisted enrichment (optional)
+        try:
+            from ai_agents.groq_classifier import GroqClassifierAgent
+            classifier = GroqClassifierAgent()
+            cls = classifier.classify_report(geotagged_report.description)
+            if geotagged_report.category == 'other' and cls.get('category'):
+                geotagged_report.category = cls['category']
+            urgency = cls.get('urgency_level', '').lower()
+            if urgency in ['low','medium','high','critical']:
+                geotagged_report.severity = urgency
+            geotagged_report.save()
+        except Exception:
+            pass
+
+        # Handle multiple media files
+        media_files = self.request.FILES.getlist('media')
+        from .models import DisasterMedia
+        for f in media_files:
+            media_type = 'video' if getattr(f, 'content_type', '').startswith('video/') else 'image'
+            DisasterMedia.objects.create(report=geotagged_report, media_type=media_type, file=f)
 
         # Prepare WebSocket data
         report_data = {
@@ -34,6 +59,8 @@ class DisasterReportListCreateView(generics.ListCreateAPIView):
             "status": geotagged_report.status,
             "latitude": geotagged_report.latitude,
             "longitude": geotagged_report.longitude,
+            "severity": geotagged_report.severity,
+            "tracking_code": geotagged_report.tracking_code,
         }
 
         # Send to WebSocket group
@@ -57,7 +84,30 @@ class DisasterReportDetailView(generics.RetrieveUpdateAPIView):
     def update(self, request, *args, **kwargs):
         """Allow partial updates (PATCH-style behavior)."""
         kwargs['partial'] = True
-        return super().update(request, *args, **kwargs)
+        response = super().update(request, *args, **kwargs)
+        try:
+            # Broadcast status updates
+            instance = self.get_object()
+            channel_layer = get_channel_layer()
+            if channel_layer is not None:
+                async_to_sync(channel_layer.group_send)(
+                    "disaster_reports",
+                    {
+                        "type": "send_report_update",
+                        "report": {
+                            "id": instance.id,
+                            "category": instance.category,
+                            "status": instance.status,
+                            "latitude": instance.latitude,
+                            "longitude": instance.longitude,
+                            "severity": instance.severity,
+                            "tracking_code": instance.tracking_code,
+                        }
+                    }
+                )
+        except Exception:
+            pass
+        return response
 
 
 ### ✅ API to Mark a Report as 'Invalid' ###

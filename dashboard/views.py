@@ -14,12 +14,42 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+
+# Import AI agents
+from ai_agents.orchestrator import MultiAgentOrchestrator
+from ai_agents.groq_orchestrator import groq_orchestrator
+from ai_agents.exception_handler import safe_ai_view_response
+from ai_agents.analytics import PredictiveAnalyticsAgent
+from asgiref.sync import async_to_sync
+from ai_agents.civic_chatbot import CivicChatbotAgent
+from ai_agents.conversation import ContextManager
+
+# Initialize AI agents
+orchestrator = MultiAgentOrchestrator()
+analytics_agent = PredictiveAnalyticsAgent()
+# Use enhanced chatbot with conversation management
+enhanced_chatbot = CivicChatbotAgent()
+context_manager = ContextManager()
 
 # ------------------------
-from django.utils.timezone import now, timedelta
+from django.utils import timezone
+from datetime import timedelta
+import logging
+
+# Set up logging
+logger = logging.getLogger(__name__)
+
+# Initialize AI agents
+orchestrator = MultiAgentOrchestrator()
+analytics_agent = PredictiveAnalyticsAgent()
+# Use enhanced chatbot with conversation management
+enhanced_chatbot = CivicChatbotAgent()
+context_manager = ContextManager()
 
 
-@login_required
+
 def dashboard_overview(request):
     total_reports = Report.objects.count()
     resolved_reports = Report.objects.filter(status='resolved').count()
@@ -30,7 +60,7 @@ def dashboard_overview(request):
 
     # Additional metrics
     recent_reports = Report.objects.order_by('-created_at')[:5]  # Get the latest 5 reports
-    active_users = User.objects.filter(last_login__gte=now() - timedelta(days=30)).count()  # Users active in the last 30 days
+    active_users = User.objects.filter(last_login__gte=timezone.now() - timedelta(days=30)).count()  # Users active in the last 30 days
     resolved_percentage = (resolved_reports / total_reports * 100) if total_reports else 0  # Avoid division by zero
 
     # Context with improvements
@@ -52,7 +82,7 @@ def dashboard_overview(request):
 
 
 
-@login_required
+
 def manage_departments(request):
     # Fetching all the departments (GovernmentAdmin entries)
     departments = GovernmentAdmin.objects.all()
@@ -189,14 +219,593 @@ def analytics_view(request):
 
 
 @login_required
+@login_required
 def dashboard(request):
-    # User-related statistics
-    user_profile = Profile.objects.get(user=request.user)
+    """Main dashboard view with user statistics and overview."""
+    try:
+        # User-related statistics
+        user_profile = Profile.objects.get(user=request.user)
 
-    # User's reports statistics
+        # User's reports statistics
+        user_reports = Report.objects.filter(user=request.user)
+        reports_submitted = user_reports.count()
+        reports_under_review = user_reports.filter(status='under_review').count()
+        reports_resolved = user_reports.filter(status='resolved').count()
+        
+        # Get recent reports for the user
+        recent_reports = user_reports.order_by('-created_at')[:5]
+        
+        # Get user's recent forum activity
+        from forum.models import Post, Comment
+        recent_posts = Post.objects.filter(author=request.user).order_by('-created_at')[:3]
+        recent_comments = Comment.objects.filter(author=request.user).order_by('-created_at')[:3]
+        
+        # Calculate engagement metrics
+        total_engagement = reports_submitted + recent_posts.count() + recent_comments.count()
+        
+        context = {
+            'user_profile': user_profile,
+            'reports_submitted': reports_submitted,
+            'reports_under_review': reports_under_review,
+            'reports_resolved': reports_resolved,
+            'recent_reports': recent_reports,
+            'recent_posts': recent_posts,
+            'recent_comments': recent_comments,
+            'total_engagement': total_engagement,
+            'engagement_score': request.user.engagement_score,
+        }
+        
+        return render(request, 'dashboard/dashboard.html', context)
+    except Profile.DoesNotExist:
+        # Handle case where user doesn't have a profile
+        context = {
+            'user_profile': None,
+            'reports_submitted': 0,
+            'reports_under_review': 0,
+            'reports_resolved': 0,
+            'recent_reports': [],
+            'recent_posts': [],
+            'recent_comments': [],
+            'total_engagement': 0,
+            'engagement_score': 0,
+        }
+        return render(request, 'dashboard/dashboard.html', context)
+
+@login_required
+def citizen_ai_dashboard(request):
+    """Enhanced citizen-facing AI dashboard powered by Groq orchestrator."""
+    try:
+        # Get user's own reports for AI analysis
+        user_reports = Report.objects.filter(user=request.user).order_by('-created_at')[:10]
+        
+        # Get user profile or create if doesn't exist (cleaned up duplicate code)
+        try:
+            user_profile = request.user.profile
+            location = user_profile.location
+        except Profile.DoesNotExist:
+            # Create profile with default location
+            user_profile = Profile.objects.create(user=request.user, location='unknown')
+            location = 'unknown'
+        
+        # Get Groq orchestrator health status and capabilities
+        orchestrator_health = groq_orchestrator.health_check()
+        ai_capabilities = groq_orchestrator.get_capabilities()
+        performance_stats = groq_orchestrator.get_performance_stats()
+        
+        # Get personalized AI insights using analytics agent
+        analytics_agent = PredictiveAnalyticsAgent()
+        user_activity_data = {
+            'analysis_type': 'user_activity',
+            'user_id': request.user.id,
+            'report_count': user_reports.count(),
+            'recent_categories': list(user_reports.values_list('category', flat=True)[:5])
+        }
+        
+        try:
+            ai_insights = async_to_sync(analytics_agent.process)(user_activity_data)
+        except Exception as e:
+            logger.warning(f"Analytics agent failed: {e}")
+            ai_insights = None
+        
+        # Get AI recommendations for the citizen
+        recommendations_data = {
+            'analysis_type': 'citizen_recommendations',
+            'user_id': request.user.id,
+            'location': location
+        }
+        
+        try:
+            ai_recommendations = async_to_sync(analytics_agent.process)(recommendations_data)
+        except Exception as e:
+            logger.warning(f"Recommendations failed: {e}")
+            ai_recommendations = None
+        
+        # Get community insights
+        community_data = {
+            'analysis_type': 'community_insights',
+            'time_period': 30,
+            'user_location': location
+        }
+        
+        try:
+            community_insights = async_to_sync(analytics_agent.process)(community_data)
+        except Exception as e:
+            logger.warning(f"Community insights failed: {e}")
+            community_insights = None
+        
+        # Prepare context with Groq orchestrator information
+        context = {
+            'user_reports': user_reports,
+            'ai_insights': ai_insights.predictions if ai_insights else {},
+            'ai_recommendations': ai_recommendations.predictions if ai_recommendations else {},
+            'community_insights': community_insights.predictions if community_insights else {},
+            'report_count': user_reports.count(),
+            'recent_reports': user_reports[:5],
+            # Enhanced Groq-specific context
+            'groq_enabled': orchestrator_health['orchestrator']['status'] in ['healthy', 'degraded'],
+            'ai_health': orchestrator_health,
+            'ai_capabilities': ai_capabilities,
+            'performance_stats': performance_stats,
+            'chatbot_available': orchestrator_health['agents'].get('chatbot', {}).get('status') in ['healthy', 'degraded'],
+            'classifier_available': orchestrator_health['agents'].get('classifier', {}).get('status') in ['healthy', 'degraded']
+        }
+        
+        return render(request, 'dashboard/citizen_ai_dashboard.html', context)
+        
+    except Exception as e:
+        logger.error(f"Citizen AI Dashboard error: {e}")
+        # Enhanced fallback with Groq status
+        user_reports = Report.objects.filter(user=request.user).order_by('-created_at')[:5]
+        context = {
+            'user_reports': user_reports,
+            'ai_insights': {},
+            'ai_recommendations': {},
+            'community_insights': {},
+            'report_count': user_reports.count(),
+            'recent_reports': user_reports,
+            'error': 'Some AI features are temporarily unavailable.',
+            'groq_enabled': False,
+            'ai_health': {'orchestrator': {'status': 'unhealthy'}},
+            'ai_capabilities': [],
+            'chatbot_available': False,
+            'classifier_available': False
+        }
+        return render(request, 'dashboard/citizen_ai_dashboard_fallback.html', context)
+
+@login_required
+def citizen_ai_recommendations(request):
+    """Enhanced AI recommendations for citizens using Groq orchestrator."""
+    try:
+        # Get Groq orchestrator status
+        orchestrator_health = groq_orchestrator.health_check()
+        
+        # Get analytics agent for recommendations
+        analytics_agent = PredictiveAnalyticsAgent()
+        
+        # Get personalized recommendations based on user activity
+        recommendations_data = {
+            'analysis_type': 'citizen_recommendations',
+            'user_id': request.user.id,
+            'user_history': Report.objects.filter(user=request.user).count()
+        }
+        
+        try:
+            ai_recommendations = async_to_sync(analytics_agent.process)(recommendations_data)
+        except Exception as e:
+            logger.warning(f"Analytics agent failed: {e}")
+            ai_recommendations = None
+        
+        # Get user reports for context
+        user_reports = Report.objects.filter(user=request.user).order_by('-created_at')[:5]
+        
+        context = {
+            'recommendations': ai_recommendations.predictions if ai_recommendations else {},
+            'user_activity': Report.objects.filter(user=request.user).count(),
+            'recent_reports': user_reports,
+            'groq_enabled': orchestrator_health['orchestrator']['status'] in ['healthy', 'degraded'],
+            'ai_health': orchestrator_health,
+            'chatbot_available': orchestrator_health['agents'].get('chatbot', {}).get('status') in ['healthy', 'degraded']
+        }
+        
+        return render(request, 'dashboard/citizen_ai_recommendations.html', context)
+        
+    except Exception as e:
+        logger.error(f"Citizen AI Recommendations error: {e}")
+        context = {
+            'recommendations': {},
+            'user_activity': 0,
+            'recent_reports': [],
+            'error': 'AI recommendations are temporarily unavailable.',
+            'groq_enabled': False,
+            'ai_health': {'orchestrator': {'status': 'unhealthy'}},
+            'chatbot_available': False
+        }
+        return render(request, 'dashboard/citizen_ai_recommendations_fallback.html', context)
+
+@login_required
+@ensure_csrf_cookie
+def ai_chat_page(request):
+    """Dedicated AI chat page with modern UI."""
+    try:
+        # Get Groq orchestrator health status
+        orchestrator_health = groq_orchestrator.health_check()
+        
+        context = {
+            'groq_enabled': orchestrator_health['orchestrator']['status'] in ['healthy', 'degraded'],
+            'ai_health': orchestrator_health,
+            'chatbot_available': orchestrator_health['agents'].get('chatbot', {}).get('status') in ['healthy', 'degraded'],
+            'user_report_count': Report.objects.filter(user=request.user).count() if request.user.is_authenticated else 0
+        }
+        
+        return render(request, 'dashboard/ai_chat.html', context)
+        
+    except Exception as e:
+        logger.error(f"AI chat page error: {e}")
+        context = {
+            'groq_enabled': False,
+            'ai_health': {'orchestrator': {'status': 'unhealthy'}},
+            'chatbot_available': False,
+            'error': 'AI chat is temporarily unavailable.'
+        }
+        return render(request, 'dashboard/ai_chat.html', context)
+
+@require_http_methods(["GET"])
+def ai_status_api(request):
+    """API endpoint for AI status information."""
+    try:
+        # Get comprehensive health check
+        health_status = groq_orchestrator.health_check()
+        performance_stats = groq_orchestrator.get_performance_stats()
+        
+        status_response = {
+            'overall_status': health_status['orchestrator']['status'],
+            'groq_enabled': health_status['orchestrator']['status'] in ['healthy', 'degraded'],
+            'agents': {
+                'chatbot': health_status['agents'].get('chatbot', {}).get('status', 'unknown'),
+                'classifier': health_status['agents'].get('classifier', {}).get('status', 'unknown'),
+                'sentiment': health_status['agents'].get('sentiment', {}).get('status', 'unknown')
+            },
+            'performance': {
+                'total_operations': performance_stats.get('total_operations', 0),
+                'success_rate': performance_stats.get('success_rate', 0.0),
+                'error_rate': performance_stats.get('error_rate', 0.0)
+            },
+            'capabilities': groq_orchestrator.get_capabilities(),
+            'timestamp': timezone.now().isoformat()
+        }
+        
+        return JsonResponse(status_response)
+        
+    except Exception as e:
+        logger.error(f"Error getting AI status: {e}")
+        return JsonResponse({
+            'overall_status': 'unhealthy',
+            'groq_enabled': False,
+            'error': 'Unable to retrieve AI status',
+            'timestamp': timezone.now().isoformat()
+        }, status=503)
+
+
+# ------------------------
+# AI-Powered Dashboard Views
+# ------------------------
+
+@login_required
+def ai_dashboard(request):
+    """AI-powered dashboard with advanced analytics and insights."""
+    try:
+        # Initialize AI agents
+        analytics_agent = PredictiveAnalyticsAgent()
+        
+        # Get AI analytics
+        analytics_data = {
+            'analysis_type': 'general_analytics',
+            'time_period': 30
+        }
+        
+        ai_result = async_to_sync(analytics_agent.process)(analytics_data)
+        
+        # Get recent reports for AI analysis
+        recent_reports = Report.objects.order_by('-created_at')[:10]
+        
+        # Analyze reports with AI
+        ai_insights = []
+        for report in recent_reports:
+            try:
+                # Create comprehensive analysis input
+                analysis_input = {
+                    'report_id': report.id,
+                    'title': report.title,
+                    'description': report.description,
+                    'category': report.category,
+                    'location': getattr(report, 'location', 'unknown'),
+                    'created_at': report.created_at.isoformat(),
+                    'status': report.status
+                }
+                
+                # Get AI insights for this report
+                orchestrator = MultiAgentOrchestrator()
+                report_analysis = orchestrator.analyze_report(analysis_input)
+                
+                ai_insights.append({
+                    'report': report,
+                    'analysis': report_analysis
+                })
+                
+            except Exception as e:
+                logger.error(f"AI analysis failed for report {report.id}: {e}")
+                continue
+        
+        # Get predictive analytics
+        hotspot_prediction = async_to_sync(analytics_agent.process)({
+            'analysis_type': 'hotspot_prediction',
+            'time_horizon': 7,
+            'locations': ['downtown', 'suburbs', 'industrial', 'residential']
+        })
+        
+        sentiment_analysis = async_to_sync(analytics_agent.process)({
+            'analysis_type': 'sentiment_analysis',
+            'time_period': 30
+        })
+        
+        context = {
+            'ai_analytics': ai_result.predictions if ai_result else {},
+            'ai_insights': ai_insights[:5],  # Top 5 insights
+            'hotspot_predictions': hotspot_prediction.predictions if hotspot_prediction else {},
+            'sentiment_analysis': sentiment_analysis.predictions if sentiment_analysis else {},
+            'performance_summary': analytics_agent.get_performance_summary(),
+            'recent_reports': recent_reports[:5]
+        }
+        
+        return render(request, 'admin_dashboard/ai_dashboard.html', context)
+        
+    except Exception as e:
+        logger.error(f"AI Dashboard error: {e}")
+        # Fallback to basic dashboard if AI fails
+        return render(request, 'admin_dashboard/ai_dashboard_fallback.html', {
+            'error': 'AI features temporarily unavailable'
+        })
+
+@login_required
+def ai_report_analysis(request, report_id):
+    """AI-powered detailed analysis for a specific report."""
+    report = get_object_or_404(Report, id=report_id)
+    
+    try:
+        # Initialize orchestrator
+        orchestrator = MultiAgentOrchestrator()
+        
+        # Prepare report data for AI analysis
+        report_data = {
+            'report_id': report.id,
+            'title': report.title,
+            'description': report.description,
+            'category': report.category,
+            'location': getattr(report, 'location', 'unknown'),
+            'created_at': report.created_at.isoformat(),
+            'status': report.status,
+            'user_id': report.user.id if report.user else None
+        }
+        
+        # Get comprehensive AI analysis
+        ai_analysis = orchestrator.analyze_report(report_data)
+        
+        # Get similar reports using AI
+        similar_reports = Report.objects.filter(
+            category=report.category
+        ).exclude(id=report.id)[:3]
+        
+        context = {
+            'report': report,
+            'ai_analysis': ai_analysis,
+            'similar_reports': similar_reports,
+            'confidence_score': ai_analysis.get('confidence', 0) * 100
+        }
+        
+        return render(request, 'admin_dashboard/ai_report_analysis.html', context)
+        
+    except Exception as e:
+        logger.error(f"AI Report Analysis error: {e}")
+        return render(request, 'admin_dashboard/ai_report_analysis_fallback.html', {
+            'report': report,
+            'error': 'AI analysis temporarily unavailable'
+        })
+
+@login_required
+def ai_predictive_insights(request):
+    """AI-powered predictive insights and recommendations."""
+    try:
+        analytics_agent = PredictiveAnalyticsAgent()
+        
+        # Get trend analysis
+        trend_analysis = async_to_sync(analytics_agent.process)({
+            'analysis_type': 'trend_analysis',
+            'time_period': 60  # 60 days
+        })
+        
+        # Get resource optimization recommendations
+        resource_optimization = async_to_sync(analytics_agent.process)({
+            'analysis_type': 'resource_optimization',
+            'departments': ['police', 'fire', 'utilities', 'infrastructure', 'health']
+        })
+        
+        context = {
+            'trend_analysis': trend_analysis.predictions if trend_analysis else {},
+            'resource_optimization': resource_optimization.predictions if resource_optimization else {},
+            'performance_summary': analytics_agent.get_performance_summary()
+        }
+        
+        return render(request, 'admin_dashboard/ai_predictive_insights.html', context)
+        
+    except Exception as e:
+        logger.error(f"AI Predictive Insights error: {e}")
+        return render(request, 'admin_dashboard/ai_predictive_insights_fallback.html', {
+            'error': 'AI predictive insights temporarily unavailable'
+        })
+
+@login_required
+def ai_chatbot_interface(request):
+    """AI Chatbot interface for citizen assistance."""
+    if not (request.user.is_staff or request.user.is_superuser):
+        return redirect('dashboard')
+    try:
+        # Get enhanced chatbot health check and capabilities
+        health_status = enhanced_chatbot.health_check()
+        capabilities = enhanced_chatbot.get_capabilities()
+        
+        # Get analytics from context manager
+        analytics = context_manager.get_analytics_summary()
+        
+        context = {
+            'chatbot_health': health_status,
+            'chatbot_capabilities': capabilities,
+            'chatbot_analytics': analytics,
+            'conversation_history': [],  # Will be populated by frontend
+        }
+        
+        return render(request, 'admin_dashboard/ai_chatbot.html', context)
+        
+    except Exception as e:
+        logger.error(f"Error loading AI chatbot interface: {e}")
+        context = {
+            'error': 'AI chatbot interface is currently unavailable.',
+            'chatbot_health': {'status': 'unhealthy'},
+            'chatbot_capabilities': [],
+            'chatbot_analytics': {'total_conversations': 0},
+        }
+        return render(request, 'admin_dashboard/ai_chatbot_fallback.html', context)
+
+@login_required
+def chatbot_api(request):
+    """API endpoint for chatbot interactions with timeout and error handling."""
+    if request.method == 'POST':
+        try:
+            import json
+            from django.conf import settings
+            from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
+            
+            try:
+                data = json.loads(request.body)
+                message = data.get('message', '').strip()
+                
+                if not message:
+                    return JsonResponse({
+                        'error': 'Message is required',
+                        'confidence': 0.0,
+                        'timestamp': timezone.now().isoformat()
+                    })
+                
+                # Validate message length
+                if len(message) > 1000:
+                    return JsonResponse({
+                        'error': 'Message too long (max 1000 characters)',
+                        'confidence': 0.0,
+                        'timestamp': timezone.now().isoformat()
+                    })
+                
+                # Get or create user session
+                user_id = str(request.user.id) if request.user.is_authenticated else 'anonymous'
+                session_id = request.session.get('chatbot_session_id')
+                
+                if not session_id:
+                    try:
+                        session_id = context_manager.start_session(user_id)
+                        request.session['chatbot_session_id'] = session_id
+                    except Exception as session_error:
+                        logger.warning(f"Session creation failed: {session_error}")
+                        session_id = f"fallback_{user_id}_{datetime.now().timestamp()}"
+                        request.session['chatbot_session_id'] = session_id
+                
+                # Process message with Groq orchestrator (faster and more reliable)
+                with ThreadPoolExecutor(max_workers=1) as executor:
+                    context = {
+                        'user_id': user_id,
+                        'session_id': session_id,
+                        'page_context': 'citizen_dashboard',
+                        'user_has_active_reports': Report.objects.filter(user=request.user).exists() if request.user.is_authenticated else False,
+                        'conversation_history': data.get('conversation_history', [])
+                    }
+                    
+                    # Use Groq orchestrator for better performance and reliability
+                    try:
+                        future = executor.submit(
+                            groq_orchestrator.generate_chatbot_response, 
+                            message, 
+                            context
+                        )
+                        response = future.result(timeout=30)
+                    except Exception as groq_error:
+                        logger.error(f"Groq orchestrator failed: {groq_error}")
+                        # Fallback to basic response
+                        response = {
+                            'response': 'I can help you with government services, reporting issues, and civic engagement. What would you like to know?',
+                            'confidence': 0.5,
+                            'intent': {'primary_intent': 'general'},
+                            'entities': {},
+                            'conversation_context': {},
+                            'requires_escalation': False,
+                            'suggested_actions': [],
+                            'sentiment_analysis': {}
+                        }
+                
+                # Return response in enhanced format
+                return JsonResponse({
+                    'response': response.get('response', 'I apologize, but I cannot process your message right now.'),
+                    'confidence': response.get('confidence', 0.5),
+                    'intent': response.get('intent', {}).get('primary_intent', 'general'),
+                    'entities': response.get('entities', {}),
+                    'conversation_context': response.get('conversation_context', {}),
+                    'requires_escalation': response.get('requires_escalation', False),
+                    'suggested_actions': response.get('suggested_actions', []),
+                    'sentiment_analysis': response.get('sentiment_analysis', {}),
+                    'session_id': session_id,
+                    'timestamp': timezone.now().isoformat()
+                })
+                
+            except FuturesTimeoutError:
+                logger.error("Chatbot API timeout")
+                return JsonResponse({
+                    'error': 'Request timed out. Please try again with a shorter message.',
+                    'confidence': 0.0,
+                    'requires_escalation': True,
+                    'timestamp': timezone.now().isoformat()
+                })
+                
+        except json.JSONDecodeError:
+            logger.error("Invalid JSON in chatbot API request")
+            return JsonResponse({
+                'error': 'Invalid request format',
+                'confidence': 0.0,
+                'timestamp': timezone.now().isoformat()
+            }, status=400)
+            
+        except AttributeError as e:
+            logger.error(f"Chatbot agent error: {e}")
+            return JsonResponse({
+                'error': 'AI service temporarily unavailable',
+                'confidence': 0.0,
+                'requires_escalation': True,
+                'timestamp': timezone.now().isoformat()
+            }, status=503)
+            
+        except Exception as e:
+            logger.error(f"Error in chatbot API: {e}")
+            return JsonResponse({
+                'error': 'Failed to process message. Please try again later.',
+                'confidence': 0.0,
+                'requires_escalation': True,
+                'timestamp': timezone.now().isoformat()
+            }, status=500)
+    
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+@login_required
+def user_dashboard(request):
+    """User dashboard with personal statistics and activity."""
+    # Get user's reports statistics
     user_reports = Report.objects.filter(user=request.user)
     reports_submitted = user_reports.count()
-    reports_under_review = user_reports.filter(status='under_review').count()
+    reports_under_review = user_reports.filter(status='pending').count()
     reports_resolved = user_reports.filter(status='resolved').count()
 
     # Recent reports
@@ -216,6 +825,7 @@ def dashboard(request):
     conversations_count = conversations.count()
 
     # Suggested users for following
+    user_profile = Profile.objects.get(user=request.user)
     suggested_users = User.objects.exclude(id=request.user.id).exclude(id__in=user_profile.following.all()).order_by('date_joined')[:5]
 
     # Context data to pass to the template

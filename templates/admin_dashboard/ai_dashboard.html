@@ -1,0 +1,139 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block title %}AI-Powered Dashboard - PublicBridge{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- AI Dashboard Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-0 text-gray-800">
+                        <i class="fas fa-brain text-primary me-2"></i>
+                        AI-Powered Dashboard
+                    </h1>
+                    <p class="text-muted mb-0">Advanced analytics and predictive insights powered by artificial intelligence</p>
+                </div>
+                <div class="btn-group" role="group">
+                    <a href="{% url 'ai_predictive_insights' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-chart-line me-1"></i>
+                        Predictive Insights
+                    </a>
+                    <button class="btn btn-primary" onclick="refreshAIDashboard()">
+                        <i class="fas fa-sync-alt me-1"></i>
+                        Refresh AI Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Performance Metrics -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                AI Confidence Score
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ performance_summary.confidence_score|floatformat:1 }}%
+                            </div>
+                            <div class="progress progress-sm mt-2">
+                                <div class="progress-bar bg-primary" role="progressbar" 
+                                     style="width: {{ performance_summary.confidence_score }}%">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-brain fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Processing Speed
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ performance_summary.avg_processing_time|floatformat:2 }}s
+                            </div>
+                            <small class="text-muted">Average per report</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tachometer-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                AI Accuracy
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ performance_summary.accuracy_score|floatformat:1 }}%
+                            </div>
+                            <small class="text-muted">Last 30 days</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-bullseye fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Active AI Agents
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ performance_summary.active_agents }}
+                            </div>
+                            <small class="text-muted">Currently running</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-robot fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Insights and Predictions -->
+    <div class="row">
+        <!-- Recent AI Insights -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Recent AI Insights
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% if ai_insights %}
+                        <div class="timeline">
+                            {% for insight in ai_insights %}
+                                <div class="timeline-item mb-3">
+                                    <div class="timeline-marker bg-{{ insight.analysis.category|lower|slice:":3" }}

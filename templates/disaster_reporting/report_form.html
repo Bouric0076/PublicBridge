@@ -1,115 +1,115 @@
 {% extends 'dashboard/base.html' %}
 
-{% block page_title %} Submit Disaster Report{% endblock %}
+{% block page_title %}Submit Disaster Report{% endblock %}
 {% block page_subtitle %}Help your community by reporting emergencies and issues in real-time{% endblock %}
 
 {% block extra_head %}
-<!-- Leaflet CSS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
-      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
-      crossorigin=""/>
-<!-- Font Awesome -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 {% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30 py-6">
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/20 py-6">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header Section -->
         <div class="mb-8">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Emergency Reporting</h1>
-                    <p class="text-gray-600 text-lg max-w-2xl">Report emergencies, disasters, or community issues to help authorities respond quickly and keep everyone safe.</p>
+                    <div class="flex items-center space-x-3 mb-2">
+                        <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Emergency Reporting</h1>
+                            <p class="text-gray-600 text-base sm:text-lg max-w-2xl">Select a location on the map to report an emergency or community issue</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="mt-4 lg:mt-0 flex items-center space-x-4">
-                    <div class="flex items-center space-x-2 text-sm text-gray-500 bg-white px-3 py-2 rounded-lg shadow-sm">
-                        <i class="fas fa-shield-alt text-green-500"></i>
-                        <span>Verified Reporting</span>
-                    </div>
-                    <div class="flex items-center space-x-2 text-sm text-gray-500 bg-white px-3 py-2 rounded-lg shadow-sm">
-                        <i class="fas fa-clock text-blue-500"></i>
-                        <span>Real-time Alerts</span>
-                    </div>
+                <div class="mt-4 lg:mt-0 flex items-center space-x-2">
+                    <span class="inline-flex items-center text-sm text-gray-600 bg-white px-3 py-2 rounded-lg border border-gray-200 shadow-sm">
+                        <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                        <span class="font-medium">Secure & Verified</span>
+                    </span>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
-            <!-- Left Sidebar - Recent Reports -->
-            <div class="xl:col-span-1 space-y-6">
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+            <!-- Left Sidebar - Recent Reports & Contacts -->
+            <div class="xl:col-span-3 space-y-6">
                 <!-- Recent Reports -->
-                <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
-                    <h3 class="font-semibold text-gray-900 mb-4 flex items-center">
-                        <i class="fas fa-history text-blue-600 mr-2"></i>
-                        Recent Reports
-                    </h3>
-                    <div class="space-y-4">
-                        <div class="flex items-start space-x-3 p-3 bg-red-50 rounded-lg border border-red-100">
-                            <div class="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
-                            <div class="flex-1">
-                                <h4 class="font-medium text-gray-900">Building Fire</h4>
-                                <p class="text-xs text-gray-600">2 hours ago • 1.2km away</p>
-                                <div class="flex items-center mt-1">
-                                    <span class="text-xs px-2 py-1 bg-red-100 text-red-800 rounded-full">High Priority</span>
-                                </div>
-                            </div>
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+                        <h3 class="font-semibold text-gray-900 flex items-center">
+                            <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Recent Reports
+                        </h3>
+                    </div>
+                    <div class="p-4 max-h-80 overflow-y-auto">
+                        <div id="recent-reports" class="space-y-3">
+                            <!-- Reports will be populated here -->
                         </div>
-                        <div class="flex items-start space-x-3 p-3 bg-yellow-50 rounded-lg border border-yellow-100">
-                            <div class="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
-                            <div class="flex-1">
-                                <h4 class="font-medium text-gray-900">Road Accident</h4>
-                                <p class="text-xs text-gray-600">4 hours ago • 0.8km away</p>
-                                <div class="flex items-center mt-1">
-                                    <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">Medium Priority</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3 p-3 bg-green-50 rounded-lg border border-green-100">
-                            <div class="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                            <div class="flex-1">
-                                <h4 class="font-medium text-gray-900">Power Outage</h4>
-                                <p class="text-xs text-gray-600">6 hours ago • 2.1km away</p>
-                                <div class="flex items-center mt-1">
-                                    <span class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">Resolved</span>
-                                </div>
-                            </div>
+                        <div id="recent-reports-empty" class="text-center py-8">
+                            <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <p class="text-gray-500 text-sm">No recent reports found</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Emergency Contacts -->
-                <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
-                    <h4 class="font-semibold text-gray-900 mb-4 flex items-center">
-                        <i class="fas fa-phone-alt text-red-500 mr-2"></i>
-                        Emergency Contacts
-                    </h4>
-                    <div class="space-y-3">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+                        <h3 class="font-semibold text-gray-900 flex items-center">
+                            <svg class="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                            </svg>
+                            Emergency Contacts
+                        </h3>
+                    </div>
+                    <div class="p-4 space-y-3">
                         <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
                             <span class="text-gray-700 flex items-center">
-                                <i class="fas fa-shield-alt text-blue-500 mr-3"></i>
-                                Police
+                                <svg class="w-5 h-5 text-blue-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                </svg>
+                                <span>Police</span>
                             </span>
                             <a href="tel:911" class="text-red-600 font-medium hover:text-red-700">911</a>
                         </div>
                         <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
                             <span class="text-gray-700 flex items-center">
-                                <i class="fas fa-fire text-red-500 mr-3"></i>
-                                Fire Department
+                                <svg class="w-5 h-5 text-red-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"/>
+                                </svg>
+                                <span>Fire Department</span>
                             </span>
                             <a href="tel:911" class="text-red-600 font-medium hover:text-red-700">911</a>
                         </div>
                         <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
                             <span class="text-gray-700 flex items-center">
-                                <i class="fas fa-ambulance text-green-500 mr-3"></i>
-                                Ambulance
+                                <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                                <span>Ambulance</span>
                             </span>
                             <a href="tel:911" class="text-red-600 font-medium hover:text-red-700">911</a>
                         </div>
                         <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
                             <span class="text-gray-700 flex items-center">
-                                <i class="fas fa-life-ring text-purple-500 mr-3"></i>
-                                Coast Guard
+                                <svg class="w-5 h-5 text-purple-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
+                                </svg>
+                                <span>Coast Guard</span>
                             </span>
                             <a href="tel:911" class="text-red-600 font-medium hover:text-red-700">911</a>
                         </div>
@@ -117,251 +117,276 @@
                 </div>
             </div>
 
-            <!-- Main Content - Map and Form -->
-            <div class="xl:col-span-3">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <!-- Map and Stats -->
-                    <div class="lg:col-span-2 space-y-6">
-                        <!-- Map Container -->
-                        <div class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
-                            <div class="p-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
-                                <div class="flex items-center justify-between">
-                                    <h3 class="font-semibold text-gray-900 flex items-center">
-                                        <i class="fas fa-map-marker-alt text-red-500 mr-2"></i>
-                                        Select Incident Location
-                                    </h3>
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex items-center space-x-2 text-sm text-gray-500">
-                                            <i class="fas fa-info-circle text-blue-500"></i>
-                                            <span>Click on the map to mark location</span>
-                                        </div>
-                                        <div class="flex space-x-2">
-                                            <button id="zoom-in" class="w-8 h-8 bg-white border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50">
-                                                <i class="fas fa-plus text-gray-600"></i>
-                                            </button>
-                                            <button id="zoom-out" class="w-8 h-8 bg-white border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50">
-                                                <i class="fas fa-minus text-gray-600"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="map" class="w-full h-96"></div>
-                            <div class="p-4 bg-gray-50 border-t border-gray-100">
-                                <div class="flex items-center justify-between text-sm">
-                                    <div class="flex items-center space-x-4 text-gray-600">
-                                        <div class="flex items-center space-x-1">
-                                            <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
-                                            <span>Your Location</span>
-                                        </div>
-                                        <div class="flex items-center space-x-1">
-                                            <div class="w-3 h-3 bg-red-500 rounded-full"></div>
-                                            <span>Selected Location</span>
-                                        </div>
-                                        <div class="flex items-center space-x-1">
-                                            <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                                            <span>Other Reports</span>
-                                        </div>
-                                    </div>
-                                    <button id="use-current-location" class="text-blue-600 hover:text-blue-700 font-medium flex items-center space-x-1 bg-white px-3 py-2 rounded-lg shadow-sm">
-                                        <i class="fas fa-crosshairs"></i>
-                                        <span>Use Current Location</span>
-                                    </button>
-                                </div>
+            <!-- Main Content - Map Area -->
+            <div class="xl:col-span-9 relative z-0">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden h-[600px] relative z-0">
+                    <!-- Map Controls Header -->
+                    <div class="absolute top-4 left-4 right-4 z-10">
+                        <div class="flex items-center justify-between">
+                            <div class="bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-lg border border-gray-200">
+                                <h3 class="font-semibold text-gray-900 flex items-center text-sm">
+                                    <svg class="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    Click on map to select incident location
+                                </h3>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Quick Stats -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <p class="text-sm text-gray-600">Reports Today</p>
-                                        <p class="text-2xl font-bold text-gray-900">24</p>
-                                    </div>
-                                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-flag text-green-600"></i>
-                                    </div>
+                    <!-- Map Container -->
+                    <div id="map" class="w-full h-full relative z-0"></div>
+
+                    <!-- Map Legend -->
+                    <div class="absolute bottom-4 left-4 z-10">
+                        <div class="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-gray-200">
+                            <div class="flex items-center space-x-4 text-sm text-gray-600">
+                                <div class="flex items-center space-x-1">
+                                    <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                    <span>Your Location</span>
                                 </div>
-                            </div>
-                            <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <p class="text-sm text-gray-600">Active Emergencies</p>
-                                        <p class="text-2xl font-bold text-gray-900">8</p>
-                                    </div>
-                                    <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-exclamation-triangle text-red-600"></i>
-                                    </div>
+                                <div class="flex items-center space-x-1">
+                                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                                    <span>Selected Location</span>
                                 </div>
-                            </div>
-                            <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <p class="text-sm text-gray-600">Avg. Response Time</p>
-                                        <p class="text-2xl font-bold text-gray-900">12m</p>
-                                    </div>
-                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-clock text-blue-600"></i>
-                                    </div>
+                                <div class="flex items-center space-x-1">
+                                    <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                    <span>Other Reports</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Report Form Sidebar -->
-                    <div class="lg:col-span-1">
-                        <div class="sticky top-6">
-                            <!-- Form Container -->
-                            <div id="report-form-container" class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
-                                <div class="p-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50">
-                                    <h3 class="text-xl font-semibold text-gray-900 flex items-center">
-                                        <i class="fas fa-edit text-blue-600 mr-2"></i>
-                                        Report Details
-                                    </h3>
-                                    <p class="text-sm text-gray-600 mt-1">Fill in the details about the incident</p>
-                                </div>
-
-                                <form id="report-form" class="p-6 space-y-6">
-                                    <!-- Category -->
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-900 mb-3 flex items-center">
-                                            <i class="fas fa-tag text-purple-600 mr-2"></i>
-                                            Incident Type
-                                        </label>
-                                        <div class="relative">
-                                            <select id="category" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 bg-white appearance-none">
-                                                <option value="fire">Fire Emergency</option>
-                                                <option value="flood">Flood Situation</option>
-                                                <option value="earthquake">Earthquake</option>
-                                                <option value="medical">Medical Emergency</option>
-                                                <option value="road_damage">Road Damage/Accident</option>
-                                                <option value="infrastructure">Infrastructure Failure</option>
-                                                <option value="weather">Severe Weather</option>
-                                                <option value="other">Other Emergency</option>
-                                            </select>
-                                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                                <i class="fas fa-chevron-down"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Severity -->
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-900 mb-3 flex items-center">
-                                            <i class="fas fa-exclamation-circle text-orange-600 mr-2"></i>
-                                            Severity Level
-                                        </label>
-                                        <div class="grid grid-cols-3 gap-2">
-                                            <button type="button" class="severity-btn p-3 border border-gray-300 rounded-lg text-center hover:border-green-300 hover:bg-green-50 transition-colors" data-level="low">
-                                                <div class="w-3 h-3 bg-green-500 rounded-full mx-auto mb-2"></div>
-                                                <span class="text-xs font-medium text-gray-700">Low</span>
-                                            </button>
-                                            <button type="button" class="severity-btn p-3 border border-gray-300 rounded-lg text-center hover:border-yellow-300 hover:bg-yellow-50 transition-colors" data-level="medium">
-                                                <div class="w-3 h-3 bg-yellow-500 rounded-full mx-auto mb-2"></div>
-                                                <span class="text-xs font-medium text-gray-700">Medium</span>
-                                            </button>
-                                            <button type="button" class="severity-btn p-3 border border-gray-300 rounded-lg text-center hover:border-red-300 hover:bg-red-50 transition-colors" data-level="high">
-                                                <div class="w-3 h-3 bg-red-500 rounded-full mx-auto mb-2"></div>
-                                                <span class="text-xs font-medium text-gray-700">High</span>
-                                            </button>
-                                        </div>
-                                        <input type="hidden" id="severity" value="medium">
-                                    </div>
-
-                                    <!-- Description -->
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-900 mb-3 flex items-center">
-                                            <i class="fas fa-align-left text-green-600 mr-2"></i>
-                                            Incident Description
-                                        </label>
-                                        <textarea 
-                                            id="description" 
-                                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 resize-none bg-white" 
-                                            rows="4" 
-                                            placeholder="Provide detailed information about the incident, including any immediate dangers, number of people affected, and current situation..."
-                                            required
-                                        ></textarea>
-                                        <div class="flex justify-between text-xs text-gray-500 mt-2">
-                                            <span>Be specific and include relevant details</span>
-                                            <span id="char-count">0/500</span>
-                                        </div>
-                                    </div>
-
-                                    <!-- Image Upload -->
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-900 mb-3 flex items-center">
-                                            <i class="fas fa-camera text-pink-600 mr-2"></i>
-                                            Upload Evidence
-                                        </label>
-                                        <div id="drop-area" class="drop-area border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-gray-400 transition-colors cursor-pointer bg-gray-50">
-                                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-3"></i>
-                                            <p class="text-sm text-gray-600 mb-2">Drag & drop images here</p>
-                                            <p class="text-xs text-gray-500 mb-4">Supports JPG, PNG, GIF • Max 5MB</p>
-                                            <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-                                                <i class="fas fa-folder-open mr-2"></i>
-                                                Choose Files
-                                            </button>
-                                            <input type="file" id="image" hidden accept="image/*" multiple>
-                                        </div>
-                                        <div id="image-preview" class="mt-3 grid grid-cols-3 gap-2 hidden"></div>
-                                    </div>
-
-                                    <!-- Location Coordinates -->
-                                    <div class="bg-gray-50 rounded-xl p-4">
-                                        <label class="block text-sm font-semibold text-gray-900 mb-2 flex items-center">
-                                            <i class="fas fa-map-pin text-red-600 mr-2"></i>
-                                            Location Coordinates
-                                        </label>
-                                        <div class="grid grid-cols-2 gap-3">
-                                            <div>
-                                                <label class="text-xs text-gray-600 mb-1 block">Latitude</label>
-                                                <input type="text" id="latitude" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm" readonly>
-                                            </div>
-                                            <div>
-                                                <label class="text-xs text-gray-600 mb-1 block">Longitude</label>
-                                                <input type="text" id="longitude" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm" readonly>
-                                            </div>
-                                        </div>
-                                        <p class="text-xs text-gray-500 mt-2 flex items-center">
-                                            <i class="fas fa-info-circle mr-1"></i>
-                                            Select location on the map to enable submission
-                                        </p>
-                                    </div>
-
-                                    <!-- Submit Button -->
-                                    <button 
-                                        type="submit" 
-                                        id="submit-btn"
-                                        disabled
-                                        class="w-full py-4 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:from-green-700 hover:to-green-800 transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl font-semibold flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                                    >
-                                        <i class="fas fa-paper-plane mr-2"></i>
-                                        Submit Emergency Report
-                                    </button>
-
-                                    <!-- Privacy Notice -->
-                                    <div class="text-center">
-                                        <p class="text-xs text-gray-500">
-                                            <i class="fas fa-shield-alt mr-1"></i>
-                                            Your report will be shared with emergency services and community responders
-                                        </p>
-                                    </div>
-                                </form>
-                            </div>
+                    <!-- Location Instructions -->
+                    <div id="location-instructions" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 text-center bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-gray-200 max-w-sm">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
                         </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Select a Location</h3>
+                        <p class="text-gray-600 text-sm">Click anywhere on the map to mark the incident location and start your report</p>
                     </div>
                 </div>
+
+                <!-- Report Button - Fixed at bottom-right of main component -->
+                <button 
+                    id="report-button"
+                    class="report-btn hidden fixed bottom-6 right-24 sm:right-28 md:right-32 bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-4 rounded-xl shadow-2xl hover:from-red-600 hover:to-orange-600 transition-all duration-300 transform-gpu hover:scale-105 font-semibold flex items-center space-x-3 z-30 border-2 border-white"
+                >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span class="text-lg">Report Incident</span>
+                </button>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Slide-out Report Form -->
+<div id="report-form-overlay" class="fixed inset-0 bg-black/50 z-[5000] hidden transition-opacity duration-300"></div>
+<div id="report-form-sidebar" class="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-[6000] transform translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto transform-gpu">
+    <div class="flex flex-col h-full">
+        <!-- Form Header -->
+        <div class="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-900 flex items-center">
+                        <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                        Report Incident
+                    </h2>
+                    <p class="text-sm text-gray-600 mt-1">Provide details about the emergency</p>
+                </div>
+                <button id="close-form" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Form Content -->
+        <form id="report-form" class="flex-1 p-6 space-y-6">
+            <!-- Selected Location Display -->
+            <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                <label class="block text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                    <svg class="w-4 h-4 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    Selected Location
+                </label>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs text-gray-600 mb-1 block">Latitude</label>
+                        <input type="text" id="latitude" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm font-mono" readonly>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-600 mb-1 block">Longitude</label>
+                        <input type="text" id="longitude" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm font-mono" readonly>
+                    </div>
+                </div>
+                <div class="mt-3 flex items-center gap-4">
+                    <button type="button" id="change-location" class="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        Change Location
+                    </button>
+                    <button type="button" id="use-current-location" class="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M4.93 4.93l14.14 14.14M12 2a10 10 0 100 20 10 10 0 000-20z"/>
+                        </svg>
+                        Use Current Location
+                    </button>
+                    <span id="geo-loading" class="inline-flex items-center text-xs text-gray-500 hidden">
+                        <svg class="w-3 h-3 mr-1 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        Locating...
+                    </span>
+                </div>
+            </div>
+
+            <!-- Category -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-900 mb-3 flex items-center">
+                    <svg class="w-4 h-4 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                    </svg>
+                    Incident Type
+                </label>
+                <div class="relative">
+                    <select id="category" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 bg-white appearance-none" required>
+                        <option value="fire">Fire Emergency</option>
+                        <option value="flood">Flood Situation</option>
+                        <option value="earthquake">Earthquake</option>
+                        <option value="medical">Medical Emergency</option>
+                        <option value="road_damage">Road Damage/Accident</option>
+                        <option value="infrastructure">Infrastructure Failure</option>
+                        <option value="weather">Severe Weather</option>
+                        <option value="other">Other Emergency</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Severity -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-900 mb-3 flex items-center">
+                    <svg class="w-4 h-4 text-orange-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"/>
+                    </svg>
+                    Severity Level
+                </label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button type="button" class="severity-btn p-3 border border-gray-300 rounded-lg text-center hover:border-green-300 hover:bg-green-50 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500" data-level="low" aria-pressed="false">
+                        <div class="w-3 h-3 bg-green-500 rounded-full mx-auto mb-2"></div>
+                        <span class="text-xs font-medium text-gray-700">Low</span>
+                    </button>
+                    <button type="button" class="severity-btn p-3 border border-gray-300 rounded-lg text-center hover:border-yellow-300 hover:bg-yellow-50 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500" data-level="medium" aria-pressed="true">
+                        <div class="w-3 h-3 bg-yellow-500 rounded-full mx-auto mb-2"></div>
+                        <span class="text-xs font-medium text-gray-700">Medium</span>
+                    </button>
+                    <button type="button" class="severity-btn p-3 border border-gray-300 rounded-lg text-center hover:border-red-300 hover:bg-red-50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500" data-level="high" aria-pressed="false">
+                        <div class="w-3 h-3 bg-red-500 rounded-full mx-auto mb-2"></div>
+                        <span class="text-xs font-medium text-gray-700">High</span>
+                    </button>
+                </div>
+                <input type="hidden" id="severity" value="medium">
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-900 mb-3 flex items-center">
+                    <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                    Incident Description
+                </label>
+                <textarea id="description" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 resize-none bg-white" rows="4" maxlength="500" placeholder="Provide detailed information about the incident, including any immediate dangers, number of people affected, and current situation..." required></textarea>
+                <div class="flex justify-between text-xs text-gray-500 mt-2">
+                    <span>Be specific and include relevant details</span>
+                    <span id="char-count">0/500</span>
+                </div>
+            </div>
+
+            <!-- Image Upload -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-900 mb-3 flex items-center">
+                    <svg class="w-4 h-4 text-pink-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    Upload Evidence
+                </label>
+                <div id="drop-area" class="drop-area border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-gray-400 transition-colors cursor-pointer bg-gray-50">
+                    <svg class="w-8 h-8 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                    </svg>
+                    <p class="text-sm text-gray-600 mb-2">Drag & drop images here</p>
+                    <p class="text-xs text-gray-500 mb-4">Supports JPG, PNG, GIF, MP4 • Max 5MB (images) / 25MB (video)</p>
+                    <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                        Choose Files
+                    </button>
+                    <input type="file" id="image" hidden accept="image/*,video/*" multiple>
+                </div>
+                <div id="image-preview" class="mt-3 grid grid-cols-3 gap-2 hidden"></div>
+            </div>
+
+            <!-- Identity Preference -->
+            <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    <span class="text-sm text-gray-700">Submit anonymously</span>
+                </div>
+                <label class="inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="is_anonymous" class="rounded">
+                </label>
+            </div>
+
+            <!-- Submit Button -->
+            <button 
+                type="submit" 
+                id="submit-btn"
+                class="w-full py-4 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:from-green-700 hover:to-green-800 transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl font-semibold flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-green-500"
+            >
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                </svg>
+                Submit Emergency Report
+            </button>
+
+            <!-- Privacy Notice -->
+            <div class="text-center">
+                <p class="text-xs text-gray-500">
+                    <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                    Your report will be shared with emergency services and community responders
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Loading Overlay -->
-<div id="loading" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+<div id="loading" class="fixed inset-0 bg-black/50 flex items-center justify-center z-[7000] hidden" role="status" aria-live="assertive">
     <div class="bg-white rounded-2xl p-6 text-center max-w-sm mx-4 shadow-2xl">
         <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i class="fas fa-spinner fa-spin text-blue-600 text-2xl"></i>
+            <svg class="w-8 h-8 text-blue-600 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
         </div>
         <h3 class="text-lg font-semibold text-gray-900 mb-2">Submitting Report</h3>
         <p class="text-gray-600 text-sm">Please wait while we process your emergency report...</p>
@@ -369,14 +394,16 @@
 </div>
 
 <!-- Success Modal -->
-<div id="success-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+<div id="success-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-[7000] hidden" role="dialog" aria-modal="true" aria-labelledby="success-title">
     <div class="bg-white rounded-2xl p-6 text-center max-w-sm mx-4 shadow-2xl">
         <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i class="fas fa-check text-green-600 text-2xl"></i>
+            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
         </div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">Report Submitted</h3>
+        <h3 id="success-title" class="text-lg font-semibold text-gray-900 mb-2">Report Submitted</h3>
         <p class="text-gray-600 text-sm mb-4">Your emergency report has been successfully submitted. Authorities have been notified.</p>
-        <button id="success-ok" class="w-full py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+        <button id="success-ok" class="w-full py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500">
             Continue
         </button>
     </div>
@@ -438,6 +465,26 @@
         transform: scale(1.1);
     }
     
+    /* Animation classes */
+    .report-btn.shake {
+        animation: shake 0.5s ease-in-out;
+    }
+    
+    .report-btn.pulse {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    
     /* Custom map styles */
     .leaflet-popup-content-wrapper {
         border-radius: 12px;
@@ -449,13 +496,10 @@
     }
 </style>
 
-<!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossorigin=""></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 <script>
-    // Initialize Map with custom style
+    // Map initialization and interaction
     var map = L.map('map', {
         zoomControl: false
     }).setView([0, 0], 13);
@@ -471,112 +515,200 @@
         maxZoom: 19
     }).addTo(map);
     
-    // Custom zoom buttons
-    document.getElementById('zoom-in').addEventListener('click', function() {
-        map.zoomIn();
-    });
-    
-    document.getElementById('zoom-out').addEventListener('click', function() {
-        map.zoomOut();
-    });
-
-    // Custom Marker Icons
+    // Marker icons
     var userIcon = L.divIcon({
-        html: '<div class="w-8 h-8 bg-blue-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center"><i class="fas fa-user text-white text-xs"></i></div>',
+        html: '<div class="w-8 h-8 bg-blue-600 rounded-full border-2 border-white shadow-lg flex items-center justify-center" aria-label="Your location"><svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></div>',
         iconSize: [32, 32],
         iconAnchor: [16, 16],
         className: 'user-location-marker'
     });
 
     var incidentIcon = L.divIcon({
-        html: '<div class="w-10 h-10 bg-red-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center"><i class="fas fa-exclamation text-white text-sm"></i></div>',
+        html: '<div class="w-10 h-10 bg-red-600 rounded-full border-2 border-white shadow-lg flex items-center justify-center" aria-label="Incident location"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg></div>',
         iconSize: [40, 40],
         iconAnchor: [20, 20],
         className: 'incident-location-marker'
     });
 
-    // Get User Location
+    // Variables
     var userMarker;
+    var selectedMarker;
+    var selectedLat = null;
+    var selectedLng = null;
+
+    // Geolocation and auto-populate
     navigator.geolocation.getCurrentPosition(function(position) {
         var lat = position.coords.latitude;
         var lon = position.coords.longitude;
         map.setView([lat, lon], 13);
         userMarker = L.marker([lat, lon], { icon: userIcon })
             .addTo(map)
-            .bindPopup("<div class='text-center'><b>📍 Your Current Location</b><br>You are here</div>")
+            .bindPopup("<div class='text-center'><b>Your Current Location</b><br>You are here</div>")
             .openPopup();
-            
-        // Add some sample incident markers for demonstration
-        addSampleIncidents(lat, lon);
+        loadExistingReports();
     }, function(error) {
         console.log("Geolocation error:", error);
-        // Default to a reasonable location if geolocation fails
-        map.setView([40.7128, -74.0060], 10); // New York
-        addSampleIncidents(40.7128, -74.0060);
+        map.setView([40.7128, -74.0060], 10);
+        loadExistingReports();
     });
 
-    // Add sample incidents for demonstration
-    function addSampleIncidents(lat, lon) {
-        // Add a few sample incidents around the user's location
-        var sampleIncidents = [
-            {lat: lat + 0.01, lon: lon + 0.01, type: 'fire', description: 'Building fire reported'},
-            {lat: lat - 0.008, lon: lon + 0.005, type: 'medical', description: 'Medical emergency'},
-            {lat: lat + 0.005, lon: lon - 0.01, type: 'road_damage', description: 'Road accident'}
-        ];
-        
-        sampleIncidents.forEach(function(incident) {
-            var incidentMarker = L.marker([incident.lat, incident.lon], {
-                icon: L.divIcon({
-                    html: '<div class="w-8 h-8 bg-yellow-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center"><i class="fas fa-exclamation text-white text-xs"></i></div>',
-                    iconSize: [32, 32],
-                    iconAnchor: [16, 16],
-                    className: 'other-incident-marker'
-                })
-            }).addTo(map)
-            .bindPopup("<div class='text-center'><b>Reported Incident</b><br>" + incident.description + "</div>");
-        });
+    function loadExistingReports() {
+        fetch('/disaster-reporting/api/reports/')
+            .then(r => r.json())
+            .then(data => {
+                renderRecentReports(data || []);
+                (data || []).forEach(function(report) {
+                    var icon = L.divIcon({
+                        html: '<div class="w-8 h-8 bg-yellow-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center"><svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"/></svg></div>',
+                        iconSize: [32, 32], iconAnchor: [16, 16], className: 'other-incident-marker'
+                    });
+                    if (report.latitude && report.longitude) {
+                        L.marker([report.latitude, report.longitude], { icon })
+                            .addTo(map)
+                            .bindPopup("<div class='text-center'><b>Reported Incident</b><br>" + (report.description || '') + "</div>");
+                    }
+                });
+            })
+            .catch(() => {
+                // Handle error silently
+            });
     }
 
     // Click to Select Location
-    var selectedMarker;
     map.on('click', function(event) {
         var lat = event.latlng.lat;
         var lon = event.latlng.lng;
 
-        if (selectedMarker) map.removeLayer(selectedMarker);
+        setSelectedLocation(lat, lon);
         
-        selectedMarker = L.marker([lat, lon], { icon: incidentIcon })
-            .addTo(map)
-            .bindPopup("<div class='text-center'><b>📍 Selected Incident Location</b><br>This is where the incident occurred</div>")
-            .openPopup();
+        // Show and animate the report button
+        const reportBtn = document.getElementById('report-button');
+        reportBtn.classList.remove('hidden');
+        reportBtn.classList.add('shake', 'pulse');
         
-        document.getElementById("latitude").value = lat.toFixed(6);
-        document.getElementById("longitude").value = lon.toFixed(6);
+        // Hide instructions
+        document.getElementById('location-instructions').classList.add('hidden');
         
-        // Enable submit button
-        document.getElementById("submit-btn").disabled = false;
+        // Remove animations after they complete
+        setTimeout(() => {
+            reportBtn.classList.remove('shake');
+        }, 500);
     });
 
-    // Use Current Location Button
-    document.getElementById("use-current-location").addEventListener("click", function() {
-        if (userMarker) {
-            var lat = userMarker.getLatLng().lat;
-            var lon = userMarker.getLatLng().lng;
-            
-            if (selectedMarker) map.removeLayer(selectedMarker);
-            
-            selectedMarker = L.marker([lat, lon], { icon: incidentIcon })
-                .addTo(map)
-                .bindPopup("<div class='text-center'><b>📍 Selected Incident Location</b><br>Using your current location</div>")
-                .openPopup();
-            
-            document.getElementById("latitude").value = lat.toFixed(6);
-            document.getElementById("longitude").value = lon.toFixed(6);
-            document.getElementById("submit-btn").disabled = false;
-            
-            map.setView([lat, lon], 15);
-        }
+    function setSelectedLocation(lat, lon) {
+        selectedLat = lat;
+        selectedLng = lon;
+        
+        if (selectedMarker) map.removeLayer(selectedMarker);
+        selectedMarker = L.marker([lat, lon], { icon: incidentIcon })
+            .addTo(map)
+            .bindPopup("<div class='text-center'><b>Selected Incident Location</b><br>Click 'Report Incident' to continue</div>")
+            .openPopup();
+        
+        // Update form fields if form is open
+        document.getElementById("latitude").value = lat.toFixed(6);
+        document.getElementById("longitude").value = lon.toFixed(6);
+    }
+
+    // Report Button Click - Open Form
+    document.getElementById('report-button').addEventListener('click', function() {
+        openReportForm();
     });
+
+    // Close Form Button
+    document.getElementById('close-form').addEventListener('click', function() {
+        closeReportForm();
+    });
+
+    // Overlay Click - Close Form
+    document.getElementById('report-form-overlay').addEventListener('click', function() {
+        closeReportForm();
+    });
+
+    // Change Location Button
+    document.getElementById('change-location').addEventListener('click', function() {
+        closeReportForm();
+        // Show instructions again
+        document.getElementById('location-instructions').classList.remove('hidden');
+    });
+
+    document.getElementById('use-current-location').addEventListener('click', function() {
+        var loader = document.getElementById('geo-loading');
+        loader.classList.remove('hidden');
+        
+        // Check if geolocation is supported
+        if (!navigator.geolocation) {
+            loader.classList.add('hidden');
+            alert('Geolocation is not supported by your browser.');
+            return;
+        }
+        
+        // Check if running on HTTPS (required for geolocation in modern browsers)
+        if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+            loader.classList.add('hidden');
+            alert('Geolocation requires HTTPS connection. Please use a secure connection or select location on the map.');
+            return;
+        }
+        
+        // Enhanced geolocation options for better accuracy
+        var geoOptions = {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 60000
+        };
+        
+        navigator.geolocation.getCurrentPosition(function(pos) {
+            loader.classList.add('hidden');
+            var lat = pos.coords.latitude;
+            var lon = pos.coords.longitude;
+            setSelectedLocation(lat, lon);
+            map.setView([lat, lon], 15);
+            openReportForm();
+        }, function(err) {
+            loader.classList.add('hidden');
+            
+            // Enhanced error handling with specific messages
+            var errorMessage = 'Unable to retrieve your location. ';
+            switch(err.code) {
+                case err.PERMISSION_DENIED:
+                    errorMessage += 'Location access was denied. Please enable location permissions in your browser settings.';
+                    break;
+                case err.POSITION_UNAVAILABLE:
+                    errorMessage += 'Location information is unavailable. Please check your device location settings.';
+                    break;
+                case err.TIMEOUT:
+                    errorMessage += 'Location request timed out. Please try again or select location on the map.';
+                    break;
+                default:
+                    errorMessage += 'An unknown error occurred. Please select location on the map.';
+                    break;
+            }
+            
+            // Add debug information
+            console.log('Geolocation error details:', {
+                code: err.code,
+                message: err.message,
+                protocol: window.location.protocol,
+                hostname: window.location.hostname
+            });
+            
+            alert(errorMessage);
+        }, geoOptions);
+    });
+
+    function openReportForm() {
+        document.getElementById('report-form-overlay').classList.remove('hidden');
+        document.getElementById('report-form-sidebar').classList.remove('translate-x-full');
+        // Stop pulsing animation when form opens
+        document.getElementById('report-button').classList.remove('pulse');
+    }
+
+    function closeReportForm() {
+        document.getElementById('report-form-sidebar').classList.add('translate-x-full');
+        setTimeout(() => {
+            document.getElementById('report-form-overlay').classList.add('hidden');
+        }, 300);
+    }
 
     // Severity Selection
     document.querySelectorAll('.severity-btn').forEach(btn => {
@@ -584,6 +716,8 @@
             document.querySelectorAll('.severity-btn').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             document.getElementById('severity').value = this.dataset.level;
+            document.querySelectorAll('.severity-btn').forEach(b => b.setAttribute('aria-pressed', 'false'));
+            this.setAttribute('aria-pressed', 'true');
         });
     });
 
@@ -592,10 +726,11 @@
 
     // Character Count
     document.getElementById('description').addEventListener('input', function() {
-        document.getElementById('char-count').textContent = this.value.length + '/500';
+        var len = this.value.length;
+        document.getElementById('char-count').textContent = len + '/500';
     });
 
-    // Image Upload Handling
+    // Image Upload Handling (same as before)
     const dropArea = document.getElementById("drop-area");
     const imageInput = document.getElementById("image");
     const imagePreview = document.getElementById("image-preview");
@@ -638,40 +773,217 @@
 
     function handleFiles(e) {
         const files = e.target.files;
-        imagePreview.classList.remove('hidden');
         
-        Array.from(files).forEach(file => {
-            if (!file.type.match('image.*')) return;
+        // Show loading state - preserve the file input element
+        const originalContent = dropArea.innerHTML;
+        dropArea.innerHTML = `
+            <svg class="w-8 h-8 text-blue-600 mx-auto mb-3 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            <p class="text-sm text-blue-600 mb-2">Processing files...</p>
+            <p class="text-xs text-gray-500">${files.length} file(s) selected</p>
+            <input type="file" id="image" hidden accept="image/*,video/*" multiple>
+        `;
+        
+        setTimeout(() => {
+            imagePreview.classList.remove('hidden');
+            let processedCount = 0;
+            let validCount = 0;
             
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const div = document.createElement('div');
-                div.className = 'image-preview-item';
-                div.innerHTML = `
-                    <img src="${e.target.result}" class="w-full h-20 object-cover">
-                    <button type="button" class="remove-image" onclick="this.parentElement.remove()">
-                        <i class="fas fa-times"></i>
+            // Handle case where no files are selected
+            if (files.length === 0) {
+                dropArea.innerHTML = `
+                    <svg class="w-8 h-8 text-yellow-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                    </svg>
+                    <p class="text-sm text-yellow-600 mb-2">No files selected</p>
+                    <p class="text-xs text-gray-500 mb-4">Please select valid image or video files</p>
+                    <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                        Choose Files
                     </button>
+                    <input type="file" id="image" hidden accept="image/*,video/*" multiple>
                 `;
-                imagePreview.appendChild(div);
+                
+                // Re-attach click event to the new button
+                const newButton = dropArea.querySelector('button');
+                if (newButton) {
+                    newButton.addEventListener('click', () => imageInput.click());
+                }
+                
+                setTimeout(() => {
+                    dropArea.innerHTML = originalContent;
+                    dropArea.addEventListener("click", () => imageInput.click());
+                }, 3000);
+                return;
             }
-            reader.readAsDataURL(file);
-        });
+            
+            Array.from(files).forEach(file => {
+                const isImage = file.type.startsWith('image/');
+                const isVideo = file.type.startsWith('video/');
+                
+                if (!isImage && !isVideo) {
+                    processedCount++;
+                    return;
+                }
+
+                var maxSize = isImage ? 5 * 1024 * 1024 : 25 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    processedCount++;
+                    return;
+                }
+
+                validCount++;
+                const reader = new FileReader();
+                
+                reader.onloadstart = function() {
+                    // Show individual file loading state
+                    const loadingDiv = document.createElement('div');
+                    loadingDiv.className = 'image-preview-item loading';
+                    loadingDiv.id = `loading-${file.name}`;
+                    loadingDiv.innerHTML = `
+                        <div class="w-full h-20 bg-gray-200 rounded flex items-center justify-center">
+                            <svg class="w-6 h-6 text-gray-400 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                        </div>
+                    `;
+                    imagePreview.appendChild(loadingDiv);
+                };
+                
+                reader.onload = function(ev) {
+                    // Remove loading state
+                    const loadingDiv = document.getElementById(`loading-${file.name}`);
+                    if (loadingDiv) loadingDiv.remove();
+                    
+                    const div = document.createElement('div');
+                    div.className = 'image-preview-item';
+                    div.innerHTML = isImage
+                        ? `<img src="${ev.target.result}" class="w-full h-20 object-cover">`
+                        : `<video src="${ev.target.result}" class="w-full h-20 object-cover" controls></video>`;
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'remove-image';
+                    btn.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
+                    btn.onclick = () => div.remove();
+                    div.appendChild(btn);
+                    imagePreview.appendChild(div);
+                    
+                    processedCount++;
+                    
+                    // Show success feedback when all files are processed
+                    if (processedCount === files.length) {
+                        if (validCount === 0) {
+                            // All files were invalid
+                            dropArea.innerHTML = `
+                                <svg class="w-8 h-8 text-red-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <p class="text-sm text-red-600 mb-2">No valid files selected</p>
+                                <p class="text-xs text-gray-500 mb-4">Please select JPG, PNG, GIF images (max 5MB) or MP4 videos (max 25MB)</p>
+                                <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                                    Choose Files
+                                </button>
+                                <input type="file" id="image" hidden accept="image/*,video/*" multiple>
+                            `;
+                        } else {
+                            // Some files were valid
+                            dropArea.innerHTML = `
+                                <svg class="w-8 h-8 text-green-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <p class="text-sm text-green-600 mb-2">${validCount} file(s) uploaded successfully!</p>
+                                <p class="text-xs text-gray-500 mb-4">Drag & drop more images or click to choose files</p>
+                                <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                                    Choose More Files
+                                </button>
+                                <input type="file" id="image" hidden accept="image/*,video/*" multiple>
+                            `;
+                        }
+                        
+                        // Re-attach click event to the new button
+                        const newButton = dropArea.querySelector('button');
+                        if (newButton) {
+                            newButton.addEventListener('click', () => imageInput.click());
+                        }
+                        
+                        // Reset to original state after 3 seconds
+                        setTimeout(() => {
+                            dropArea.innerHTML = originalContent;
+                            dropArea.addEventListener("click", () => imageInput.click());
+                        }, 3000);
+                    }
+                };
+                
+                reader.onerror = function() {
+                    const loadingDiv = document.getElementById(`loading-${file.name}`);
+                    if (loadingDiv) loadingDiv.remove();
+                    processedCount++;
+                    
+                    if (processedCount === files.length) {
+                        // Determine the type of error to provide appropriate feedback
+                        if (validCount === 0) {
+                            // All files failed to process
+                            dropArea.innerHTML = `
+                                <svg class="w-8 h-8 text-red-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <p class="text-sm text-red-600 mb-2">Unable to process files</p>
+                                <p class="text-xs text-gray-500 mb-4">Files may be corrupted or unsupported. Try different files.</p>
+                                <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                                    Choose Files
+                                </button>
+                                <input type="file" id="image" hidden accept="image/*,video/*" multiple>
+                            `;
+                        } else {
+                            // Some files succeeded, some failed
+                            dropArea.innerHTML = `
+                                <svg class="w-8 h-8 text-yellow-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                </svg>
+                                <p class="text-sm text-yellow-600 mb-2">${validCount} file(s) uploaded, ${files.length - validCount} failed</p>
+                                <p class="text-xs text-gray-500 mb-4">Some files couldn't be processed. Try different files if needed.</p>
+                                <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                                    Choose More Files
+                                </button>
+                                <input type="file" id="image" hidden accept="image/*,video/*" multiple>
+                            `;
+                        }
+                        
+                        // Re-attach click event to the new button
+                        const newButton = dropArea.querySelector('button');
+                        if (newButton) {
+                            newButton.addEventListener('click', () => imageInput.click());
+                        }
+                        
+                        setTimeout(() => {
+                            dropArea.innerHTML = originalContent;
+                            dropArea.addEventListener("click", () => imageInput.click());
+                        }, 3000);
+                    }
+                };
+                
+                reader.readAsDataURL(file);
+            });
+        }, 500); // Small delay to show loading state
     }
 
     // Form Submission
     document.getElementById("report-form").addEventListener("submit", function(event) {
         event.preventDefault();
 
+        if (!selectedLat || !selectedLng) {
+            alert('Please select a location on the map first.');
+            return;
+        }
+
         var category = document.getElementById("category").value;
         var description = document.getElementById("description").value;
         var severity = document.getElementById("severity").value;
-        var latitude = document.getElementById("latitude").value;
-        var longitude = document.getElementById("longitude").value;
         var images = document.getElementById("image").files;
+        var isAnonymous = document.getElementById('is_anonymous').checked;
 
-        if (!latitude || !longitude) {
-            alert("⚠️ Please select a location on the map before submitting.");
+        if (!description || description.length > 500) {
+            alert('Please provide a valid description (max 500 characters).');
             return;
         }
 
@@ -679,27 +991,121 @@
         formData.append("category", category);
         formData.append("description", description);
         formData.append("severity", severity);
-        formData.append("latitude", latitude);
-        formData.append("longitude", longitude);
+        formData.append("latitude", selectedLat);
+        formData.append("longitude", selectedLng);
+        formData.append("is_anonymous", isAnonymous);
         
         for (let i = 0; i < images.length; i++) {
-            formData.append("images", images[i]);
+            const file = images[i];
+            if (file.type.startsWith('image/')) {
+                compressImage(file, 0.7).then(blob => {
+                    formData.append('media', blob, file.name);
+                });
+            } else if (file.type.startsWith('video/')) {
+                formData.append('media', file);
+            }
         }
 
-        // Show Loading Indicator
         document.getElementById("loading").classList.remove("hidden");
 
-        // Simulate API call
-        setTimeout(() => {
+        fetch('/disaster-reporting/api/reports/', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            body: formData
+        }).then(async (resp) => {
             document.getElementById("loading").classList.add("hidden");
+            if (!resp.ok) {
+                alert('Submission failed. Please try again.');
+                return;
+            }
+            const data = await resp.json();
+            const tracking = data.tracking_code || data.id;
+            document.querySelector('#success-modal h3').textContent = 'Report Submitted';
+            document.querySelector('#success-modal p').textContent = `Your tracking code: ${tracking}. Authorities have been notified.`;
             document.getElementById("success-modal").classList.remove("hidden");
-        }, 2000);
+            
+            // Reset form and close sidebar
+            closeReportForm();
+            document.getElementById('report-button').classList.add('hidden');
+            document.getElementById('location-instructions').classList.remove('hidden');
+            if (selectedMarker) {
+                map.removeLayer(selectedMarker);
+                selectedMarker = null;
+            }
+            selectedLat = null;
+            selectedLng = null;
+            
+            // Reload recent reports
+            loadExistingReports();
+        }).catch(() => {
+            document.getElementById("loading").classList.add("hidden");
+            alert('Network error. Please check your connection.');
+        });
     });
 
     // Success modal handler
     document.getElementById("success-ok").addEventListener("click", function() {
         document.getElementById("success-modal").classList.add("hidden");
-        window.location.href = "/dashboard/";
     });
+
+    function compressImage(file, quality=0.7) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            const canvas = document.createElement('canvas');
+            const reader = new FileReader();
+            reader.onload = e => { img.src = e.target.result; };
+            img.onload = () => {
+                const MAX_W = 1280; const MAX_H = 1280;
+                let { width, height } = img;
+                if (width > MAX_W || height > MAX_H) {
+                    const ratio = Math.min(MAX_W/width, MAX_H/height);
+                    width = width * ratio; height = height * ratio;
+                }
+                canvas.width = width; canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                canvas.toBlob((blob) => resolve(blob), 'image/jpeg', quality);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function renderRecentReports(data) {
+        var container = document.getElementById('recent-reports');
+        var empty = document.getElementById('recent-reports-empty');
+        container.innerHTML = '';
+        if (!data.length) { empty.classList.remove('hidden'); return; }
+        empty.classList.add('hidden');
+        data.slice(0, 5).forEach(function(r) {
+            var sev = (r.severity || 'medium');
+            var sevClasses = sev === 'high' ? 'bg-red-50 border-red-100' : (sev === 'low' ? 'bg-green-50 border-green-100' : 'bg-yellow-50 border-yellow-100');
+            var sevBadgeClasses = sev === 'high' ? 'bg-red-100 text-red-800' : (sev === 'low' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800');
+            var wrap = document.createElement('div');
+            wrap.className = 'flex items-start space-x-3 p-3 rounded-lg border ' + sevClasses;
+            wrap.innerHTML = '<div class="w-2 h-2 rounded-full mt-2 ' + (sev === 'high' ? 'bg-red-500' : (sev === 'low' ? 'bg-green-500' : 'bg-yellow-500')) + '"></div>' +
+                '<div class="flex-1">' +
+                '<h4 class="font-medium text-gray-900">' + (r.category_display || r.category || 'Report') + '</h4>' +
+                '<p class="text-xs text-gray-600">Severity: ' + sev + '</p>' +
+                '<div class="flex items-center mt-1"><span class="text-xs px-2 py-1 rounded-full ' + sevBadgeClasses + '">' + (r.status_display || r.status || 'pending') + '</span></div>' +
+                '</div>';
+            container.appendChild(wrap);
+        });
+    }
 </script>
 {% endblock %}

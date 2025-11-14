@@ -1,0 +1,69 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block title %}AI Dashboard - Temporarily Unavailable - PublicBridge{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg mt-5">
+                <div class="card-body text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-robot fa-5x text-muted mb-3"></i>
+                        <h2 class="text-muted">AI Features Temporarily Unavailable</h2>
+                    </div>
+                    
+                    {% if error %}
+                        <div class="alert alert-warning mb-4">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            {{ error }}
+                        </div>
+                    {% endif %}
+                    
+                    <p class="text-muted mb-4">
+                        Our AI-powered analytics are currently experiencing technical difficulties. 
+                        We're working to restore these advanced features as quickly as possible.
+                    </p>
+                    
+                    <div class="row justify-content-center mb-4">
+                        <div class="col-md-6">
+                            <div class="card border-light">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-chart-bar fa-2x text-primary mb-2"></i>
+                                    <h6>Standard Analytics Available</h6>
+                                    <p class="small text-muted">Basic reporting and analytics are still accessible</p>
+                                    <a href="{% url 'analytics_view' %}" class="btn btn-outline-primary btn-sm">
+                                        View Standard Analytics
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <button class="btn btn-primary me-2" onclick="location.reload()">
+                            <i class="fas fa-sync-alt me-1"></i>
+                            Try Again
+                        </button>
+                        <a href="{% url 'dashboard_overview' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>
+                            Back to Dashboard
+                        </a>
+                    </div>
+                    
+                    <div class="text-muted small">
+                        <p>If this issue persists, please contact our support team.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-retry after 30 seconds
+setTimeout(function() {
+    location.reload();
+}, 30000);
+</script>
+{% endblock %}
