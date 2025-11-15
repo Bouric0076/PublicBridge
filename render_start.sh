@@ -9,7 +9,14 @@ echo "=== Starting Application ==="
 
 # Run database migrations before starting the application
 echo "Running database migrations..."
-python manage.py migrate --noinput
+echo "Current migration status:"
+python manage.py showmigrations
+echo "Specifically checking users app migrations:"
+python manage.py showmigrations users
+echo "Applying all migrations..."
+python manage.py migrate --noinput --verbosity=2
+echo "Migration completed. Checking final status:"
+python manage.py showmigrations users
 
 # Collect static files
 echo "Collecting static files..."
