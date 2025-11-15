@@ -1,1 +1,1 @@
-web: daphne -b 0.0.0.0 -p $PORT PublicBridge.asgi:application
+web: bash render_start.sh
