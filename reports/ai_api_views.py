@@ -25,9 +25,7 @@ from ai_agents.orchestrator import MultiAgentOrchestrator
 from ai_agents.groq_orchestrator import groq_orchestrator
 from ai_agents.exception_handler import safe_ai_view_response
 import logging
-
 logger = logging.getLogger(__name__)
-from ai_agents.civic_chatbot import CivicChatbotAgent
 
 class AIReportListView(generics.ListAPIView):
     """List reports with AI insights."""
