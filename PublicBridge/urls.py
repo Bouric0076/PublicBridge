@@ -19,10 +19,18 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
+from django.http import HttpResponse
 # from django.contrib import admin_dashboard
+
+# Health check endpoint for Render
+def health_check(request):
+    return HttpResponse('OK', status=200)
 
 
 urlpatterns = [
+    # Health check endpoint for Render port detection
+    path('health/', health_check, name='health_check'),
+    
     path('grappelli/', include('grappelli.urls')),
 
     path( 'admin/', admin.site.urls),
