@@ -11,15 +11,11 @@ __version__ = "1.0.0"
 __author__ = "PublicBridge AI Team - Lead Bouric Enos"
 
 from .orchestrator import MultiAgentOrchestrator
-from .analytics import PredictiveAnalyticsAgent
-from .civic_chatbot import CivicChatbotAgent
 from .conversation import ContextManager
 from .nlp import EnhancedNLPEngine
 
 __all__ = [
     'MultiAgentOrchestrator',
-    'PredictiveAnalyticsAgent',
-    'CivicChatbotAgent',
     'ContextManager',
     'EnhancedNLPEngine'
 ]
