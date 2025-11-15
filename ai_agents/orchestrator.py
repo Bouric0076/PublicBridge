@@ -16,7 +16,7 @@ from .base import BaseAIAgent, ReportCategory, UrgencyLevel, AIAnalysisResult, R
 from .groq_classifier import GroqClassifierAgent
 from .groq_chatbot import GroqChatbotAgent
 
-from .llama_classifier import LlamaClassifierAgent  # Keep as fallback
+
 from .civic_chatbot import CivicChatbotAgent  # Keep as fallback
 from .conversation import ContextManager
 from .analytics_tracker import ChatAnalyticsTracker
@@ -520,8 +520,6 @@ class MultiAgentOrchestrator:
                 available = True
             elif hasattr(agent, 'sentiment_pipeline') and agent.sentiment_pipeline is not None:
                 available = True  # Sentiment analyzer uses pipelines
-            elif hasattr(agent, 'llama_model') and agent.llama_model is not None:
-                available = True  # LlamaClassifierAgent
             else:
                 available = False
             
