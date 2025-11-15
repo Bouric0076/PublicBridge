@@ -10,6 +10,7 @@ groq
 # Database & Environment
 dj-database-url==3.0.1
 python-dotenv==1.2.1
+psycopg2-binary==2.9.9
 
 # Web server (memory efficient)
 uvicorn==0.24.0
