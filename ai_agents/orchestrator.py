@@ -15,7 +15,7 @@ from collections import Counter
 from .base import BaseAIAgent, ReportCategory, UrgencyLevel, AIAnalysisResult, ReportAnalysis
 from .groq_classifier import GroqClassifierAgent
 from .groq_chatbot import GroqChatbotAgent
-from .advanced_sentiment import AdvancedSentimentAnalyzer
+
 from .llama_classifier import LlamaClassifierAgent  # Keep as fallback
 from .civic_chatbot import CivicChatbotAgent  # Keep as fallback
 from .conversation import ContextManager
@@ -519,7 +519,7 @@ class MultiAgentOrchestrator:
             if hasattr(agent, 'model') and agent.model is not None:
                 available = True
             elif hasattr(agent, 'sentiment_pipeline') and agent.sentiment_pipeline is not None:
-                available = True  # AdvancedSentimentAnalyzer uses pipelines
+                available = True  # Sentiment analyzer uses pipelines
             elif hasattr(agent, 'llama_model') and agent.llama_model is not None:
                 available = True  # LlamaClassifierAgent
             else:
