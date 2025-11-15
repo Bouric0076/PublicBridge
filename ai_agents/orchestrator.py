@@ -17,7 +17,7 @@ from .groq_classifier import GroqClassifierAgent
 from .groq_chatbot import GroqChatbotAgent
 
 
-from .civic_chatbot import CivicChatbotAgent  # Keep as fallback
+
 from .conversation import ContextManager
 from .analytics_tracker import ChatAnalyticsTracker
 from .classifier import ReportClassifierAgent  # Keep as fallback
@@ -424,13 +424,13 @@ class MultiAgentOrchestrator:
         """Initialize basic fallback agents."""
         self.agents['classifier'] = ReportClassifierAgent()
         self.agents['sentiment'] = SentimentAnalyzerAgent()
-        self.agents['chatbot'] = CivicChatbotAgent()  # Use enhanced chatbot even in fallback
+        self.agents['chatbot'] = GroqChatbotAgent()  # Use Groq chatbot in fallback
         self.use_advanced_agents = False
         logger.info("Initialized with fallback agents using enhanced chatbot")
     
     async def process_chatbot_message(self, user_input: str, context: Dict = None) -> Dict:
         """
-        Process a chatbot message using the CivicChatbotAgent.
+        Process a chatbot message using the chatbot agent.
         
         Args:
             user_input: The citizen's message
