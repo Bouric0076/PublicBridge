@@ -3,7 +3,7 @@ services:
     name: publicbridge
     env: python
     buildCommand: "./build.sh"
-    startCommand: "daphne -b 0.0.0.0 -p $PORT PublicBridge.asgi:application"
+    startCommand: "bash render_start.sh"
     envVars:
       - key: DJANGO_SECRET_KEY
         generateValue: true

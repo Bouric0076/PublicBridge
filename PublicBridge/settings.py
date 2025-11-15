@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'daphne',  # Daphne should be before django.contrib.staticfiles
     'django.contrib.staticfiles',
     'channels',  # Channels for WebSockets
     'crispy_forms',
