@@ -8,6 +8,7 @@ channels-redis==4.2.0
 groq
 nltk==3.8.1
 textblob==0.17.1
+geopy==2.4.1
 
 # Database & Environment
 dj-database-url==3.0.1
