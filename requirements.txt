@@ -5,7 +5,7 @@ channels==4.0.0
 channels-redis==4.2.0
 
 # Essential AI - Groq only (lightweight)
-groq==0.34.0
+groq
 
 # Database & Environment
 dj-database-url==3.0.1
@@ -26,6 +26,7 @@ whitenoise==6.11.0
 requests==2.32.3
 Pillow==11.1.0
 python-dateutil==2.9.0.post0
+grapelli
 
 # Remove heavy ML libraries that cause memory overflow:
 # - torch (2GB+) - not used in core functionality
