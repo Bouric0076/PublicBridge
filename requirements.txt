@@ -16,6 +16,7 @@ uvicorn==0.24.0
 gunicorn==21.2.0
 
 # Django extensions
+django-grappelli==4.0.1
 django-allauth==65.4.1
 django-crispy-forms==2.3
 django-extensions==3.2.3
@@ -26,7 +27,7 @@ whitenoise==6.11.0
 requests==2.32.3
 Pillow==11.1.0
 python-dateutil==2.9.0.post0
-grapelli
+
 
 # Remove heavy ML libraries that cause memory overflow:
 # - torch (2GB+) - not used in core functionality
