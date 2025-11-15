@@ -5,7 +5,6 @@ import asyncio
 
 from .groq_chatbot import GroqChatbotAgent
 from .groq_classifier import GroqClassifierAgent
-from .advanced_sentiment import AdvancedSentimentAnalyzer
 from .device_manager import device_manager
 from .exception_handler import (
     safe_ai_operation, 
@@ -84,16 +83,10 @@ class GroqAIOrchestrator:
             self.classifier_agent = None
             self.initialization_status['classifier'] = False
         
-        # Initialize sentiment agent
-        try:
-            self.sentiment_agent = AdvancedSentimentAnalyzer()
-            health = check_ai_agent_health(self.sentiment_agent)
-            self.initialization_status['sentiment'] = health['status'] in ['healthy', 'degraded']
-            logger.info(f"Sentiment agent initialized: {health['status']}")
-        except Exception as e:
-            logger.error(f"Sentiment agent initialization failed: {e}")
-            self.sentiment_agent = None
-            self.initialization_status['sentiment'] = False
+        # Initialize sentiment agent - using fallback only
+        self.sentiment_agent = None
+        self.initialization_status['sentiment'] = False
+        logger.info("Sentiment agent disabled - using fallback mechanisms only")
         
         # Log overall initialization status
         successful_agents = sum(self.initialization_status.values())
