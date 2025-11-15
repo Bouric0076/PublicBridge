@@ -7,6 +7,14 @@ echo "PORT environment variable: $PORT"
 echo "Binding to: 0.0.0.0:$PORT"
 echo "=== Starting Application ==="
 
+# Run database migrations before starting the application
+echo "Running database migrations..."
+python manage.py migrate --noinput
+
+# Collect static files
+echo "Collecting static files..."
+python manage.py collectstatic --noinput
+
 # Wait for any previous services to release the port
 echo "Initializing port binding..."
 sleep 2
