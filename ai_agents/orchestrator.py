@@ -70,22 +70,15 @@ class MultiAgentOrchestrator:
         # Initialize agents based on configuration
         if use_advanced_agents:
             try:
-                # Try to initialize Groq-based agents first
+                # Use only Groq-based agents to avoid heavy ML dependencies
                 self.agents['classifier'] = GroqClassifierAgent()
-                self.agents['sentiment'] = AdvancedSentimentAnalyzer()
+                # Use GroqClassifierAgent for sentiment analysis too (it handles urgency/emotion)
+                self.agents['sentiment'] = GroqClassifierAgent()  
                 self.agents['chatbot'] = GroqChatbotAgent()
-                logger.info("Initialized with advanced Groq-based agents")
+                logger.info("Initialized with lightweight Groq-based agents")
             except Exception as e:
-                logger.warning(f"Failed to initialize Groq agents, trying Llama fallback: {e}")
-                try:
-                    # Fallback to Llama-based agents
-                    self.agents['classifier'] = LlamaClassifierAgent()
-                    self.agents['sentiment'] = AdvancedSentimentAnalyzer()
-                    self.agents['chatbot'] = CivicChatbotAgent()
-                    logger.info("Initialized with Llama-based fallback agents")
-                except Exception as e2:
-                    logger.warning(f"Failed to initialize Llama agents, using basic fallback: {e2}")
-                    self._initialize_fallback_agents()
+                logger.warning(f"Failed to initialize Groq agents, using basic fallback: {e}")
+                self._initialize_fallback_agents()
         else:
             self._initialize_fallback_agents()
         
