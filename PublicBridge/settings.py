@@ -131,12 +131,17 @@ DATABASES = {
 }
 
 # Fallback to DATABASE_URL if provided (for Render deployment)
-if 'DATABASE_URL' in os.environ:
-    DATABASES['default'] = dj_database_url.parse(
-        os.environ['DATABASE_URL'],
-        conn_max_age=600,
-        ssl_require=True
-    )
+if 'DATABASE_URL' in os.environ and os.environ['DATABASE_URL']:
+    try:
+        DATABASES['default'] = dj_database_url.parse(
+            os.environ['DATABASE_URL'],
+            conn_max_age=600,
+            ssl_require=True
+        )
+    except Exception as e:
+        # If DATABASE_URL is malformed, log the error and use the manual config
+        print(f"Warning: DATABASE_URL parsing failed: {e}")
+        print("Using manual database configuration instead")
 
 AUTH_USER_MODEL = 'users.User'
 
