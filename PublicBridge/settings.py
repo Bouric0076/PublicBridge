@@ -114,14 +114,23 @@ else:
         }
     }
 
-# Database
+# Database Configuration
+# Supabase PostgreSQL connection
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': get_env_variable('DB_NAME', 'postgres'),
+        'USER': get_env_variable('DB_USER', 'postgres'),
+        'PASSWORD': get_env_variable('DB_PASSWORD', ''),
+        'HOST': get_env_variable('DB_HOST', 'localhost'),
+        'PORT': get_env_variable('DB_PORT', '5432'),
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
     }
 }
 
+# Fallback to DATABASE_URL if provided (for Render deployment)
 if 'DATABASE_URL' in os.environ:
     DATABASES['default'] = dj_database_url.parse(
         os.environ['DATABASE_URL'],
